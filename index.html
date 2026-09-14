@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#111827">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111827">
@@ -2459,6 +2461,16 @@ updateAll();
 
 addScorePlayer();
 
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("PWA: Service Worker registered"))
+      .catch((error) => console.error("PWA: Service Worker error", error));
+  });
+}
 </script>
 
 </body>

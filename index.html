@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ボドゲスコア</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background: #f5f5f7;
+  color: #222;
+}
+
+header {
+  background: #222;
+  color: white;
+  padding: 22px 18px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+main {
+  max-width: 600px;
+  margin: auto;
+  padding: 18px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 19px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+button {
+  background: #222;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:active {
+  opacity: 0.7;
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.player-row input {
+  margin-top: 0;
+}
+
+.score-list {
+  margin-top: 15px;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.rank {
+  font-weight: bold;
+  width: 35px;
+}
+
+.name {
+  flex: 1;
+}
+
+.score {
+  font-weight: bold;
+}
+
+.small {
+  color: #777;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none;
+}
+
+.game-button {
+  text-align: left;
+  background: #fff;
+  color: #222;
+  border: 1px solid #ddd;
+  margin-top: 8px;
+}
+
+.best {
+  font-size: 24px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🎲 ボドゲスコア
+</header>
+
+<main>
+
+<!-- 対戦記録 -->
+<div class="card">
+  <h2>🎮 対戦を記録</h2>
+
+  <input id="gameName" placeholder="ゲーム名（例：ドミニオン）">
+
+  <div id="players">
+    <div class="player-row">
+      <input class="player-name" placeholder="プレイヤー名">
+      <input class="player-score" type="number" placeholder="点数">
+    </div>
+    <div class="player-row">
+      <input class="player-name" placeholder="プレイヤー名">
+      <input class="player-score" type="number" placeholder="点数">
+    </div>
+  </div>
+
+  <button onclick="addPlayer()">＋ プレイヤー追加</button>
+  <button onclick="saveMatch()">この対戦を記録</button>
+</div>
+
+
+<!-- ゲーム一覧 -->
+<div class="card">
+  <h2>📚 ゲーム一覧</h2>
+  <div id="gameList">
+    <p class="small">まだ記録がありません</p>
+  </div>
+</div>
+
+
+<!-- ゲーム詳細 -->
+<div id="gameDetail" class="card hidden">
+  <h2 id="detailTitle"></h2>
+
+  <div class="small">歴代自己ベストランキング</div>
+
+  <div id="ranking" class="score-list"></div>
+
+  <br>
+
+  <div class="small">対戦履歴</div>
+
+  <div id="history"></div>
+</div>
+
+</main>
+
+
+<script>
+
+let data = JSON.parse(localStorage.getItem("boardgameData")) || {
+  matches: []
+};
+
+
+// プレイヤー追加
+function addPlayer() {
+
+  const players = document.getElementById("players");
+
+  const row = document.createElement("div");
+  row.className = "player-row";
+
+  row.innerHTML = `
+    <input class="player-name" placeholder="プレイヤー名">
+    <input class="player-score" type="number" placeholder="点数">
+  `;
+
+  players.appendChild(row);
+}
+
+
+// 対戦を保存
+function saveMatch() {
+
+  const gameName =
+    document.getElementById("gameName").value.trim();
+
+  if (!gameName) {
+    alert("ゲーム名を入力してください");
+    return;
+  }
+
+  const names =
+    [...document.querySelectorAll(".player-name")];
+
+  const scores =
+    [...document.querySelectorAll(".player-score")];
+
+  const players = [];
+
+  for (let i = 0; i < names.length; i++) {
+
+    const name = names[i].value.trim();
+    const score = scores[i].value;
+
+    if (name && score !== "") {
+
+      players.push({
+        name: name,
+        score: Number(score)
+      });
+
+    }
+  }
+
+  if (players.length < 2) {
+    alert("2人以上入力してください");
+    return;
+  }
+
+  data.matches.push({
+    game: gameName,
+    date: new Date().toLocaleDateString("ja-JP"),
+    players: players
+  });
+
+  localStorage.setItem(
+    "boardgameData",
+    JSON.stringify(data)
+  );
+
+  alert("対戦を記録しました！");
+
+  document.getElementById("gameName").value = "";
+
+  document.getElementById("players").innerHTML = `
+    <div class="player-row">
+      <input class="player-name" placeholder="プレイヤー名">
+      <input class="player-score" type="number" placeholder="点数">
+    </div>
+    <div class="player-row">
+      <input class="player-name" placeholder="プレイヤー名">
+      <input class="player-score" type="number" placeholder="点数">
+    </div>
+  `;
+
+  showGames();
+}
+
+
+// ゲーム一覧
+function showGames() {
+
+  const list = document.getElementById("gameList");
+
+  const games = [...new Set(
+    data.matches.map(match => match.game)
+  )];
+
+  if (games.length === 0) {
+    list.innerHTML =
+      '<p class="small">まだ記録がありません</p>';
+    return;
+  }
+
+  list.innerHTML = "";
+
+  games.forEach(game => {
+
+    const button = document.createElement("button");
+
+    button.className = "game-button";
+    button.textContent = "🎲 " + game;
+
+    button.onclick = () => showGame(game);
+
+    list.appendChild(button);
+
+  });
+}
+
+
+// ゲーム詳細
+function showGame(game) {
+
+  const detail =
+    document.getElementById("gameDetail");
+
+  detail.classList.remove("hidden");
+
+  document.getElementById("detailTitle").textContent =
+    "🎲 " + game;
+
+  const matches =
+    data.matches.filter(match => match.game === game);
+
+
+  // 各プレイヤーの歴代最高得点を集計
+  const bestScores = {};
+
+  matches.forEach(match => {
+
+    match.players.forEach(player => {
+
+      if (
+        bestScores[player.name] === undefined ||
+        player.score > bestScores[player.name]
+      ) {
+
+        bestScores[player.name] = player.score;
+
+      }
+
+    });
+
+  });
+
+
+  // 得点順に並べる
+  const ranking =
+    Object.entries(bestScores)
+      .sort((a, b) => b[1] - a[1]);
+
+
+  const rankingElement =
+    document.getElementById("ranking");
+
+  rankingElement.innerHTML = "";
+
+
+  ranking.forEach((player, index) => {
+
+    const row =
+      document.createElement("div");
+
+    row.className = "score-item";
+
+    row.innerHTML = `
+      <span class="rank">${index + 1}位</span>
+      <span class="name">${player[0]}</span>
+      <span class="score">${player[1]}点</span>
+    `;
+
+    rankingElement.appendChild(row);
+
+  });
+
+
+  // 対戦履歴
+  const history =
+    document.getElementById("history");
+
+  history.innerHTML = "";
+
+  [...matches].reverse().forEach(match => {
+
+    const div =
+      document.createElement("div");
+
+    div.style.padding = "12px 0";
+    div.style.borderBottom = "1px solid #eee";
+
+    let text =
+      `<div class="small">${match.date}</div>`;
+
+    match.players.forEach(player => {
+
+      text += `
+        <div>
+          ${player.name}：
+          <strong>${player.score}点</strong>
+        </div>
+      `;
+
+    });
+
+    div.innerHTML = text;
+
+    history.appendChild(div);
+
+  });
+
+}
+
+
+// 初期表示
+showGames();
+
+</script>
+
+</body>
+</html>

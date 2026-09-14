@@ -14,7 +14,7 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-               "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   background: #f3f4f6;
   color: #111827;
 }
@@ -115,11 +115,11 @@ button.small {
   margin-bottom: 8px;
 }
 
-.player-row input:first-child {
+.player-row select {
   flex: 2;
 }
 
-.player-row input:last-child {
+.player-row input {
   flex: 1;
 }
 
@@ -154,7 +154,7 @@ button.small {
 }
 
 .rank-number {
-  width: 30px;
+  width: 42px;
   font-weight: bold;
   text-align: center;
 }
@@ -182,7 +182,11 @@ button.small {
 .history-score {
   display: flex;
   justify-content: space-between;
-  padding: 3px 0;
+  padding: 4px 0;
+}
+
+.history-winner {
+  font-weight: bold;
 }
 
 .empty {
@@ -219,6 +223,44 @@ button.small {
 .hidden {
   display: none;
 }
+
+.stat-box {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.player-detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.backup-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.backup-buttons button {
+  flex: 1;
+}
+
+#fileInput {
+  display: none;
+}
 </style>
 </head>
 
@@ -226,7 +268,7 @@ button.small {
 
 <header>
   <h1>🎲 ボドゲスコア</h1>
-  <p>対戦結果を記録して、ゲームごとの自己ベストランキングを作ろう</p>
+  <p>対戦結果を記録して、ゲームごとのランキングを作ろう</p>
 </header>
 
 <div class="container">
@@ -263,12 +305,17 @@ button.small {
 
     <div class="radio-group">
       <label class="radio-option">
-        <input type="radio" name="scoreDirection" value="high" checked>
+        <input type="radio"
+               name="scoreDirection"
+               value="high"
+               checked>
         高得点が上位
       </label>
 
       <label class="radio-option">
-        <input type="radio" name="scoreDirection" value="low">
+        <input type="radio"
+               name="scoreDirection"
+               value="low">
         低得点が上位
       </label>
     </div>
@@ -299,10 +346,20 @@ button.small {
   </div>
 
 
+  <!-- プレイヤー一覧・戦績 -->
+  <div class="card">
+    <h2>👥 プレイヤー戦績</h2>
+    <div id="playerStatsList"></div>
+  </div>
+
+
   <!-- ゲーム詳細 -->
   <div class="card hidden" id="gameDetail">
+
     <h2 id="detailGameName"></h2>
-    <div id="detailGameDirection" class="section-note"></div>
+
+    <div id="detailGameDirection"
+         class="section-note"></div>
 
     <h3>🏆 個人ベストランキング</h3>
     <div id="bestRanking"></div>
@@ -312,6 +369,49 @@ button.small {
 
     <h3>📝 対戦履歴</h3>
     <div id="matchHistory"></div>
+
+  </div>
+
+
+  <!-- プレイヤー詳細 -->
+  <div class="card hidden" id="playerDetail">
+
+    <h2 id="detailPlayerName"></h2>
+
+    <div id="playerDetailStats"></div>
+
+  </div>
+
+
+  <!-- バックアップ -->
+  <div class="card">
+    <h2>💾 データ管理</h2>
+
+    <p class="section-note">
+      スマホの機種変更やSafariのデータ消去に備えて、
+      定期的にバックアップしてください。
+    </p>
+
+    <div class="backup-buttons">
+
+      <button onclick="exportData()">
+        データを書き出す
+      </button>
+
+      <button class="secondary"
+              onclick="document.getElementById('fileInput').click()">
+        データを復元
+      </button>
+
+    </div>
+
+    <input
+      type="file"
+      id="fileInput"
+      accept=".json"
+      onchange="importData(event)"
+    >
+
   </div>
 
 </div>
@@ -323,74 +423,91 @@ const STORAGE_KEY = "boardgameData";
 
 
 /* =========================
-   データ読み込み・移行
+   データ読み込み
 ========================= */
 
 let data = loadData();
 
+
 function loadData() {
 
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved =
+    localStorage.getItem(STORAGE_KEY);
 
   if (!saved) {
+
     return {
       players: [],
       games: [],
       matches: []
     };
+
   }
+
 
   try {
 
-    const old = JSON.parse(saved);
+    const old =
+      JSON.parse(saved);
 
-    const players = Array.isArray(old.players)
-      ? old.players.map(p => {
 
-          if (typeof p === "string") {
+    const players =
+      Array.isArray(old.players)
+        ? old.players.map(p => {
+
+            if (typeof p === "string") {
+
+              return {
+                name: p,
+                active: true
+              };
+
+            }
+
             return {
-              name: p,
-              active: true
+              name: p.name,
+              active:
+                p.active !== false
             };
-          }
 
-          return {
-            name: p.name,
-            active: p.active !== false
-          };
-
-        })
-      : [];
+          })
+        : [];
 
 
-    const games = Array.isArray(old.games)
-      ? old.games.map(g => {
+    const games =
+      Array.isArray(old.games)
+        ? old.games.map(g => {
 
-          if (typeof g === "string") {
+            if (typeof g === "string") {
+
+              return {
+                name: g,
+                direction: "high",
+                active: true
+              };
+
+            }
+
             return {
-              name: g,
-              direction: "high",
-              active: true
+              name: g.name,
+              direction:
+                g.direction || "high",
+              active:
+                g.active !== false
             };
-          }
 
-          return {
-            name: g.name,
-            direction: g.direction || "high",
-            active: g.active !== false
-          };
-
-        })
-      : [];
+          })
+        : [];
 
 
-    const matches = Array.isArray(old.matches)
-      ? old.matches
-      : [];
+    const matches =
+      Array.isArray(old.matches)
+        ? old.matches
+        : [];
 
 
     /*
-      過去の対戦記録にしか存在しない
+      過去記録にしか存在しない
       プレイヤー・ゲームも復元
     */
 
@@ -398,9 +515,11 @@ function loadData() {
 
       if (match.game) {
 
-        const exists = games.some(
-          g => g.name === match.game
-        );
+        const exists =
+          games.some(
+            g => g.name === match.game
+          );
+
 
         if (!exists) {
 
@@ -417,18 +536,21 @@ function loadData() {
 
       if (Array.isArray(match.scores)) {
 
-        match.scores.forEach(score => {
+        match.scores.forEach(item => {
 
-          if (!score.player) return;
+          if (!item.player) return;
 
-          const exists = players.some(
-            p => p.name === score.player
-          );
+
+          const exists =
+            players.some(
+              p => p.name === item.player
+            );
+
 
           if (!exists) {
 
             players.push({
-              name: score.player,
+              name: item.player,
               active: false
             });
 
@@ -446,6 +568,7 @@ function loadData() {
       games,
       matches
     };
+
 
   } catch (e) {
 
@@ -481,12 +604,17 @@ function registerGame() {
   const input =
     document.getElementById("gameName");
 
+
   const name =
     input.value.trim();
 
+
   if (!name) {
+
     alert("ゲーム名を入力してください");
+
     return;
+
   }
 
 
@@ -504,20 +632,17 @@ function registerGame() {
 
   if (existing) {
 
-    /*
-      以前「登録から外した」ゲームなら
-      再登録として復活させる
-    */
-
     existing.active = true;
     existing.direction = direction;
 
   } else {
 
     data.games.push({
+
       name,
       direction,
       active: true
+
     });
 
   }
@@ -545,6 +670,7 @@ function archiveGame(name) {
       g => g.name === name
     );
 
+
   if (!game) return;
 
 
@@ -553,7 +679,9 @@ function archiveGame(name) {
       `${name}を登録一覧から外しますか？\n\n過去の対戦記録は残ります。`
     )
   ) {
+
     return;
+
   }
 
 
@@ -575,12 +703,17 @@ function registerPlayer() {
   const input =
     document.getElementById("playerName");
 
+
   const name =
     input.value.trim();
 
+
   if (!name) {
+
     alert("プレイヤー名を入力してください");
+
     return;
+
   }
 
 
@@ -597,8 +730,10 @@ function registerPlayer() {
   } else {
 
     data.players.push({
+
       name,
       active: true
+
     });
 
   }
@@ -624,6 +759,7 @@ function archivePlayer(name) {
       p => p.name === name
     );
 
+
   if (!player) return;
 
 
@@ -632,7 +768,9 @@ function archivePlayer(name) {
       `${name}を登録一覧から外しますか？\n\n過去の対戦記録は残ります。`
     )
   ) {
+
     return;
+
   }
 
 
@@ -646,19 +784,13 @@ function archivePlayer(name) {
 
 
 /* =========================
-   対戦記録
+   対戦記録入力
 ========================= */
-
-let scorePlayerCount = 0;
-
 
 function addScorePlayer(
   playerName = "",
   score = ""
 ) {
-
-  scorePlayerCount++;
-
 
   const container =
     document.getElementById(
@@ -669,48 +801,99 @@ function addScorePlayer(
   const div =
     document.createElement("div");
 
-  div.className = "player-row";
 
-  div.innerHTML = `
+  div.className =
+    "player-row";
 
-    <select class="match-player">
 
-      <option value="">プレイヤーを選択</option>
+  const select =
+    document.createElement("select");
 
-      ${data.players
-        .filter(p => p.active)
-        .map(p =>
-          `<option value="${escapeHTML(p.name)}"
-            ${p.name === playerName ? "selected" : ""}>
-            ${escapeHTML(p.name)}
-          </option>`
-        )
-        .join("")
+  select.className =
+    "match-player";
+
+
+  const defaultOption =
+    document.createElement("option");
+
+  defaultOption.value = "";
+  defaultOption.textContent =
+    "プレイヤーを選択";
+
+
+  select.appendChild(
+    defaultOption
+  );
+
+
+  data.players
+    .filter(p => p.active)
+    .forEach(p => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        p.name;
+
+      option.textContent =
+        p.name;
+
+      if (p.name === playerName) {
+
+        option.selected = true;
+
       }
 
-    </select>
+      select.appendChild(option);
 
-    <input
-      class="match-score"
-      type="number"
-      placeholder="得点"
-      value="${score}"
-    >
+    });
 
-    <button
-      class="small danger"
-      onclick="this.parentElement.remove()"
-    >
-      ×
-    </button>
 
-  `;
+  const input =
+    document.createElement("input");
 
+  input.className =
+    "match-score";
+
+  input.type =
+    "number";
+
+  input.placeholder =
+    "得点";
+
+  input.value =
+    score;
+
+
+  const remove =
+    document.createElement("button");
+
+  remove.className =
+    "small danger";
+
+  remove.textContent =
+    "×";
+
+  remove.type =
+    "button";
+
+  remove.onclick = () =>
+    div.remove();
+
+
+  div.appendChild(select);
+  div.appendChild(input);
+  div.appendChild(remove);
 
   container.appendChild(div);
 
 }
 
+
+/* =========================
+   対戦を記録
+========================= */
 
 function recordMatch() {
 
@@ -737,7 +920,9 @@ function recordMatch() {
 
   if (rows.length === 0) {
 
-    alert("プレイヤーを追加してください");
+    alert(
+      "プレイヤーを追加してください"
+    );
 
     return;
 
@@ -745,6 +930,8 @@ function recordMatch() {
 
 
   const scores = [];
+
+  const usedPlayers = new Set();
 
 
   for (const row of rows) {
@@ -772,6 +959,20 @@ function recordMatch() {
     }
 
 
+    if (usedPlayers.has(player)) {
+
+      alert(
+        `${player}が重複しています`
+      );
+
+      return;
+
+    }
+
+
+    usedPlayers.add(player);
+
+
     scores.push({
 
       player,
@@ -781,6 +982,61 @@ function recordMatch() {
     });
 
   }
+
+
+  const game =
+    data.games.find(
+      g => g.name === gameName
+    );
+
+
+  const direction =
+    game
+      ? game.direction
+      : "high";
+
+
+  /*
+    勝者を自動判定
+  */
+
+  let bestScore =
+    direction === "high"
+      ? -Infinity
+      : Infinity;
+
+
+  scores.forEach(item => {
+
+    if (direction === "high") {
+
+      if (item.score > bestScore) {
+
+        bestScore =
+          item.score;
+
+      }
+
+    } else {
+
+      if (item.score < bestScore) {
+
+        bestScore =
+          item.score;
+
+      }
+
+    }
+
+  });
+
+
+  scores.forEach(item => {
+
+    item.winner =
+      item.score === bestScore;
+
+  });
 
 
   data.matches.push({
@@ -804,14 +1060,71 @@ function recordMatch() {
     "scorePlayers"
   ).innerHTML = "";
 
-  scorePlayerCount = 0;
 
   addScorePlayer();
 
 
-  alert("対戦結果を記録しました");
+  alert(
+    "対戦結果を記録しました！"
+  );
+
 
   updateAll();
+
+}
+
+
+/* =========================
+   ゲーム選択
+========================= */
+
+function renderGameSelect() {
+
+  const select =
+    document.getElementById(
+      "matchGame"
+    );
+
+
+  const current =
+    select.value;
+
+
+  select.innerHTML =
+    `<option value="">
+      ゲームを選択
+    </option>`;
+
+
+  data.games
+    .filter(g => g.active)
+    .forEach(game => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        game.name;
+
+      option.textContent =
+        game.name;
+
+      select.appendChild(option);
+
+    });
+
+
+  if (
+    data.games.some(
+      g =>
+        g.active &&
+        g.name === current
+    )
+  ) {
+
+    select.value = current;
+
+  }
 
 }
 
@@ -846,60 +1159,87 @@ function renderGameList() {
   }
 
 
-  container.innerHTML =
-    activeGames.map(game => {
-
-      const matchCount =
-        data.matches.filter(
-          m => m.game === game.name
-        ).length;
+  container.innerHTML = "";
 
 
-      const direction =
-        game.direction === "high"
-          ? "高得点が上位"
-          : "低得点が上位";
+  activeGames.forEach(game => {
+
+    const matchCount =
+      data.matches.filter(
+        m => m.game === game.name
+      ).length;
 
 
-      return `
+    const direction =
+      game.direction === "high"
+        ? "高得点が上位"
+        : "低得点が上位";
 
-        <div
-          class="game-item"
-          onclick="showGameDetail('${escapeJS(game.name)}')"
-          style="cursor:pointer;"
-        >
 
-          <div class="row">
+    const item =
+      document.createElement("div");
 
-            <div>
-              <div class="game-title">
-                ${escapeHTML(game.name)}
-              </div>
+    item.className =
+      "game-item";
 
-              <div class="game-meta">
-                ${direction}
-                ／
-                ${matchCount}回対戦
-              </div>
-            </div>
+    item.style.cursor =
+      "pointer";
 
-            <button
-              class="small danger"
-              onclick="
-                event.stopPropagation();
-                archiveGame('${escapeJS(game.name)}')
-              "
-            >
-              登録から外す
-            </button>
 
-          </div>
+    const row =
+      document.createElement("div");
 
-        </div>
+    row.className =
+      "row";
 
-      `;
 
-    }).join("");
+    const info =
+      document.createElement("div");
+
+    info.innerHTML = `
+      <div class="game-title">
+        ${escapeHTML(game.name)}
+      </div>
+
+      <div class="game-meta">
+        ${direction}
+        ／
+        ${matchCount}回対戦
+      </div>
+    `;
+
+
+    info.onclick = () =>
+      showGameDetail(game.name);
+
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "small danger";
+
+    button.textContent =
+      "登録から外す";
+
+
+    button.onclick = event => {
+
+      event.stopPropagation();
+
+      archiveGame(game.name);
+
+    };
+
+
+    row.appendChild(info);
+    row.appendChild(button);
+
+    item.appendChild(row);
+
+    container.appendChild(item);
+
+  });
 
 }
 
@@ -934,85 +1274,54 @@ function renderPlayerList() {
   }
 
 
-  container.innerHTML =
-    activePlayers.map(p => `
-
-      <div class="row"
-           style="margin-bottom:8px;">
-
-        <div>
-          ${escapeHTML(p.name)}
-        </div>
-
-        <button
-          class="small danger"
-          onclick="
-            archivePlayer('${escapeJS(p.name)}')
-          "
-        >
-          登録から外す
-        </button>
-
-      </div>
-
-    `).join("");
-
-}
+  container.innerHTML = "";
 
 
-/* =========================
-   ゲーム選択
-========================= */
+  activePlayers.forEach(player => {
 
-function renderGameSelect() {
+    const row =
+      document.createElement("div");
 
-  const select =
-    document.getElementById(
-      "matchGame"
-    );
+    row.className =
+      "row";
 
-
-  const current =
-    select.value;
+    row.style.marginBottom =
+      "8px";
 
 
-  const activeGames =
-    data.games.filter(
-      g => g.active
-    );
+    const name =
+      document.createElement("div");
+
+    name.textContent =
+      player.name;
+
+    name.style.cursor =
+      "pointer";
+
+    name.onclick = () =>
+      showPlayerDetail(player.name);
 
 
-  select.innerHTML =
-    `<option value="">
-      ゲームを選択
-    </option>`;
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "small danger";
+
+    button.textContent =
+      "登録から外す";
 
 
-  activeGames.forEach(game => {
+    button.onclick = () =>
+      archivePlayer(player.name);
 
-    const option =
-      document.createElement("option");
 
-    option.value =
-      game.name;
+    row.appendChild(name);
+    row.appendChild(button);
 
-    option.textContent =
-      game.name;
-
-    select.appendChild(option);
+    container.appendChild(row);
 
   });
-
-
-  if (
-    activeGames.some(
-      g => g.name === current
-    )
-  ) {
-
-    select.value = current;
-
-  }
 
 }
 
@@ -1038,6 +1347,11 @@ function showGameDetail(gameName) {
 
 
   document.getElementById(
+    "playerDetail"
+  ).classList.add("hidden");
+
+
+  document.getElementById(
     "detailGameName"
   ).textContent =
     gameName;
@@ -1057,14 +1371,9 @@ function showGameDetail(gameName) {
   );
 
 
-  renderGameStats(
-    gameName
-  );
+  renderGameStats(gameName);
 
-
-  renderMatchHistory(
-    gameName
-  );
+  renderMatchHistory(gameName);
 
 }
 
@@ -1111,29 +1420,21 @@ function renderBestRanking(
         bestScores[player] =
           score;
 
-      } else {
+      } else if (
+        direction === "high" &&
+        score > bestScores[player]
+      ) {
 
-        if (direction === "high") {
+        bestScores[player] =
+          score;
 
-          if (
-            score >
-            bestScores[player]
-          ) {
-            bestScores[player] =
-              score;
-          }
+      } else if (
+        direction === "low" &&
+        score < bestScores[player]
+      ) {
 
-        } else {
-
-          if (
-            score <
-            bestScores[player]
-          ) {
-            bestScores[player] =
-              score;
-          }
-
-        }
+        bestScores[player] =
+          score;
 
       }
 
@@ -1146,15 +1447,9 @@ function renderBestRanking(
     Object.entries(bestScores)
       .sort((a, b) => {
 
-        if (direction === "high") {
-
-          return b[1] - a[1];
-
-        } else {
-
-          return a[1] - b[1];
-
-        }
+        return direction === "high"
+          ? b[1] - a[1]
+          : a[1] - b[1];
 
       });
 
@@ -1171,34 +1466,73 @@ function renderBestRanking(
   }
 
 
-  container.innerHTML =
-    `<div class="rank-list">
+  let previousScore = null;
+  let currentRank = 0;
 
-      ${
-        ranking.map(
-          ([player, score], index) => `
 
-            <div class="rank-item">
+  container.innerHTML = "";
 
-              <div class="rank-number">
-                ${index + 1}位
-              </div>
 
-              <div class="rank-player">
-                ${escapeHTML(player)}
-              </div>
+  ranking.forEach(
+    ([player, score], index) => {
 
-              <div class="rank-score">
-                ${score}点
-              </div>
+      if (score !== previousScore) {
 
-            </div>
+        currentRank =
+          index + 1;
 
-          `
-        ).join("")
+        previousScore =
+          score;
+
       }
 
-    </div>`;
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "rank-item";
+
+
+      const number =
+        document.createElement("div");
+
+      number.className =
+        "rank-number";
+
+      number.textContent =
+        `${currentRank}位`;
+
+
+      const playerDiv =
+        document.createElement("div");
+
+      playerDiv.className =
+        "rank-player";
+
+      playerDiv.textContent =
+        player;
+
+
+      const scoreDiv =
+        document.createElement("div");
+
+      scoreDiv.className =
+        "rank-score";
+
+      scoreDiv.textContent =
+        `${score}点`;
+
+
+      item.appendChild(number);
+      item.appendChild(playerDiv);
+      item.appendChild(scoreDiv);
+
+
+      container.appendChild(item);
+
+    }
+  );
 
 }
 
@@ -1207,9 +1541,7 @@ function renderBestRanking(
    ゲーム統計
 ========================= */
 
-function renderGameStats(
-  gameName
-) {
+function renderGameStats(gameName) {
 
   const container =
     document.getElementById(
@@ -1227,28 +1559,68 @@ function renderGameStats(
     new Set();
 
 
+  let totalScores = 0;
+  let scoreCount = 0;
+
+
   matches.forEach(match => {
 
-    match.scores.forEach(
-      item =>
-        players.add(
-          item.player
-        )
-    );
+    match.scores.forEach(item => {
+
+      players.add(item.player);
+
+      totalScores +=
+        Number(item.score);
+
+      scoreCount++;
+
+    });
 
   });
 
 
+  const average =
+    scoreCount > 0
+      ? (totalScores / scoreCount).toFixed(1)
+      : "-";
+
+
   container.innerHTML = `
 
-    <div>
-      対戦回数：
-      <strong>${matches.length}</strong>回
+    <div class="stat-box">
+
+      <div class="stat-label">
+        対戦回数
+      </div>
+
+      <div class="stat-value">
+        ${matches.length}回
+      </div>
+
     </div>
 
-    <div style="margin-top:5px;">
-      参加プレイヤー：
-      <strong>${players.size}</strong>人
+    <div class="stat-box">
+
+      <div class="stat-label">
+        参加プレイヤー
+      </div>
+
+      <div class="stat-value">
+        ${players.size}人
+      </div>
+
+    </div>
+
+    <div class="stat-box">
+
+      <div class="stat-label">
+        全参加者の平均得点
+      </div>
+
+      <div class="stat-value">
+        ${average}点
+      </div>
+
     </div>
 
   `;
@@ -1260,14 +1632,24 @@ function renderGameStats(
    対戦履歴
 ========================= */
 
-function renderMatchHistory(
-  gameName
-) {
+function renderMatchHistory(gameName) {
 
   const container =
     document.getElementById(
       "matchHistory"
     );
+
+
+  const game =
+    data.games.find(
+      g => g.name === gameName
+    );
+
+
+  const direction =
+    game
+      ? game.direction
+      : "high";
 
 
   const matches =
@@ -1294,63 +1676,744 @@ function renderMatchHistory(
   }
 
 
-  container.innerHTML =
-    matches.map(match => {
+  container.innerHTML = "";
 
-      const date =
-        new Date(
-          match.date
-        ).toLocaleDateString(
-          "ja-JP",
-          {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric"
-          }
+
+  matches.forEach(match => {
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.className =
+      "history-item";
+
+
+    const date =
+      document.createElement("div");
+
+    date.className =
+      "history-date";
+
+
+    date.textContent =
+      new Date(
+        match.date
+      ).toLocaleDateString(
+        "ja-JP",
+        {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric"
+        }
+      );
+
+
+    wrapper.appendChild(date);
+
+
+    /*
+      勝者を再計算
+      （古い記録にも対応）
+    */
+
+    let bestScore =
+      direction === "high"
+        ? -Infinity
+        : Infinity;
+
+
+    match.scores.forEach(item => {
+
+      const score =
+        Number(item.score);
+
+
+      if (direction === "high") {
+
+        if (score > bestScore)
+          bestScore = score;
+
+      } else {
+
+        if (score < bestScore)
+          bestScore = score;
+
+      }
+
+    });
+
+
+    const sortedScores =
+      [...match.scores].sort(
+        (a, b) =>
+          direction === "high"
+            ? b.score - a.score
+            : a.score - b.score
+      );
+
+
+    sortedScores.forEach(item => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "history-score";
+
+
+      if (
+        Number(item.score) ===
+        bestScore
+      ) {
+
+        row.classList.add(
+          "history-winner"
+        );
+
+      }
+
+
+      const name =
+        document.createElement("span");
+
+      name.textContent =
+        Number(item.score) === bestScore
+          ? `🥇 ${item.player}`
+          : item.player;
+
+
+      const score =
+        document.createElement("strong");
+
+      score.textContent =
+        `${item.score}点`;
+
+
+      row.appendChild(name);
+      row.appendChild(score);
+
+      wrapper.appendChild(row);
+
+    });
+
+
+    container.appendChild(wrapper);
+
+  });
+
+}
+
+
+/* =========================
+   プレイヤー戦績一覧
+========================= */
+
+function renderPlayerStatsList() {
+
+  const container =
+    document.getElementById(
+      "playerStatsList"
+    );
+
+
+  const players =
+    data.players.filter(
+      p => p.active
+    );
+
+
+  if (players.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">
+        まだプレイヤーが登録されていません
+      </div>`;
+
+    return;
+
+  }
+
+
+  container.innerHTML = "";
+
+
+  players.forEach(player => {
+
+    const matches =
+      getPlayerMatches(
+        player.name
+      );
+
+
+    let wins = 0;
+    let totalScore = 0;
+
+
+    matches.forEach(match => {
+
+      const item =
+        match.scores.find(
+          s =>
+            s.player ===
+            player.name
         );
 
 
-      const scores =
-        [...match.scores]
-          .sort(
-            (a, b) =>
-              b.score - a.score
-          );
+      if (!item) return;
 
 
-      return `
+      totalScore +=
+        Number(item.score);
 
-        <div class="history-item">
 
-          <div class="history-date">
-            ${date}
+      if (isWinner(match, player.name)) {
+
+        wins++;
+
+      }
+
+    });
+
+
+    const average =
+      matches.length > 0
+        ? (
+            totalScore /
+            matches.length
+          ).toFixed(1)
+        : "-";
+
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "player-detail-item";
+
+    row.style.cursor =
+      "pointer";
+
+
+    const name =
+      document.createElement("span");
+
+    name.textContent =
+      player.name;
+
+
+    const info =
+      document.createElement("span");
+
+    info.textContent =
+      `${matches.length}戦 ${wins}勝`;
+
+    info.style.color =
+      "#6b7280";
+
+
+    row.appendChild(name);
+    row.appendChild(info);
+
+
+    row.onclick = () =>
+      showPlayerDetail(player.name);
+
+
+    container.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================
+   プレイヤー詳細
+========================= */
+
+function showPlayerDetail(playerName) {
+
+  document.getElementById(
+    "playerDetail"
+  ).classList.remove("hidden");
+
+
+  document.getElementById(
+    "gameDetail"
+  ).classList.add("hidden");
+
+
+  document.getElementById(
+    "detailPlayerName"
+  ).textContent =
+    `👤 ${playerName}`;
+
+
+  const matches =
+    getPlayerMatches(playerName);
+
+
+  let wins = 0;
+  let totalScore = 0;
+
+
+  const gameStats = {};
+
+
+  matches.forEach(match => {
+
+    const item =
+      match.scores.find(
+        s =>
+          s.player === playerName
+      );
+
+
+    if (!item) return;
+
+
+    totalScore +=
+      Number(item.score);
+
+
+    if (
+      isWinner(
+        match,
+        playerName
+      )
+    ) {
+
+      wins++;
+
+    }
+
+
+    if (!gameStats[match.game]) {
+
+      gameStats[match.game] = {
+
+        matches: 0,
+        wins: 0,
+        best: null
+
+      };
+
+    }
+
+
+    gameStats[match.game].matches++;
+
+
+    if (
+      isWinner(
+        match,
+        playerName
+      )
+    ) {
+
+      gameStats[match.game].wins++;
+
+    }
+
+
+    const game =
+      data.games.find(
+        g => g.name === match.game
+      );
+
+
+    const direction =
+      game
+        ? game.direction
+        : "high";
+
+
+    const best =
+      gameStats[match.game].best;
+
+
+    if (
+      best === null ||
+      (
+        direction === "high" &&
+        item.score > best
+      ) ||
+      (
+        direction === "low" &&
+        item.score < best
+      )
+    ) {
+
+      gameStats[match.game].best =
+        Number(item.score);
+
+    }
+
+  });
+
+
+  const average =
+    matches.length > 0
+      ? (
+          totalScore /
+          matches.length
+        ).toFixed(1)
+      : "-";
+
+
+  const winRate =
+    matches.length > 0
+      ? (
+          wins /
+          matches.length *
+          100
+        ).toFixed(1)
+      : "0.0";
+
+
+  const container =
+    document.getElementById(
+      "playerDetailStats"
+    );
+
+
+  let html = `
+
+    <div class="stat-box">
+      <div class="stat-label">
+        総対戦数
+      </div>
+      <div class="stat-value">
+        ${matches.length}戦
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-label">
+        1位回数
+      </div>
+      <div class="stat-value">
+        ${wins}勝
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-label">
+        勝率
+      </div>
+      <div class="stat-value">
+        ${winRate}%
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-label">
+        平均得点
+      </div>
+      <div class="stat-value">
+        ${average}点
+      </div>
+    </div>
+
+    <h3>ゲーム別戦績</h3>
+
+  `;
+
+
+  const games =
+    Object.entries(
+      gameStats
+    );
+
+
+  if (games.length === 0) {
+
+    html +=
+      `<div class="empty">
+        まだ対戦記録がありません
+      </div>`;
+
+  } else {
+
+    games.forEach(
+      ([gameName, stats]) => {
+
+        const rate =
+          stats.matches > 0
+            ? (
+                stats.wins /
+                stats.matches *
+                100
+              ).toFixed(1)
+            : "0.0";
+
+
+        html += `
+
+          <div class="stat-box">
+
+            <strong>
+              ${escapeHTML(gameName)}
+            </strong>
+
+            <div style="margin-top:6px;">
+              ${stats.matches}戦
+              ／
+              ${stats.wins}勝
+              ／
+              勝率 ${rate}%
+            </div>
+
+            <div style="margin-top:4px;">
+              ベスト：
+              <strong>
+                ${stats.best}点
+              </strong>
+            </div>
+
           </div>
 
-          ${
-            scores.map(
-              item => `
+        `;
 
-                <div class="history-score">
+      }
+    );
 
-                  <span>
-                    ${escapeHTML(item.player)}
-                  </span>
+  }
 
-                  <strong>
-                    ${item.score}点
-                  </strong>
 
-                </div>
+  container.innerHTML =
+    html;
 
-              `
-            ).join("")
-          }
+}
 
-        </div>
 
-      `;
+/* =========================
+   プレイヤーの対戦取得
+========================= */
 
-    }).join("");
+function getPlayerMatches(
+  playerName
+) {
+
+  return data.matches.filter(
+    match =>
+      Array.isArray(match.scores) &&
+      match.scores.some(
+        s =>
+          s.player ===
+          playerName
+      )
+  );
+
+}
+
+
+/* =========================
+   勝者判定
+========================= */
+
+function isWinner(
+  match,
+  playerName
+) {
+
+  const game =
+    data.games.find(
+      g => g.name === match.game
+    );
+
+
+  const direction =
+    game
+      ? game.direction
+      : "high";
+
+
+  const item =
+    match.scores.find(
+      s =>
+        s.player === playerName
+    );
+
+
+  if (!item) return false;
+
+
+  const scores =
+    match.scores.map(
+      s => Number(s.score)
+    );
+
+
+  const best =
+    direction === "high"
+      ? Math.max(...scores)
+      : Math.min(...scores);
+
+
+  return Number(item.score) === best;
+
+}
+
+
+/* =========================
+   バックアップ
+========================= */
+
+function exportData() {
+
+  const json =
+    JSON.stringify(
+      data,
+      null,
+      2
+    );
+
+
+  const blob =
+    new Blob(
+      [json],
+      {
+        type: "application/json"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const a =
+    document.createElement("a");
+
+
+  const date =
+    new Date()
+      .toISOString()
+      .slice(0, 10);
+
+
+  a.href = url;
+
+  a.download =
+    `boardgame-backup-${date}.json`;
+
+
+  a.click();
+
+
+  URL.revokeObjectURL(url);
+
+
+  alert(
+    "バックアップファイルを書き出しました！"
+  );
+
+}
+
+
+/* =========================
+   バックアップ復元
+========================= */
+
+function importData(event) {
+
+  const file =
+    event.target.files[0];
+
+
+  if (!file) return;
+
+
+  if (
+    !confirm(
+      "現在のデータをバックアップデータで置き換えます。\n\nよろしいですか？"
+    )
+  ) {
+
+    event.target.value = "";
+
+    return;
+
+  }
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload = function(e) {
+
+    try {
+
+      const imported =
+        JSON.parse(
+          e.target.result
+        );
+
+
+      if (
+        !imported ||
+        !Array.isArray(
+          imported.players
+        ) ||
+        !Array.isArray(
+          imported.games
+        ) ||
+        !Array.isArray(
+          imported.matches
+        )
+      ) {
+
+        throw new Error(
+          "形式が違います"
+        );
+
+      }
+
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(imported)
+      );
+
+
+      data =
+        loadData();
+
+
+      updateAll();
+
+
+      document.getElementById(
+        "scorePlayers"
+      ).innerHTML = "";
+
+
+      addScorePlayer();
+
+
+      alert(
+        "データを復元しました！"
+      );
+
+
+    } catch (error) {
+
+      alert(
+        "バックアップファイルを読み込めませんでした。"
+      );
+
+      console.error(error);
+
+    }
+
+
+    event.target.value = "";
+
+  };
+
+
+  reader.readAsText(file);
 
 }
 
@@ -1367,6 +2430,8 @@ function updateAll() {
 
   renderPlayerList();
 
+  renderPlayerStatsList();
+
 }
 
 
@@ -1382,17 +2447,6 @@ function escapeHTML(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-
-}
-
-
-function escapeJS(str) {
-
-  return String(str)
-    .replace(/\\/g, "\\\\")
-    .replace(/'/g, "\\'")
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "\\r");
 
 }
 

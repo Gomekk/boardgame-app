@@ -5040,6 +5040,414 @@ function renderGameRankingGameList() {
 
 }
 
+function renderGameSpecificRanking(gameName) {
+
+  const container =
+    document.getElementById("selectedGameRanking");
+
+  if (!container) return;
+
+  const title =
+    document.getElementById("selectedGameRankingTitle");
+
+  const scoreRanking =
+    document.getElementById("gameScoreRanking");
+
+  const winRateRanking =
+    document.getElementById("gameWinRateRanking");
+
+  const winCountRanking =
+    document.getElementById("gameWinCountRanking");
+
+  const streakRanking =
+    document.getElementById("gameStreakRanking");
+
+  const averageRankRanking =
+    document.getElementById("gameAverageRankRanking");
+
+  if (
+    !title ||
+    !scoreRanking ||
+    !winRateRanking ||
+    !winCountRanking ||
+    !streakRanking ||
+    !averageRankRanking
+  ) {
+    return;
+  }
+
+  const game =
+    data.games.find(
+      g => g.name === gameName
+    );
+
+  if (!game) return;
+
+  const matches =
+    data.matches
+      .filter(match =>
+        match.game === gameName
+      )
+      .sort((a, b) =>
+        new Date(a.date) -
+        new Date(b.date)
+      );
+
+  title.textContent =
+    `🎲 ${gameName}`;
+
+  container.classList.remove("hidden");
+
+  scoreRanking.innerHTML = "";
+  winRateRanking.innerHTML = "";
+  winCountRanking.innerHTML = "";
+  streakRanking.innerHTML = "";
+  averageRankRanking.innerHTML = "";
+
+  if (matches.length === 0) {
+
+    const empty =
+      '<div class="section-note">まだ対戦記録がありません。</div>';
+
+    scoreRanking.innerHTML = empty;
+    winRateRanking.innerHTML = empty;
+    winCountRanking.innerHTML = empty;
+    streakRanking.innerHTML = empty;
+    averageRankRanking.innerHTML = empty;
+
+    return;
+  }
+
+  const stats = {};
+
+  matches.forEach(match => {
+
+    const scores =
+      match.scores || [];
+
+    scores.forEach(item => {
+
+      if (!stats[item.player]) {
+
+        stats[item.player] = {
+          matches: 0,
+          wins: 0,
+          totalScore: 0,
+          totalRank: 0,
+          currentStreak: 0,
+          bestStreak: 0,
+          bestScore: null
+        };
+
+      }
+
+      const player =
+        stats[item.player];
+
+      player.matches++;
+
+      player.totalScore +=
+        Number(item.score) || 0;
+
+      if (
+        isWinner(
+          match,
+          item.player
+        )
+      ) {
+
+        player.wins++;
+
+        player.currentStreak++;
+
+        player.bestStreak =
+          Math.max(
+            player.bestStreak,
+            player.currentStreak
+          );
+
+      } else {
+
+        player.currentStreak = 0;
+
+      }
+
+      if (
+        player.bestScore === null ||
+        (
+          game.direction === "low"
+            ? Number(item.score) <
+              Number(player.bestScore)
+            : Number(item.score) >
+              Number(player.bestScore)
+        )
+      ) {
+
+        player.bestScore =
+          Number(item.score);
+
+      }
+
+      const sorted =
+        scores
+          .slice()
+          .sort((a, b) => {
+
+            if (game.direction === "low") {
+
+              return (
+                Number(a.score) -
+                Number(b.score)
+              );
+
+            }
+
+            return (
+              Number(b.score) -
+              Number(a.score)
+            );
+
+          });
+
+      const rank =
+        sorted.findIndex(
+          p =>
+            p.player ===
+            item.player
+        ) + 1;
+
+      player.totalRank += rank;
+
+    });
+
+  });
+
+  const ranking =
+    Object.entries(stats)
+      .map(([name, stat]) => ({
+
+        name,
+
+        matches:
+          stat.matches,
+
+        wins:
+          stat.wins,
+
+        winRate:
+          stat.wins /
+          stat.matches *
+          100,
+
+        bestScore:
+          stat.bestScore,
+
+        averageRank:
+          stat.totalRank /
+          stat.matches,
+
+        bestStreak:
+          stat.bestStreak
+
+      }));
+
+  function renderRanking(
+    target,
+    list,
+    valueFormatter
+  ) {
+
+    target.innerHTML = "";
+
+    list.forEach(
+      (player, index) => {
+
+        const row =
+          document.createElement("div");
+
+        row.className =
+          "rank-item";
+
+        const rank =
+          document.createElement("span");
+
+        rank.className =
+          "rank-number";
+
+        rank.textContent =
+          `${index + 1}位`;
+
+        const name =
+          document.createElement("span");
+
+        name.className =
+          "rank-player";
+
+        name.textContent =
+          player.name;
+
+        const value =
+          document.createElement("span");
+
+        value.className =
+          "rank-score";
+
+        value.textContent =
+          valueFormatter(player);
+
+        row.appendChild(rank);
+        row.appendChild(name);
+        row.appendChild(value);
+
+        target.appendChild(row);
+
+      }
+    );
+
+  }
+
+  const scoreList =
+    ranking
+      .filter(player =>
+        player.bestScore !== null
+      )
+      .sort((a, b) => {
+
+        if (game.direction === "low") {
+
+          return (
+            a.bestScore -
+            b.bestScore
+          );
+
+        }
+
+        return (
+          b.bestScore -
+          a.bestScore
+        );
+
+      });
+
+  renderRanking(
+    scoreRanking,
+    scoreList,
+    player =>
+      `${player.bestScore}点`
+  );
+
+  const winRateList =
+    ranking
+      .filter(player =>
+        player.matches > 0
+      )
+      .sort((a, b) => {
+
+        if (
+          b.winRate !==
+          a.winRate
+        ) {
+
+          return (
+            b.winRate -
+            a.winRate
+          );
+
+        }
+
+        return (
+          b.matches -
+          a.matches
+        );
+
+      });
+
+  renderRanking(
+    winRateRanking,
+    winRateList,
+    player =>
+      `${player.winRate.toFixed(1)}%`
+  );
+
+  const winCountList =
+    ranking
+      .slice()
+      .sort((a, b) => {
+
+        if (
+          b.wins !==
+          a.wins
+        ) {
+
+          return (
+            b.wins -
+            a.wins
+          );
+
+        }
+
+        return (
+          b.winRate -
+          a.winRate
+        );
+
+      });
+
+  renderRanking(
+    winCountRanking,
+    winCountList,
+    player =>
+      `${player.wins}勝`
+  );
+
+  const streakList =
+    ranking
+      .slice()
+      .sort((a, b) => {
+
+        if (
+          b.bestStreak !==
+          a.bestStreak
+        ) {
+
+          return (
+            b.bestStreak -
+            a.bestStreak
+          );
+
+        }
+
+        return (
+          b.winRate -
+          a.winRate
+        );
+
+      });
+
+  renderRanking(
+    streakRanking,
+    streakList,
+    player =>
+      `${player.bestStreak}連勝`
+  );
+
+  const averageRankList =
+    ranking
+      .slice()
+      .sort((a, b) =>
+        a.averageRank -
+        b.averageRank
+      );
+
+  renderRanking(
+    averageRankRanking,
+    averageRankList,
+    player =>
+      `${player.averageRank.toFixed(2)}位`
+  );
+
+}
+
 function normalizeGameSearch(text) {
 
   return String(text)
@@ -5606,6 +6014,11 @@ function showScreen(screenName) {
 
   }
 
+ if (screenName === "gameRankingScreen") {
+
+  renderGameRankingGameList();
+
+}
 
   // ランキング画面
   if (screenName === "rankingScreen") {

@@ -236,6 +236,14 @@ button.small {
   margin-bottom: 12px;
 }
 
+.screenContent {
+  display: none;
+}
+
+.screenContent.active {
+  display: block;
+}
+
 .stat-box {
   background: #f9fafb;
   border-radius: 10px;
@@ -340,7 +348,16 @@ button.small {
 </header>
 
 
+<!-- 情報登録画面 -->
+<div id="infoScreen" class="screenContent">
 
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('homeScreen')"
+  >
+    ← ホームに戻る
+  </button>
 
   <!-- ゲーム登録 -->
   <div class="card">
@@ -387,6 +404,16 @@ button.small {
     <div id="playerList" style="margin-top:12px;"></div>
   </div>
 
+<!-- ランキング画面 -->
+<div id="rankingScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('homeScreen')"
+  >
+    ← ホームに戻る
+  </button>
 
   <!-- ゲーム一覧 -->
   <div class="card">
@@ -431,6 +458,7 @@ button.small {
 
   </div>
 
+</div>
 
   <!-- バックアップ -->
   <div class="card">
@@ -464,7 +492,7 @@ button.small {
   </div>
 
 </div>
-
+</div>
 
 <script>
 
@@ -2782,17 +2810,49 @@ function showScreen(screenName) {
   const main =
     document.getElementById("mainContent");
 
+  const screens =
+    document.querySelectorAll(".screenContent");
+
+
+  /* ホーム画面 */
+
   if (screenName === "homeScreen") {
 
     home.classList.remove("hidden");
+
     main.classList.add("hidden");
+
+    screens.forEach(screen => {
+      screen.classList.remove("active");
+    });
 
     return;
 
   }
 
+
+  /* ホームを隠す */
+
   home.classList.add("hidden");
+
   main.classList.remove("hidden");
+
+
+  /* すべての画面を隠す */
+
+  screens.forEach(screen => {
+    screen.classList.remove("active");
+  });
+
+
+  /* 選択した画面だけ表示 */
+
+  const target =
+    document.getElementById(screenName);
+
+  if (target) {
+    target.classList.add("active");
+  }
 
 }
 

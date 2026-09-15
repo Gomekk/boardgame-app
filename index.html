@@ -1791,24 +1791,6 @@ function saveData() {
 
 async function registerGame() {
 
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "ゲームを登録するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
-
   const input =
     document.getElementById("gameName");
 

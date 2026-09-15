@@ -1404,6 +1404,11 @@ async function testGamesFromDatabase() {
 
   if (error) {
 
+    alert(
+      "❌ DB接続エラー\n" +
+      error.message
+    );
+
     console.error(
       "games取得エラー:",
       error
@@ -1412,6 +1417,12 @@ async function testGamesFromDatabase() {
     return;
 
   }
+
+  alert(
+    "✅ Supabase DB接続OK\n" +
+    "ゲーム件数: " +
+    games.length
+  );
 
   console.log(
     "DBのgames:",

@@ -2468,24 +2468,6 @@ function addScorePlayer(
 
 async function recordMatch() {
 
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "対戦を記録するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
-
   const gameName =
     document.getElementById(
       "matchGame"

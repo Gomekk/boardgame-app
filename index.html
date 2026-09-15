@@ -3229,13 +3229,70 @@ function showScreen(screenName) {
   });
 
 
-  /* 選択した画面だけ表示 */
+  /* 選択した画面 */
 
   const target =
     document.getElementById(screenName);
 
   if (target) {
     target.classList.add("active");
+  }
+
+
+  /* =========================
+     画面を開いた時に最新状態へ更新
+  ========================= */
+
+
+  // 対戦記録画面
+  if (screenName === "recordScreen") {
+
+    renderGameSelect();
+
+    renderPreviousMembers();
+
+    // 新規記録時だけ今日の日付を入れる
+    const dateInput =
+      document.getElementById("matchDate");
+
+    if (
+      dateInput &&
+      !window.editingMatchId
+    ) {
+
+      dateInput.value =
+        new Date().toLocaleDateString(
+          "en-CA"
+        );
+
+    }
+
+  }
+
+
+  // ランキング画面
+  if (screenName === "rankingScreen") {
+
+    renderGameList();
+
+    renderPlayerStatsList();
+
+  }
+
+
+  // 情報登録画面
+  if (screenName === "infoScreen") {
+
+    renderPlayerList();
+
+  }
+
+
+  // データ管理画面
+  if (screenName === "backupScreen") {
+
+    // 現時点では更新処理なし
+
   }
 
 }

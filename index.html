@@ -460,6 +460,17 @@ button.small {
   <div id="averageRankRanking"></div>
 </div>
 
+<!-- 対戦相性ランキング -->
+<div class="card">
+  <h2>⚔️ 対戦相性ランキング</h2>
+
+  <select id="headToHeadPlayer">
+    <option value="">プレイヤーを選択</option>
+  </select>
+
+  <div id="headToHeadRanking"></div>
+</div>
+
   <!-- ゲーム詳細 -->
   <div class="card hidden" id="gameDetail">
 
@@ -1973,6 +1984,256 @@ function renderWinCountRanking() {
 
 }
 
+function renderHeadToHeadPlayerSelect() {
+
+  const select =
+    document.getElementById("headToHeadPlayer");
+
+  if (!select) return;
+
+  const current =
+    select.value;
+
+  select.innerHTML =
+    `<option value="">プレイヤーを選択</option>`;
+
+  data.players
+    .filter(player => player.active)
+    .forEach(player => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        player.name;
+
+      option.textContent =
+        player.name;
+
+      select.appendChild(option);
+
+    });
+
+  if (
+    data.players.some(
+      player =>
+        player.active &&
+        player.name === current
+    )
+  ) {
+    select.value = current;
+  }
+
+}
+
+function renderHeadToHeadRanking() {
+
+  const select =
+    document.getElementById("headToHeadPlayer");
+
+  const container =
+    document.getElementById("headToHeadRanking");
+
+  if (!select || !container) return;
+
+  const playerName =
+    select.value;
+
+  container.innerHTML = "";
+
+  if (!playerName) {
+    const note =
+      document.createElement("div");
+
+    note.className =
+      "section-note";
+
+    note.textContent =
+      "プレイヤーを選択してください。";
+
+    container.appendChild(note);
+
+    return;
+  }
+
+  const opponentStats = {};
+
+  data.matches.forEach(match => {
+
+    if (!Array.isArray(match.scores)) {
+      return;
+    }
+
+    const playerInMatch =
+      match.scores.some(
+        item => item.player === playerName
+      );
+
+    if (!playerInMatch) {
+      return;
+    }
+
+    match.scores.forEach(item => {
+
+      if (
+        item.player === playerName ||
+        !data.players.some(
+          player =>
+            player.active &&
+            player.name === item.player
+        )
+      ) {
+        return;
+      }
+
+      if (!opponentStats[item.player]) {
+        opponentStats[item.player] = {
+          matches: 0,
+          wins: 0
+        };
+      }
+
+      opponentStats[item.player].matches++;
+
+      if (
+        isWinner(match, playerName)
+      ) {
+        opponentStats[item.player].wins++;
+      }
+
+    });
+
+  });
+
+
+  const ranking =
+    Object.entries(opponentStats)
+      .map(([name, stats]) => {
+
+        const winRate =
+          stats.matches > 0
+            ? stats.wins / stats.matches * 100
+            : 0;
+
+        return {
+          name: name,
+          matches: stats.matches,
+          wins: stats.wins,
+          winRate: winRate
+        };
+
+      })
+      .sort((a, b) => {
+
+        if (b.winRate !== a.winRate) {
+          return b.winRate - a.winRate;
+        }
+
+        return b.matches - a.matches;
+
+      });
+
+
+  if (ranking.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "まだ他のプレイヤーとの対戦記録がありません。";
+
+    container.appendChild(empty);
+
+    return;
+  }
+
+
+  let previousRate = null;
+  let currentRank = 0;
+
+
+  ranking.forEach((player, index) => {
+
+    if (
+      player.winRate !== previousRate
+    ) {
+
+      currentRank =
+        index + 1;
+
+      previousRate =
+        player.winRate;
+
+    }
+
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "rank-item";
+
+
+    const rank =
+      document.createElement("span");
+
+    rank.className =
+      "rank-number";
+
+    rank.textContent =
+      `${currentRank}位`;
+
+
+    const name =
+      document.createElement("span");
+
+    name.className =
+      "rank-player";
+
+    name.textContent =
+      player.name;
+
+
+    const detail =
+      document.createElement("div");
+
+    detail.className =
+      "section-note";
+
+    detail.style.marginLeft =
+      "auto";
+
+    detail.style.marginRight =
+      "10px";
+
+    detail.textContent =
+      `${player.matches}戦 ${player.wins}勝`;
+
+
+    const score =
+      document.createElement("span");
+
+    score.className =
+      "rank-score";
+
+    score.textContent =
+      `${player.winRate.toFixed(1)}%`;
+
+
+    row.appendChild(rank);
+    row.appendChild(name);
+    row.appendChild(detail);
+    row.appendChild(score);
+
+    container.appendChild(row);
+
+  });
+
+}
+
 function renderAverageRankRanking() {
 
   const container =
@@ -3356,6 +3617,10 @@ function updateAll() {
   renderWinCountRanking();
   
   renderAverageRankRanking();
+  
+  renderHeadToHeadPlayerSelect();
+  
+  renderHeadToHeadRanking();
 
   renderPreviousMembers();
 
@@ -3915,6 +4180,10 @@ function showScreen(screenName) {
   renderWinCountRanking();
 
   renderAverageRankRanking();
+
+  renderHeadToHeadPlayerSelect();
+
+  renderHeadToHeadRanking();
 
 }
 

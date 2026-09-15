@@ -676,20 +676,13 @@ button.small {
 
   <!-- 情報登録 -->
   <button
-    type="button"
-    onclick="showScreen('infoScreen')"
-  >
-    ⚙️ 情報登録
-  </button>
+  type="button"
+  onclick="showScreen('settingsScreen')"
+>
+  ⚙️ 設定
+</button>
 
 
-  <!-- データ管理 -->
-  <button
-    type="button"
-    onclick="showScreen('backupScreen')"
-  >
-    💾 データ管理
-  </button>
 
 </div>
 
@@ -742,63 +735,6 @@ button.small {
 </div>
 
 
-<!-- 情報登録画面 -->
-<div id="infoScreen" class="screenContent">
-
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('homeScreen')"
-  >
-    ← ホームに戻る
-  </button>
-
-  <!-- ゲーム登録 -->
-  <div class="card">
-    <h2>🎲 ゲームを登録</h2>
-
-    <input id="gameName" placeholder="ゲーム名">
-
-    <p class="section-note">
-      このゲームでは、どちらの得点が上位になりますか？
-    </p>
-
-    <div class="radio-group">
-      <label class="radio-option">
-        <input type="radio"
-               name="scoreDirection"
-               value="high"
-               checked>
-        高得点が上位
-      </label>
-
-      <label class="radio-option">
-        <input type="radio"
-               name="scoreDirection"
-               value="low">
-        低得点が上位
-      </label>
-    </div>
-
-    <button style="margin-top:10px;" onclick="registerGame()">
-      ゲームを登録
-    </button>
-  </div>
-
-
-  <!-- プレイヤー登録 -->
-  <div class="card">
-    <h2>👤 プレイヤーを登録</h2>
-
-    <div class="row">
-      <input id="playerName" placeholder="プレイヤー名">
-      <button onclick="registerPlayer()">追加</button>
-    </div>
-
-    <div id="playerList" style="margin-top:12px;"></div>
-  </div>
-
-</div>
 
 <!-- ランキング画面 -->
 <div id="rankingScreen" class="screenContent">
@@ -959,6 +895,157 @@ button.small {
       <h3>📊 平均順位ランキング</h3>
       <div id="gameAverageRankRanking"></div>
     </div>
+
+  </div>
+
+</div>
+
+<div id="settingsScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('homeScreen')"
+  >
+    ← ホームに戻る
+  </button>
+
+  <div class="card">
+
+    <h2>⚙️ 設定</h2>
+
+    <button
+      type="button"
+      onclick="showScreen('gameManageScreen')"
+    >
+      🎲 ゲーム管理
+    </button>
+
+    <button
+      type="button"
+      onclick="showScreen('playerManageScreen')"
+    >
+      👥 プレイヤー管理
+    </button>
+
+    <button
+      type="button"
+      onclick="showScreen('backupScreen')"
+    >
+      💾 データ管理
+    </button>
+
+  </div>
+
+</div>
+
+<div id="gameManageScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('settingsScreen')"
+  >
+    ← 設定に戻る
+  </button>
+
+  <!-- ゲーム登録 -->
+  <div class="card">
+    <h2>🎲 ゲームを登録</h2>
+
+    <input
+      id="gameName"
+      placeholder="ゲーム名"
+    >
+
+    <p class="section-note">
+      このゲームでは、どちらの得点が上位になりますか？
+    </p>
+
+    <div class="radio-group">
+
+      <label class="radio-option">
+        <input
+          type="radio"
+          name="scoreDirection"
+          value="high"
+          checked
+        >
+        高得点が上位
+      </label>
+
+      <label class="radio-option">
+        <input
+          type="radio"
+          name="scoreDirection"
+          value="low"
+        >
+        低得点が上位
+      </label>
+
+    </div>
+
+    <button
+      style="margin-top:10px;"
+      onclick="registerGame()"
+    >
+      ゲームを登録
+    </button>
+
+  </div>
+
+  <!-- ゲーム一覧 -->
+  <div class="card">
+
+    <h2>🎲 ゲーム一覧</h2>
+
+    <div id="gameList"></div>
+
+  </div>
+
+</div>
+
+<div id="playerManageScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('settingsScreen')"
+  >
+    ← 設定に戻る
+  </button>
+
+  <!-- プレイヤー登録 -->
+  <div class="card">
+
+    <h2>👤 プレイヤーを登録</h2>
+
+    <div class="row">
+
+      <input
+        id="playerName"
+        placeholder="プレイヤー名"
+      >
+
+      <button
+        onclick="registerPlayer()"
+      >
+        追加
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- プレイヤー一覧 -->
+  <div class="card">
+
+    <h2>👥 プレイヤー一覧</h2>
+
+    <div
+      id="playerList"
+      style="margin-top:12px;"
+    ></div>
 
   </div>
 
@@ -6148,7 +6235,14 @@ function showScreen(screenName) {
  if (screenName === "gameRankingScreen") {
 
   renderGameRankingGameList();
+}
 
+ if (screenName === "gameManageScreen") {
+  renderGameList();
+}
+
+if (screenName === "playerManageScreen") {
+  renderPlayerList();
 }
 
   // ランキング画面

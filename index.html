@@ -505,6 +505,73 @@ button.small {
   margin-bottom: 18px;
 }
 
+/* =========================
+   ゲーム別ランキング強化
+========================= */
+
+#selectedGameRanking {
+  margin-top: 16px;
+}
+
+#selectedGameRankingTitle {
+  font-size: 22px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #222;
+}
+
+/* 各ランキング */
+#selectedGameRanking > div {
+  margin-top: 20px;
+  padding-top: 4px;
+}
+
+#selectedGameRanking > div h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  padding-left: 10px;
+  border-left: 4px solid #222;
+}
+
+/* ランキング行 */
+#selectedGameRanking .rank-item {
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+#selectedGameRanking .rank-number {
+  width: 42px;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+#selectedGameRanking .rank-player {
+  font-size: 15px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#selectedGameRanking .rank-score {
+  min-width: 70px;
+  text-align: right;
+  font-size: 16px;
+}
+
+/* 1位を少し強調 */
+#selectedGameRanking .rank-item:first-child {
+  font-weight: bold;
+}
+
+#selectedGameRanking .rank-item:first-child .rank-number {
+  font-size: 16px;
+}
+
+#selectedGameRanking .rank-item:first-child .rank-score {
+  font-size: 18px;
+}
+
 </style>
 </head>
 

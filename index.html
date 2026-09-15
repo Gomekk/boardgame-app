@@ -2286,13 +2286,22 @@ function renderPlayerStatsList() {
 
 
     const info =
-      document.createElement("span");
+  document.createElement("span");
 
-    info.textContent =
-      `${matches.length}戦 ${wins}勝`;
+const winRate =
+  matches.length > 0
+    ? (
+        wins /
+        matches.length *
+        100
+      ).toFixed(1)
+    : "0.0";
 
-    info.style.color =
-      "#6b7280";
+info.textContent =
+  `${matches.length}戦 ${wins}勝 ／ 勝率 ${winRate}%`;
+
+info.style.color =
+  "#6b7280";
 
 
     row.appendChild(name);

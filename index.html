@@ -7007,22 +7007,9 @@ if (!updatedMatch) {
 
     updateAll();
 
-    renderBestRanking(
-      match.game,
-      direction
-    );
-
-    renderGameStats(
-      match.game
-    );
-
-    renderMatchHistory(
-      match.game
-    );
-
-    renderGameList();
-
-    renderPlayerStatsList();
+renderGameSpecificRanking(
+  match.game
+);
 
   } catch (error) {
 

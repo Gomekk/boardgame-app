@@ -4959,15 +4959,20 @@ function renderGameRankingGameList() {
 
   const keyword =
     searchInput
-      ? searchInput.value.trim().toLowerCase()
+      ? normalizeGameSearch(searchInput.value)
       : "";
 
   const games =
     data.games
       .filter(game => game.active)
-      .filter(game =>
-        game.name.toLowerCase().includes(keyword)
-      )
+      .filter(game => {
+
+        const gameName =
+          normalizeGameSearch(game.name);
+
+        return gameName.includes(keyword);
+
+      })
       .sort((a, b) =>
         a.name.localeCompare(
           b.name,
@@ -5028,6 +5033,23 @@ function renderGameRankingGameList() {
     container.appendChild(button);
 
   });
+
+}
+
+function normalizeGameSearch(text) {
+
+  return String(text)
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(
+      /[\u3041-\u3096]/g,
+      function(char) {
+        return String.fromCharCode(
+          char.charCodeAt(0) + 0x60
+        );
+      }
+    )
+    .replace(/\s+/g, "");
 
 }
 

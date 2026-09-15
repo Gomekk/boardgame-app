@@ -1132,6 +1132,77 @@ function renderGameSelect() {
 
 }
 
+/* =========================
+   前回のメンバー
+========================= */
+
+function renderPreviousMembers() {
+
+  const container =
+    document.getElementById(
+      "previousMembersArea"
+    );
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  /*
+    直近の対戦記録を取得
+    ゲームは問わない
+  */
+
+  if (
+    !Array.isArray(data.matches) ||
+    data.matches.length === 0
+  ) {
+    return;
+  }
+
+  const latestMatch =
+    [...data.matches].sort(
+      (a, b) =>
+        new Date(b.date) -
+        new Date(a.date)
+    )[0];
+
+  if (
+    !latestMatch ||
+    !Array.isArray(latestMatch.scores) ||
+    latestMatch.scores.length === 0
+  ) {
+    return;
+  }
+
+  const button =
+    document.createElement("button");
+
+  button.type = "button";
+  button.className = "secondary";
+
+  button.textContent =
+    "🔄 前回のメンバーを使用";
+
+  button.onclick = () => {
+
+    document.getElementById(
+      "scorePlayers"
+    ).innerHTML = "";
+
+    latestMatch.scores.forEach(item => {
+
+      addScorePlayer(
+        item.player,
+        ""
+      );
+
+    });
+
+  };
+
+  container.appendChild(button);
+
+}
 
 /* =========================
    ゲーム一覧
@@ -2429,6 +2500,8 @@ function importData(event) {
 function updateAll() {
 
   renderGameSelect();
+
+  renderPreviousMembers();
 
   renderGameList();
 

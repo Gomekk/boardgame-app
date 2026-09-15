@@ -551,8 +551,17 @@ button.small {
 
   <!-- プレイヤー一覧・戦績 -->
 <div class="card">
+  <div class="card">
   <h2>👥 プレイヤー戦績</h2>
   <div id="playerStatsList"></div>
+
+  <button
+    type="button"
+    class="secondary"
+    onclick="showScreen('playerTrendScreen')"
+  >
+    📈 個人の成績推移を見る
+  </button>
 </div>
 
 <!-- 勝率ランキング -->
@@ -617,6 +626,33 @@ button.small {
 
     <div id="playerDetailStats"></div>
 
+  </div>
+
+</div>
+
+<div id="playerTrendScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('rankingScreen')"
+  >
+    ← ランキングに戻る
+  </button>
+
+  <div class="card">
+    <h2>📈 個人の成績推移</h2>
+
+    <select
+      id="playerTrendSelect"
+      onchange="renderPlayerTrend()"
+    >
+      <option value="">プレイヤーを選択</option>
+    </select>
+
+    <div id="playerTrendSummary"></div>
+
+    <div id="playerTrendChart"></div>
   </div>
 
 </div>
@@ -4048,6 +4084,220 @@ function importData(event) {
 
 }
 
+function renderPlayerTrendSelect() {
+
+  const select =
+    document.getElementById("playerTrendSelect");
+
+  if (!select) return;
+
+  const currentValue =
+    select.value;
+
+  select.innerHTML = `
+    <option value="">プレイヤーを選択</option>
+  `;
+
+  data.players
+    .filter(player => player.active)
+    .forEach(player => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        player.name;
+
+      option.textContent =
+        player.name;
+
+      select.appendChild(option);
+
+    });
+
+  if (
+    currentValue &&
+    data.players.some(
+      player =>
+        player.active &&
+        player.name === currentValue
+    )
+  ) {
+    select.value =
+      currentValue;
+  }
+
+}
+
+function renderPlayerTrend() {
+
+  const select =
+    document.getElementById("playerTrendSelect");
+
+  const summary =
+    document.getElementById("playerTrendSummary");
+
+  const chart =
+    document.getElementById("playerTrendChart");
+
+  if (!select || !summary || !chart) return;
+
+  const playerName =
+    select.value;
+
+  summary.innerHTML = "";
+  chart.innerHTML = "";
+
+  if (!playerName) {
+    summary.innerHTML =
+      '<div class="section-note">プレイヤーを選択してください。</div>';
+    return;
+  }
+
+  const matches =
+    getPlayerMatches(playerName)
+      .sort((a, b) =>
+        new Date(a.date) - new Date(b.date)
+      );
+
+  if (matches.length === 0) {
+    summary.innerHTML =
+      '<div class="section-note">まだ対戦記録がありません。</div>';
+    return;
+  }
+
+  let wins = 0;
+  let totalRank = 0;
+  let totalScore = 0;
+
+  const trendData = [];
+
+  matches.forEach((match, index) => {
+
+    const players =
+      match.players || [];
+
+    const player =
+      players.find(p =>
+        p.name === playerName
+      );
+
+    if (!player) return;
+
+    const winner =
+      isWinner(match, playerName);
+
+    if (winner) {
+      wins++;
+    }
+
+    const rank =
+      players
+        .slice()
+        .sort((a, b) => {
+
+          const game =
+            data.games.find(g =>
+              g.name === match.game
+            );
+
+          if (game && game.scoreDirection === "low") {
+            return Number(a.score) - Number(b.score);
+          }
+
+          return Number(b.score) - Number(a.score);
+
+        })
+        .findIndex(p =>
+          p.name === playerName
+        ) + 1;
+
+    totalRank += rank;
+    totalScore += Number(player.score) || 0;
+
+    trendData.push({
+      date: match.date,
+      game: match.game,
+      rank: rank,
+      score: Number(player.score) || 0,
+      winRate: wins / (index + 1) * 100
+    });
+
+  });
+
+  if (trendData.length === 0) {
+    summary.innerHTML =
+      '<div class="section-note">表示できる対戦記録がありません。</div>';
+    return;
+  }
+
+  const averageRank =
+    totalRank / trendData.length;
+
+  const winRate =
+    wins / trendData.length * 100;
+
+  const averageScore =
+    totalScore / trendData.length;
+
+  summary.innerHTML = `
+    <div class="player-detail-item">
+      <span>対戦数</span>
+      <strong>${trendData.length}戦</strong>
+    </div>
+
+    <div class="player-detail-item">
+      <span>勝率</span>
+      <strong>${winRate.toFixed(1)}%</strong>
+    </div>
+
+    <div class="player-detail-item">
+      <span>平均順位</span>
+      <strong>${averageRank.toFixed(2)}位</strong>
+    </div>
+
+    <div class="player-detail-item">
+      <span>平均スコア</span>
+      <strong>${averageScore.toFixed(1)}</strong>
+    </div>
+  `;
+
+  const title =
+    document.createElement("h3");
+
+  title.textContent =
+    "📊 最近の成績";
+
+  title.style.marginTop =
+    "24px";
+
+  chart.appendChild(title);
+
+  trendData.forEach((item, index) => {
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "player-detail-item";
+
+    row.innerHTML = `
+      <span>
+        ${index + 1}戦目<br>
+        <small>${item.date}　${item.game}</small>
+      </span>
+
+      <span style="text-align:right;">
+        ${item.rank}位<br>
+        ${item.score}点
+      </span>
+    `;
+
+    chart.appendChild(row);
+
+  });
+
+}
 
 /* =========================
    全体更新
@@ -4070,6 +4320,8 @@ function updateAll() {
   renderHeadToHeadPlayerSelect();
   
   renderHeadToHeadRanking();
+  
+  renderPlayerTrendSelect();
 
   renderPreviousMembers();
 
@@ -4635,6 +4887,10 @@ function showScreen(screenName) {
   renderHeadToHeadPlayerSelect();
 
   renderHeadToHeadRanking();
+  
+  renderPlayerTrendSelect();
+  
+  renderPlayerTrend();
 
 }
 

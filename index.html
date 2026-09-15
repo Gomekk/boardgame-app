@@ -392,6 +392,81 @@ button.small {
   }
 }
 
+/* =========================
+   ホーム画面 新デザイン
+========================= */
+
+.home-ranking-section {
+  margin: 24px 0;
+}
+
+.home-ranking-section h2 {
+  margin-bottom: 14px;
+}
+
+.home-ranking-carousel {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+
+.home-ranking-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.home-ranking-card {
+  flex: 0 0 88%;
+  scroll-snap-align: center;
+
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 18px;
+  padding: 18px;
+
+  box-sizing: border-box;
+}
+
+.home-ranking-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.home-ranking-hint {
+  text-align: center;
+  color: #888;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.home-action-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.home-action-row button {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* ホームのランキング内 */
+.home-ranking-card .rank-item {
+  padding: 9px 0;
+}
+
+.home-ranking-card .rank-number {
+  width: 38px;
+}
+
+.home-ranking-card .rank-score {
+  font-size: 16px;
+}
+
 </style>
 </head>
 
@@ -402,25 +477,114 @@ button.small {
 
   <h1>🎲 ボドゲスコア</h1>
 
-  <button onclick="showScreen('recordScreen')">
-    🎲 ゲームを記録
-  </button>
-  
-  <button onclick="randomSelectGame()">🎲 ランダムでゲームを決める</button>
+  <!-- ランキングカルーセル -->
+  <div class="home-ranking-section">
 
-  <button onclick="showScreen('rankingScreen')">
-    🏆 ランキング
+    <h2>🏆 ランキング</h2>
+
+    <div
+      id="homeRankingCarousel"
+      class="home-ranking-carousel"
+    >
+
+      <!-- 勝率ランキング -->
+      <div class="home-ranking-card">
+
+        <div class="home-ranking-title">
+          🏆 勝率ランキング
+        </div>
+
+        <div id="homeWinRateRanking"></div>
+
+      </div>
+
+      <!-- 最多勝利数ランキング -->
+      <div class="home-ranking-card">
+
+        <div class="home-ranking-title">
+          🥇 最多勝利数ランキング
+        </div>
+
+        <div id="homeWinCountRanking"></div>
+
+      </div>
+
+      <!-- 連勝ランキング -->
+      <div class="home-ranking-card">
+
+        <div class="home-ranking-title">
+          🔥 連勝ランキング
+        </div>
+
+        <div id="homeStreakRanking"></div>
+
+      </div>
+
+      <!-- 平均順位ランキング -->
+      <div class="home-ranking-card">
+
+        <div class="home-ranking-title">
+          📊 平均順位ランキング
+        </div>
+
+        <div id="homeAverageRankRanking"></div>
+
+      </div>
+
+    </div>
+
+    <div class="home-ranking-hint">
+      ← 横にスワイプ →
+    </div>
+
+  </div>
+
+
+  <!-- ゲーム別ランキング -->
+  <button
+    type="button"
+    onclick="showScreen('gameRankingScreen')"
+  >
+    🎲 ゲーム別ランキング
   </button>
 
-  <button onclick="showScreen('infoScreen')">
+
+  <!-- ゲームを記録・ランダム -->
+  <div class="home-action-row">
+
+    <button
+      type="button"
+      onclick="showScreen('recordScreen')"
+    >
+      🎮 ゲームを記録
+    </button>
+
+    <button
+      type="button"
+      onclick="randomSelectGame()"
+    >
+      🎲 ランダム
+    </button>
+
+  </div>
+
+
+  <!-- 情報登録 -->
+  <button
+    type="button"
+    onclick="showScreen('infoScreen')"
+  >
     ⚙️ 情報登録
   </button>
 
-<button onclick="showScreen('backupScreen')">
-  💾 データ管理
-</button>
 
-
+  <!-- データ管理 -->
+  <button
+    type="button"
+    onclick="showScreen('backupScreen')"
+  >
+    💾 データ管理
+  </button>
 
 </div>
 
@@ -4635,6 +4799,8 @@ function updateAll() {
   renderStreakRanking();
   
   renderAverageRankRanking();
+
+  renderHomeRankings();
   
   renderHeadToHeadPlayerSelect();
   
@@ -4652,6 +4818,64 @@ function updateAll() {
 
   document.getElementById("matchDate").value =
    new Date().toLocaleDateString("en-CA");
+
+}
+
+function renderHomeRankings() {
+
+  const winRate =
+    document.getElementById("homeWinRateRanking");
+
+  const winCount =
+    document.getElementById("homeWinCountRanking");
+
+  const streak =
+    document.getElementById("homeStreakRanking");
+
+  const averageRank =
+    document.getElementById("homeAverageRankRanking");
+
+  if (!winRate || !winCount || !streak || !averageRank) {
+    return;
+  }
+
+  /*
+   * 既存ランキング画面を一時的にコピーして、
+   * ホーム用ランキングとして表示する
+   */
+
+  const rankingSources = [
+    {
+      target: winRate,
+      source: "winRateRanking"
+    },
+    {
+      target: winCount,
+      source: "winCountRanking"
+    },
+    {
+      target: streak,
+      source: "streakRanking"
+    },
+    {
+      target: averageRank,
+      source: "averageRankRanking"
+    }
+  ];
+
+  rankingSources.forEach(item => {
+
+    const source =
+      document.getElementById(item.source);
+
+    if (!source) {
+      return;
+    }
+
+    item.target.innerHTML =
+      source.innerHTML;
+
+  });
 
 }
 

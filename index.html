@@ -2147,30 +2147,59 @@ function randomSelectGame() {
     data.games.filter(game => game.active);
 
   if (games.length === 0) {
-
     alert("登録されているゲームがありません。");
-
     return;
   }
-
-  const randomIndex =
-    Math.floor(Math.random() * games.length);
-
-  const selectedGame =
-    games[randomIndex];
-
-  showScreen("recordScreen");
 
   const gameSelect =
     document.getElementById("matchGame");
 
-  if (gameSelect) {
-    gameSelect.value = selectedGame.name;
-  }
+  let count = 0;
+  const totalCount = 20;
 
-  alert(
-    `🎲 今日のゲームは……\n\n「${selectedGame.name}」！`
-  );
+  const roulette =
+    setInterval(() => {
+
+      const randomIndex =
+        Math.floor(Math.random() * games.length);
+
+      const game =
+        games[randomIndex];
+
+      if (gameSelect) {
+        gameSelect.value = game.name;
+      }
+
+      count++;
+
+      if (count >= totalCount) {
+
+        clearInterval(roulette);
+
+        const finalIndex =
+          Math.floor(Math.random() * games.length);
+
+        const selectedGame =
+          games[finalIndex];
+
+        if (gameSelect) {
+          gameSelect.value =
+            selectedGame.name;
+        }
+
+        setTimeout(() => {
+
+          alert(
+            `🎲 今日のゲームは……\n\n「${selectedGame.name}」！`
+          );
+
+        }, 300);
+
+      }
+
+    }, 80);
+
+  showScreen("recordScreen");
 
 }
 

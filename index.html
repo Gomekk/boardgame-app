@@ -6895,18 +6895,31 @@ function editMatch(matchId) {
     ========================= */
 
     const {
-      error: matchError
-    } =
-      await supabaseClient
-        .from("matches")
-        .update({
-          match_date:
-            dateInput.value
-        })
-        .eq(
-          "id",
-          match.id
-        );
+  data: updatedMatch,
+  error: matchError
+} =
+  await supabaseClient
+    .from("matches")
+    .update({
+      match_date:
+        dateInput.value
+    })
+    .eq(
+      "id",
+      match.id
+    )
+    .select()
+    .single();
+
+if (matchError) {
+  throw matchError;
+}
+
+if (!updatedMatch) {
+  throw new Error(
+    "Supabase上の対戦記録が見つかりませんでした。"
+  );
+}
 
     if (matchError) {
       throw matchError;

@@ -7414,25 +7414,7 @@ renderGameSpecificRanking(
 
 }
 
-async function openRecordScreen() {
-
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "対戦を記録するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
+function openRecordScreen() {
 
   showScreen("recordScreen");
 

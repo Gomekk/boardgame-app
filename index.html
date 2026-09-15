@@ -464,9 +464,9 @@ button.small {
 <div class="card">
   <h2>⚔️ 対戦相性ランキング</h2>
 
-  <select id="headToHeadPlayer">
-    <option value="">プレイヤーを選択</option>
-  </select>
+  <select id="headToHeadPlayer" onchange="renderHeadToHeadRanking()">
+  <option value="">プレイヤーを選択</option>
+</select>
 
   <div id="headToHeadRanking"></div>
 </div>

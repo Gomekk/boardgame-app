@@ -2331,60 +2331,74 @@ function randomSelectGame() {
     document.getElementById("gameRouletteAgain");
 
   let count = 0;
-  const totalCount = 30;
+const totalCount = 32;
 
-  let selectedGame = null;
+let selectedGame = null;
 
-  const timer =
-    setInterval(() => {
+function spinRoulette() {
 
-      const randomIndex =
-        Math.floor(Math.random() * games.length);
+  const progress =
+    count / totalCount;
 
-      const game =
-        games[randomIndex];
+  const randomIndex =
+    Math.floor(Math.random() * games.length);
+
+  const game =
+    games[randomIndex];
 
   nameElement.classList.remove(
-  "game-roulette-spinning"
-);
+    "game-roulette-spinning"
+  );
 
-void nameElement.offsetWidth;
+  void nameElement.offsetWidth;
 
-nameElement.textContent =
-  game.name;
+  nameElement.textContent =
+    game.name;
 
-nameElement.classList.add(
-  "game-roulette-spinning"
-);
+  nameElement.classList.add(
+    "game-roulette-spinning"
+  );
 
-count++;
+  count++;
 
-      if (count >= totalCount) {
+  if (count >= totalCount) {
 
-        clearInterval(timer);
+    selectedGame =
+      games[
+        Math.floor(
+          Math.random() * games.length
+        )
+      ];
 
-        const finalIndex =
-          Math.floor(Math.random() * games.length);
+    nameElement.classList.remove(
+      "game-roulette-spinning"
+    );
 
-        selectedGame =
-          games[finalIndex];
+    nameElement.textContent =
+      selectedGame.name;
 
-        nameElement.textContent =
-          `🎉 ${selectedGame.name} 🎉`;
-          
-        nameElement.classList.add(
-  "game-roulette-result"
-);
+    subElement.textContent =
+      "🎉 このゲームに決定！";
 
-        subElement.textContent =
-          "このゲームに決定！";
+    buttonsElement.style.display =
+      "flex";
 
-        buttonsElement.style.display =
-          "flex";
+    return;
 
-      }
+  }
 
-    }, 100);
+  const delay =
+    55 +
+    Math.pow(progress, 3) * 300;
+
+  setTimeout(
+    spinRoulette,
+    delay
+  );
+
+}
+
+spinRoulette();
 
   recordButton.onclick = () => {
 

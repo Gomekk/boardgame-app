@@ -3168,19 +3168,17 @@ function editMatch(matchId) {
       scores;
 
 
-    saveData();
+        saveData();
 
     renderMatchHistory(
       match.game
-   
+    );
 
-  // 対戦記録の場所までスクロール
-  document.querySelector(
-    "#matchGame"
-  ).scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
+  };
+
+  wrapper.appendChild(
+    updateButton
+  );
 
 }
 

@@ -1789,62 +1789,123 @@ function saveData() {
    ゲーム登録
 ========================= */
 
-function registerGame() {
+async function registerGame() {
 
-  const input =
-    document.getElementById("gameName");
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
 
+  if (!session) {
 
-  const name =
-    input.value.trim();
+    alert(
+      "ゲームを登録するにはログインが必要です。"
+    );
 
-
-  if (!name) {
-
-    alert("ゲーム名を入力してください");
+    showScreen("loginScreen");
 
     return;
 
   }
 
+  const input =
+    document.getElementById("gameName");
+
+  const name =
+    input.value.trim();
+
+  if (!name) {
+
+    alert(
+      "ゲーム名を入力してください"
+    );
+
+    return;
+
+  }
 
   const direction =
     document.querySelector(
       'input[name="scoreDirection"]:checked'
     ).value;
 
+  try {
 
-  const existing =
-    data.games.find(
-      g => g.name === name
+    const {
+      data: existingGame,
+      error: findError
+    } =
+      await supabaseClient
+        .from("games")
+        .select("id")
+        .eq("name", name)
+        .maybeSingle();
+
+    if (findError) {
+      throw findError;
+    }
+
+    if (existingGame) {
+
+      const {
+        error: updateError
+      } =
+        await supabaseClient
+          .from("games")
+          .update({
+            active: true,
+            direction: direction
+          })
+          .eq(
+            "id",
+            existingGame.id
+          );
+
+      if (updateError) {
+        throw updateError;
+      }
+
+    } else {
+
+      const {
+        error: insertError
+      } =
+        await supabaseClient
+          .from("games")
+          .insert({
+            name: name,
+            direction: direction,
+            active: true
+          });
+
+      if (insertError) {
+        throw insertError;
+      }
+
+    }
+
+    input.value = "";
+
+    await initializeSupabaseData();
+
+    alert(
+      "ゲームを登録しました"
     );
 
+  } catch (error) {
 
-  if (existing) {
+    console.error(
+      "Supabaseゲーム登録エラー:",
+      error
+    );
 
-    existing.active = true;
-    existing.direction = direction;
-
-  } else {
-
-    data.games.push({
-
-      name,
-      direction,
-      active: true
-
-    });
+    alert(
+      "❌ ゲームの登録に失敗しました。\n\n" +
+      error.message
+    );
 
   }
-
-
-  saveData();
-
-  input.value = "";
-
-  updateAll();
-
-  alert("ゲームを登録しました");
 
 }
 

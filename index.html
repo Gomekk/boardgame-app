@@ -2179,20 +2179,36 @@ async function registerPlayer() {
    プレイヤーを登録から外す
 ========================= */
 
-function archivePlayer(name) {
+async function archivePlayer(name) {
+
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+
+    alert(
+      "プレイヤーを削除するにはログインが必要です。"
+    );
+
+    showScreen("loginScreen");
+
+    return;
+
+  }
 
   const player =
     data.players.find(
       p => p.name === name
     );
 
-
   if (!player) return;
-
 
   if (
     !confirm(
-      `${name}を登録一覧から外しますか？\n\n過去の対戦記録は残ります。`
+      `${name}を削除しますか？\n\n${name}の過去の得点記録だけが削除されます。\n他のプレイヤーの記録と対戦履歴は残ります。\n\nこの操作は元に戻せません。`
     )
   ) {
 
@@ -2200,12 +2216,140 @@ function archivePlayer(name) {
 
   }
 
+  try {
 
-  player.active = false;
+    /*
+     * このプレイヤーが参加した対戦を取得
+     */
 
-  saveData();
+    const {
+      data: scores,
+      error: scoresError
+    } =
+      await supabaseClient
+        .from("match_scores")
+        .select("match_id")
+        .eq(
+          "player_id",
+          player.id
+        );
 
-  updateAll();
+    if (scoresError) {
+      throw scoresError;
+    }
+
+    /*
+     * プレイヤーの得点だけ削除
+     */
+
+    const {
+      error: deleteScoreError
+    } =
+      await supabaseClient
+        .from("match_scores")
+        .delete()
+        .eq(
+          "player_id",
+          player.id
+        );
+
+    if (deleteScoreError) {
+      throw deleteScoreError;
+    }
+
+    /*
+     * プレイヤー削除後、
+     * 誰も残っていない対戦を削除
+     */
+
+    const matchIds =
+      [
+        ...new Set(
+          scores.map(
+            score => score.match_id
+          )
+        )
+      ];
+
+    for (const matchId of matchIds) {
+
+      const {
+        data: remainingScores,
+        error: remainingError
+      } =
+        await supabaseClient
+          .from("match_scores")
+          .select("id")
+          .eq(
+            "match_id",
+            matchId
+          );
+
+      if (remainingError) {
+        throw remainingError;
+      }
+
+      if (
+        remainingScores.length === 0
+      ) {
+
+        const {
+          error: deleteMatchError
+        } =
+          await supabaseClient
+            .from("matches")
+            .delete()
+            .eq(
+              "id",
+              matchId
+            );
+
+        if (deleteMatchError) {
+          throw deleteMatchError;
+        }
+
+      }
+
+    }
+
+    /*
+     * プレイヤー本体を削除
+     */
+
+    const {
+      error: playerError
+    } =
+      await supabaseClient
+        .from("players")
+        .delete()
+        .eq(
+          "id",
+          player.id
+        );
+
+    if (playerError) {
+      throw playerError;
+    }
+
+    await initializeSupabaseData();
+
+    alert(
+      "プレイヤーとその得点記録を削除しました。"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Supabaseプレイヤー削除エラー:",
+      error
+    );
+
+    alert(
+      "❌ プレイヤーの削除に失敗しました。\n\n" +
+      error.message
+    );
+
+  }
 
 }
 

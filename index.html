@@ -2045,24 +2045,6 @@ async function archiveGame(name) {
 
 async function registerPlayer() {
 
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "プレイヤーを登録するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
-
   const input =
     document.getElementById("playerName");
 

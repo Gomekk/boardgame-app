@@ -754,6 +754,7 @@ button.small {
     ← ホームに戻る
   </button>
 
+<h2>👤 プレイヤー成績</h2>
 
   <!-- プレイヤー一覧・戦績 -->
   <div class="card">
@@ -769,30 +770,6 @@ button.small {
   </button>
 </div>
 
-<!-- 勝率ランキング -->
-<div class="card">
-  <h2>🏆 勝率ランキング</h2>
-  <div id="winRateRanking"></div>
-</div>
-
-<!-- 最多勝利数ランキング -->
-<div class="card">
-  <h2>🥇 最多勝利数ランキング</h2>
-  <div id="winCountRanking"></div>
-</div>
-
-<!-- 連勝ランキング -->
-<div class="card">
-  <h2>🔥 連勝ランキング</h2>
-  <div id="streakRanking"></div>
-</div>
-
-<!-- 平均順位ランキング -->
-<div class="card">
-  <h2>📊 平均順位ランキング</h2>
-  <div id="averageRankRanking"></div>
-</div>
-
 <!-- 対戦相性ランキング -->
 <div class="card">
   <h2>⚔️ 対戦相性ランキング</h2>
@@ -803,25 +780,6 @@ button.small {
 
   <div id="headToHeadRanking"></div>
 </div>
-
-  <!-- ゲーム詳細 -->
-  <div class="card hidden" id="gameDetail">
-
-    <h2 id="detailGameName"></h2>
-
-    <div id="detailGameDirection"
-         class="section-note"></div>
-
-    <h3>🏆 個人ベストランキング</h3>
-    <div id="bestRanking"></div>
-
-    <h3>📊 ゲーム統計</h3>
-    <div id="gameStats"></div>
-
-    <h3>📝 対戦履歴</h3>
-    <div id="matchHistory"></div>
-
-  </div>
 
 
   <!-- プレイヤー詳細 -->
@@ -2170,10 +2128,6 @@ function renderGameList() {
         ${matchCount}回対戦
       </div>
     `;
-
-
-    info.onclick = () =>
-      showGameDetail(game.name);
 
 
     const button =
@@ -6291,14 +6245,6 @@ if (screenName === "playerManageScreen") {
   renderGameList();
 
   renderPlayerStatsList();
-
-  renderWinRateRanking();
-
-  renderWinCountRanking();
-
-  renderStreakRanking();
-
-  renderAverageRankRanking();
 
   renderHeadToHeadPlayerSelect();
 

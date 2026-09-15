@@ -2272,20 +2272,20 @@ function renderPlayerStatsList() {
       document.createElement("div");
 
     row.className =
-      "player-detail-item";
-
-    row.style.cursor =
-      "pointer";
+  "player-detail-item";
 
 
-    const name =
-      document.createElement("span");
+const name =
+  document.createElement("span");
 
-    name.textContent =
-      player.name;
+name.textContent =
+  player.name;
+
+name.style.fontWeight =
+  "bold";
 
 
-    const info =
+const info =
   document.createElement("span");
 
 const winRate =
@@ -2304,15 +2304,31 @@ info.style.color =
   "#6b7280";
 
 
-    row.appendChild(name);
-    row.appendChild(info);
+const detailButton =
+  document.createElement("button");
+
+detailButton.className =
+  "small secondary";
+
+detailButton.type =
+  "button";
+
+detailButton.textContent =
+  "詳細 →";
+
+detailButton.style.width =
+  "auto";
+
+detailButton.onclick = () =>
+  showPlayerDetail(player.name);
 
 
-    row.onclick = () =>
-      showPlayerDetail(player.name);
+row.appendChild(name);
+row.appendChild(info);
+row.appendChild(detailButton);
 
 
-    container.appendChild(row);
+container.appendChild(row);
 
   });
 

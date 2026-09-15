@@ -454,6 +454,12 @@ button.small {
   <div id="winCountRanking"></div>
 </div>
 
+<!-- 平均順位ランキング -->
+<div class="card">
+  <h2>📊 平均順位ランキング</h2>
+  <div id="averageRankRanking"></div>
+</div>
+
   <!-- ゲーム詳細 -->
   <div class="card hidden" id="gameDetail">
 
@@ -1967,6 +1973,192 @@ function renderWinCountRanking() {
 
 }
 
+function renderAverageRankRanking() {
+
+  const container =
+    document.getElementById("averageRankRanking");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const ranking =
+    data.players
+      .filter(player => player.active)
+      .map(player => {
+
+        const matches =
+          getPlayerMatches(player.name);
+
+        let rankTotal = 0;
+
+        matches.forEach(match => {
+
+          const game =
+            data.games.find(
+              g => g.name === match.game
+            );
+
+          if (!game || !Array.isArray(match.scores)) {
+            return;
+          }
+
+          const scores =
+            match.scores.map(item => ({
+              player: item.player,
+              score: Number(item.score)
+            }));
+
+          const sorted =
+            [...scores].sort((a, b) => {
+
+              if (game.direction === "high") {
+                return b.score - a.score;
+              }
+
+              return a.score - b.score;
+
+            });
+
+          const playerIndex =
+            sorted.findIndex(
+              item => item.player === player.name
+            );
+
+          if (playerIndex !== -1) {
+
+            rankTotal += playerIndex + 1;
+
+          }
+
+        });
+
+        const averageRank =
+          matches.length > 0
+            ? rankTotal / matches.length
+            : 0;
+
+        return {
+          name: player.name,
+          matches: matches.length,
+          averageRank: averageRank
+        };
+
+      })
+      .filter(player =>
+        player.matches > 0
+      )
+      .sort((a, b) => {
+
+        if (a.averageRank !== b.averageRank) {
+          return a.averageRank - b.averageRank;
+        }
+
+        return b.matches - a.matches;
+
+      });
+
+
+  if (ranking.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "まだ対戦記録がありません。";
+
+    container.appendChild(empty);
+
+    return;
+  }
+
+
+  let previousRank = null;
+  let currentRank = 0;
+
+
+  ranking.forEach((player, index) => {
+
+    if (
+      player.averageRank !== previousRank
+    ) {
+
+      currentRank =
+        index + 1;
+
+      previousRank =
+        player.averageRank;
+
+    }
+
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "rank-item";
+
+
+    const rank =
+      document.createElement("span");
+
+    rank.className =
+      "rank-number";
+
+    rank.textContent =
+      `${currentRank}位`;
+
+
+    const name =
+      document.createElement("span");
+
+    name.className =
+      "rank-player";
+
+    name.textContent =
+      player.name;
+
+
+    const detail =
+      document.createElement("div");
+
+    detail.className =
+      "section-note";
+
+    detail.style.marginLeft =
+      "auto";
+
+    detail.style.marginRight =
+      "10px";
+
+    detail.textContent =
+      `${player.matches}戦`;
+
+
+    const score =
+      document.createElement("span");
+
+    score.className =
+      "rank-score";
+
+    score.textContent =
+      `平均 ${player.averageRank.toFixed(2)}位`;
+
+
+    row.appendChild(rank);
+    row.appendChild(name);
+    row.appendChild(detail);
+    row.appendChild(score);
+
+    container.appendChild(row);
+
+  });
+
+}
+
 /* =========================
    ゲーム詳細
 ========================= */
@@ -3162,6 +3354,8 @@ function updateAll() {
   renderWinRateRanking();
   
   renderWinCountRanking();
+  
+  renderAverageRankRanking();
 
   renderPreviousMembers();
 
@@ -3717,8 +3911,10 @@ function showScreen(screenName) {
   renderPlayerStatsList();
 
   renderWinRateRanking();
-  
+
   renderWinCountRanking();
+
+  renderAverageRankRanking();
 
 }
 

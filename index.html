@@ -307,13 +307,7 @@ button.small {
   💾 データ管理
 </button>
 
-  <button
-    class="secondary"
-    onclick="showScreen('backupScreen')"
-    style="margin-top:8px;"
-  >
-    💾 データ管理
-  </button>
+
 
 </div>
 
@@ -469,7 +463,50 @@ button.small {
 
 </div>
 
-  
+  <!-- バックアップ画面 -->
+<div id="backupScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('homeScreen')"
+  >
+    ← ホームに戻る
+  </button>
+
+  <div class="card">
+    <h2>💾 データ管理</h2>
+
+    <p class="section-note">
+      スマホの機種変更やSafariのデータ消去に備えて、
+      定期的にバックアップしてください。
+    </p>
+
+    <div class="backup-buttons">
+
+      <button onclick="exportData()">
+        データを書き出す
+      </button>
+
+      <button
+        class="secondary"
+        onclick="document.getElementById('fileInput').click()"
+      >
+        データを復元
+      </button>
+
+    </div>
+
+    <input
+      type="file"
+      id="fileInput"
+      accept=".json"
+      onchange="importData(event)"
+    >
+
+  </div>
+
+</div>
 
 </div>
 </div>

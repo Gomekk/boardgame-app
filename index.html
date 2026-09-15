@@ -2755,6 +2755,32 @@ function editMatch(matchId) {
 
 }
 
+/* =========================
+   画面切り替え
+========================= */
+
+function showScreen(screenName) {
+
+  const home =
+    document.getElementById("homeScreen");
+
+  const main =
+    document.getElementById("mainContent");
+
+  if (screenName === "homeScreen") {
+
+    home.classList.remove("hidden");
+    main.classList.add("hidden");
+
+    return;
+
+  }
+
+  home.classList.add("hidden");
+  main.classList.remove("hidden");
+
+}
+
 </script>
 
 <script>

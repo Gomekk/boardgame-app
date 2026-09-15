@@ -448,6 +448,11 @@ button.small {
   <div id="winRateRanking"></div>
 </div>
 
+<!-- 最多勝利数ランキング -->
+<div class="card">
+  <h2>🥇 最多勝利数ランキング</h2>
+  <div id="winCountRanking"></div>
+</div>
 
   <!-- ゲーム詳細 -->
   <div class="card hidden" id="gameDetail">
@@ -1796,6 +1801,159 @@ function renderWinRateRanking() {
 
     detail.textContent =
       `${player.matches}戦 ${player.wins}勝`;
+
+
+    row.appendChild(rank);
+    row.appendChild(name);
+    row.appendChild(detail);
+    row.appendChild(score);
+
+    container.appendChild(row);
+
+  });
+
+}
+
+function renderWinCountRanking() {
+
+  const container =
+    document.getElementById("winCountRanking");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const ranking =
+    data.players
+      .filter(player => player.active)
+      .map(player => {
+
+        const matches =
+          getPlayerMatches(player.name);
+
+        let wins = 0;
+
+        matches.forEach(match => {
+
+          if (
+            isWinner(
+              match,
+              player.name
+            )
+          ) {
+            wins++;
+          }
+
+        });
+
+        return {
+          name: player.name,
+          matches: matches.length,
+          wins: wins
+        };
+
+      })
+      .filter(player =>
+        player.matches > 0
+      )
+      .sort((a, b) => {
+
+        if (b.wins !== a.wins) {
+          return b.wins - a.wins;
+        }
+
+        return b.matches - a.matches;
+
+      });
+
+
+  if (ranking.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "まだ対戦記録がありません。";
+
+    container.appendChild(empty);
+
+    return;
+  }
+
+
+  let previousWins = null;
+  let currentRank = 0;
+
+
+  ranking.forEach((player, index) => {
+
+    if (
+      player.wins !== previousWins
+    ) {
+
+      currentRank =
+        index + 1;
+
+      previousWins =
+        player.wins;
+
+    }
+
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "rank-item";
+
+
+    const rank =
+      document.createElement("span");
+
+    rank.className =
+      "rank-number";
+
+    rank.textContent =
+      `${currentRank}位`;
+
+
+    const name =
+      document.createElement("span");
+
+    name.className =
+      "rank-player";
+
+    name.textContent =
+      player.name;
+
+
+    const detail =
+      document.createElement("div");
+
+    detail.className =
+      "section-note";
+
+    detail.style.marginLeft =
+      "auto";
+
+    detail.style.marginRight =
+      "10px";
+
+    detail.textContent =
+      `${player.matches}戦`;
+
+
+    const score =
+      document.createElement("span");
+
+    score.className =
+      "rank-score";
+
+    score.textContent =
+      `${player.wins}勝`;
 
 
     row.appendChild(rank);

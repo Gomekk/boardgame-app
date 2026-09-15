@@ -1949,52 +1949,116 @@ function archiveGame(name) {
    プレイヤー登録
 ========================= */
 
-function registerPlayer() {
+async function registerPlayer() {
 
-  const input =
-    document.getElementById("playerName");
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
 
+  if (!session) {
 
-  const name =
-    input.value.trim();
+    alert(
+      "プレイヤーを登録するにはログインが必要です。"
+    );
 
-
-  if (!name) {
-
-    alert("プレイヤー名を入力してください");
+    showScreen("loginScreen");
 
     return;
 
   }
 
+  const input =
+    document.getElementById("playerName");
 
-  const existing =
-    data.players.find(
-      p => p.name === name
+  const name =
+    input.value.trim();
+
+  if (!name) {
+
+    alert(
+      "プレイヤー名を入力してください"
     );
 
-
-  if (existing) {
-
-    existing.active = true;
-
-  } else {
-
-    data.players.push({
-
-      name,
-      active: true
-
-    });
+    return;
 
   }
 
+  try {
 
-  saveData();
+    const {
+      data: existingPlayer,
+      error: findError
+    } =
+      await supabaseClient
+        .from("players")
+        .select("id")
+        .eq("name", name)
+        .maybeSingle();
 
-  input.value = "";
+    if (findError) {
+      throw findError;
+    }
 
-  updateAll();
+    if (existingPlayer) {
+
+      const {
+        error: updateError
+      } =
+        await supabaseClient
+          .from("players")
+          .update({
+            active: true
+          })
+          .eq(
+            "id",
+            existingPlayer.id
+          );
+
+      if (updateError) {
+        throw updateError;
+      }
+
+    } else {
+
+      const {
+        error: insertError
+      } =
+        await supabaseClient
+          .from("players")
+          .insert({
+            name: name,
+            active: true
+          });
+
+      if (insertError) {
+        throw insertError;
+      }
+
+    }
+
+    input.value = "";
+
+    await initializeSupabaseData();
+
+    alert(
+      "プレイヤーを登録しました"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Supabaseプレイヤー登録エラー:",
+      error
+    );
+
+    alert(
+      "❌ プレイヤーの登録に失敗しました。\n\n" +
+      error.message
+    );
+
+  }
 
 }
 

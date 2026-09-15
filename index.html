@@ -793,6 +793,72 @@ button.small {
 
 </div>
 
+<!-- ゲーム別ランキング画面 -->
+<div id="gameRankingScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('homeScreen')"
+  >
+    ← ホームに戻る
+  </button>
+
+  <div class="card">
+
+    <h2>🎲 ゲーム別ランキング</h2>
+
+    <!-- ゲーム検索 -->
+    <input
+      type="text"
+      id="gameRankingSearch"
+      placeholder="ゲーム名を検索"
+    >
+
+    <!-- ゲーム一覧 -->
+    <div id="gameRankingGameList"></div>
+
+  </div>
+
+  <!-- 選択したゲームのランキング -->
+  <div
+    id="selectedGameRanking"
+    class="card hidden"
+  >
+
+    <h2 id="selectedGameRankingTitle">
+      ゲームを選択してください
+    </h2>
+
+    <div>
+      <h3>🏆 得点ランキング</h3>
+      <div id="gameScoreRanking"></div>
+    </div>
+
+    <div>
+      <h3>🥇 勝率ランキング</h3>
+      <div id="gameWinRateRanking"></div>
+    </div>
+
+    <div>
+      <h3>🏅 最多勝利数ランキング</h3>
+      <div id="gameWinCountRanking"></div>
+    </div>
+
+    <div>
+      <h3>🔥 連勝ランキング</h3>
+      <div id="gameStreakRanking"></div>
+    </div>
+
+    <div>
+      <h3>📊 平均順位ランキング</h3>
+      <div id="gameAverageRankRanking"></div>
+    </div>
+
+  </div>
+
+</div>
+
 <div id="playerTrendScreen" class="screenContent">
 
   <button
@@ -4802,6 +4868,8 @@ function updateAll() {
 
   renderHomeRankings();
   
+  renderGameRankingGameList();
+  
   renderHeadToHeadPlayerSelect();
   
   renderHeadToHeadRanking();
@@ -4878,6 +4946,107 @@ function renderHomeRankings() {
   });
 
 }
+
+function renderGameRankingGameList() {
+
+  const container =
+    document.getElementById("gameRankingGameList");
+
+  if (!container) return;
+
+  const searchInput =
+    document.getElementById("gameRankingSearch");
+
+  const keyword =
+    searchInput
+      ? searchInput.value.trim().toLowerCase()
+      : "";
+
+  const games =
+    data.games
+      .filter(game => game.active)
+      .filter(game =>
+        game.name.toLowerCase().includes(keyword)
+      )
+      .sort((a, b) =>
+        a.name.localeCompare(
+          b.name,
+          "ja"
+        )
+      );
+
+  container.innerHTML = "";
+
+  if (games.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      keyword
+        ? "該当するゲームがありません。"
+        : "登録されているゲームがありません。";
+
+    container.appendChild(empty);
+
+    return;
+  }
+
+  games.forEach(game => {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+
+    button.className =
+      "secondary";
+
+    button.style.width =
+      "100%";
+
+    button.style.textAlign =
+      "left";
+
+    button.style.marginBottom =
+      "8px";
+
+    button.textContent =
+      `🎲 ${game.name}`;
+
+    button.onclick = () => {
+
+      renderGameSpecificRanking(
+        game.name
+      );
+
+    };
+
+    container.appendChild(button);
+
+  });
+
+}
+
+document.addEventListener(
+  "input",
+  function(event) {
+
+    if (
+      event.target &&
+      event.target.id ===
+        "gameRankingSearch"
+    ) {
+
+      renderGameRankingGameList();
+
+    }
+
+  }
+);
 
 
 /* =========================

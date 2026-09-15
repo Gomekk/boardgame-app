@@ -1935,6 +1935,9 @@ function renderMatchHistory(gameName) {
     wrapper.className =
       "history-item";
 
+    wrapper.dataset.matchId =
+     match.id;
+
 const deleteButton =
   document.createElement("button");
 

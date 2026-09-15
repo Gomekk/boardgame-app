@@ -1394,76 +1394,6 @@ function loadData() {
 
 }
 
-async function testSupabaseConnection() {
-
-  const { data, error } =
-    await supabaseClient
-      .from("games")
-      .select("id")
-      .limit(1);
-
-  if (error) {
-
-    console.error(
-      "Supabase接続エラー:",
-      error
-    );
-
-    return false;
-
-  }
-
-  console.log(
-    "Supabase接続OK:",
-    data
-  );
-
-  return true;
-
-}
-
-testSupabaseConnection();
-
-async function testGamesFromDatabase() {
-
-  const {
-    data: games,
-    error
-  } = await supabaseClient
-    .from("games")
-    .select("*")
-    .limit(5);
-
-  if (error) {
-
-    alert(
-      "❌ DB接続エラー\n" +
-      error.message
-    );
-
-    console.error(
-      "games取得エラー:",
-      error
-    );
-
-    return;
-
-  }
-
-  alert(
-    "✅ Supabase DB接続OK\n" +
-    "ゲーム件数: " +
-    games.length
-  );
-
-  console.log(
-    "DBのgames:",
-    games
-  );
-
-}
-
-testGamesFromDatabase();
 
 async function migrateLocalDataToSupabase() {
 
@@ -2151,6 +2081,181 @@ function addScorePlayer(
 ========================= */
 
 function recordMatch() {
+
+  const gameName =
+    document.getElementById(
+      "matchGame"
+    ).value;
+
+  const matchDate =
+    document.getElementById("matchDate").value;
+
+  if (!matchDate) {
+    alert("対戦日を入力してください");
+    return;
+  }
+
+  if (!gameName) {
+    alert("ゲームを選択してください");
+    return;
+  }
+
+  const rows =
+    document.querySelectorAll(
+      "#scorePlayers .player-row"
+    );
+
+  if (rows.length === 0) {
+    alert(
+      "プレイヤーを追加してください"
+    );
+    return;
+  }
+
+  const scores = [];
+  const usedPlayers = new Set();
+
+  for (const row of rows) {
+
+    const player =
+      row.querySelector(
+        ".match-player"
+      ).value;
+
+    const scoreText =
+      row.querySelector(
+        ".match-score"
+      ).value;
+
+    if (!player || scoreText === "") {
+      alert(
+        "プレイヤーと得点を入力してください"
+      );
+      return;
+    }
+
+    if (usedPlayers.has(player)) {
+      alert(
+        `${player}が重複しています`
+      );
+      return;
+    }
+
+    usedPlayers.add(player);
+
+    scores.push({
+      player,
+      score: Number(scoreText)
+    });
+
+  }
+
+  const game =
+    data.games.find(
+      g => g.name === gameName
+    );
+
+  const direction =
+    game
+      ? game.direction
+      : "high";
+
+  let bestScore =
+    direction === "high"
+      ? -Infinity
+      : Infinity;
+
+  scores.forEach(item => {
+
+    if (direction === "high") {
+
+      if (item.score > bestScore) {
+        bestScore =
+          item.score;
+      }
+
+    } else {
+
+      if (item.score < bestScore) {
+        bestScore =
+          item.score;
+      }
+
+    }
+
+  });
+
+  scores.forEach(item => {
+
+    item.winner =
+      item.score === bestScore;
+
+  });
+
+  const wasEditing =
+    window.editingMatchId !== null &&
+    window.editingMatchId !== undefined;
+
+  if (wasEditing) {
+
+    const matchIndex =
+      data.matches.findIndex(
+        m => m.id === window.editingMatchId
+      );
+
+    if (matchIndex !== -1) {
+
+      data.matches[matchIndex] = {
+        ...data.matches[matchIndex],
+        date: new Date(
+          matchDate + "T12:00:00"
+        ).toISOString(),
+        game: gameName,
+        scores
+      };
+
+    }
+
+    window.editingMatchId = null;
+
+    const recordButton =
+      document.querySelector(
+        'button[onclick="recordMatch()"]'
+      );
+
+    if (recordButton) {
+      recordButton.textContent =
+        "対戦を記録する";
+    }
+
+  } else {
+
+    data.matches.push({
+      id: Date.now(),
+      date: new Date(
+        matchDate + "T12:00:00"
+      ).toISOString(),
+      game: gameName,
+      scores
+    });
+
+  }
+
+  saveData();
+
+  document.getElementById(
+    "scorePlayers"
+  ).innerHTML = "";
+
+  addScorePlayer();
+
+  alert(
+    "対戦結果を記録しました！"
+  );
+
+  updateAll();
+
+}
 
 
 

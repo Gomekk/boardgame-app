@@ -785,12 +785,19 @@ button.small {
   <!-- プレイヤー詳細 -->
   <div class="card hidden" id="playerDetail">
 
-    <h2 id="detailPlayerName"></h2>
+  <button
+    type="button"
+    class="secondary"
+    onclick="document.getElementById('playerDetail').classList.add('hidden')"
+  >
+    ← プレイヤー成績に戻る
+  </button>
 
-    <div id="playerDetailStats"></div>
+  <h2 id="detailPlayerName"></h2>
 
-  </div>
+  <div id="playerDetailStats"></div>
 
+</div>
 </div>
 
 <!-- ゲーム別ランキング画面 -->

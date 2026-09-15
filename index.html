@@ -281,6 +281,96 @@ button.small {
 #fileInput {
   display: none;
 }
+
+#gameRouletteOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.game-roulette-box {
+  width: min(420px, 100%);
+  background: white;
+  border-radius: 24px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.game-roulette-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+#gameRouletteName {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 3px solid #222;
+  border-radius: 18px;
+  font-size: 30px;
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.game-roulette-sub {
+  margin-top: 18px;
+  color: #666;
+  font-size: 14px;
+}
+
+#gameRouletteButtons {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#gameRouletteButtons button {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+#gameRouletteName {
+  transition:
+    transform 0.08s ease,
+    opacity 0.08s ease;
+}
+
+.game-roulette-spinning {
+  transform: scale(1.08);
+  opacity: 0.65;
+}
+
+.game-roulette-result {
+  animation: rouletteResult 0.5s ease;
+}
+
+@keyframes rouletteResult {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 </style>
 </head>
 
@@ -2239,9 +2329,19 @@ function randomSelectGame() {
         games[randomIndex];
 
       nameElement.textContent =
-        game.name;
+  game.name;
 
-      count++;
+nameElement.classList.add(
+  "game-roulette-spinning"
+);
+
+setTimeout(() => {
+  nameElement.classList.remove(
+    "game-roulette-spinning"
+  );
+}, 70);
+
+count++;
 
       if (count >= totalCount) {
 
@@ -2255,6 +2355,10 @@ function randomSelectGame() {
 
         nameElement.textContent =
           `🎉 ${selectedGame.name} 🎉`;
+          
+        nameElement.classList.add(
+  "game-roulette-result"
+);
 
         subElement.textContent =
           "このゲームに決定！";

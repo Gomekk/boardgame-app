@@ -2349,32 +2349,63 @@ if (recordButton) {
 }
 
 
+
 /* =========================
    ゲーム選択
 ========================= */
 
+async function loadGamesFromSupabase() {
+
+  const {
+    data: games,
+    error
+  } = await supabaseClient
+    .from("games")
+    .select("*")
+    .order("name");
+
+  if (error) {
+
+    console.error(
+      "ゲーム取得エラー:",
+      error
+    );
+
+    return null;
+
+  }
+
+  return games;
+
+}
+
 function renderGameSelect() {
 
+async function renderGameSelect() {
+
   const select =
-    document.getElementById(
-      "matchGame"
-    );
+    document.getElementById("matchGame");
 
   if (!select) return;
 
+  const games =
+    await loadGamesFromSupabase();
 
-  const current =
-    select.value;
+  if (!games) {
 
+    alert(
+      "ゲーム情報を取得できませんでした。"
+    );
+
+    return;
+
+  }
 
   select.innerHTML =
-    `<option value="">
-      ゲームを選択
-    </option>`;
+    '<option value="">ゲームを選択</option>';
 
-
-  data.games
-    .filter(g => g.active)
+  games
+    .filter(game => game.active)
     .forEach(game => {
 
       const option =
@@ -2389,19 +2420,6 @@ function renderGameSelect() {
       select.appendChild(option);
 
     });
-
-
-  if (
-    data.games.some(
-      g =>
-        g.active &&
-        g.name === current
-    )
-  ) {
-
-    select.value = current;
-
-  }
 
 }
 

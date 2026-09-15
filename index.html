@@ -4304,8 +4304,11 @@ chart.appendChild(rankChart);
 const rankCanvas =
   document.createElement("canvas");
 
-rankCanvas.width = 600;
-rankCanvas.height = 240;
+rankCanvas.width =
+  rankChart.clientWidth;
+
+rankCanvas.height =
+  240;
 
 rankChart.appendChild(rankCanvas);
 
@@ -4327,7 +4330,7 @@ trendData.forEach((item, index) => {
 
 });
 
-const padding = 40;
+const padding = 30;
 
 const chartWidth =
   rankCanvas.width - padding * 2;

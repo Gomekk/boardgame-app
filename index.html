@@ -437,10 +437,16 @@ button.small {
 
 
   <!-- プレイヤー一覧・戦績 -->
-  <div class="card">
-    <h2>👥 プレイヤー戦績</h2>
-    <div id="playerStatsList"></div>
-  </div>
+<div class="card">
+  <h2>👥 プレイヤー戦績</h2>
+  <div id="playerStatsList"></div>
+</div>
+
+<!-- 勝率ランキング -->
+<div class="card">
+  <h2>🏆 勝率ランキング</h2>
+  <div id="winRateRanking"></div>
+</div>>
 
 
   <!-- ゲーム詳細 -->
@@ -1644,6 +1650,164 @@ function renderPlayerList() {
 
 }
 
+function renderWinRateRanking() {
+
+  const container =
+    document.getElementById("winRateRanking");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const ranking =
+    data.players
+      .filter(player => player.active)
+      .map(player => {
+
+        const matches =
+          getPlayerMatches(player.name);
+
+        let wins = 0;
+
+        matches.forEach(match => {
+
+          if (
+            isWinner(
+              match,
+              player.name
+            )
+          ) {
+            wins++;
+          }
+
+        });
+
+        const winRate =
+          matches.length > 0
+            ? wins / matches.length * 100
+            : 0;
+
+        return {
+          name: player.name,
+          matches: matches.length,
+          wins: wins,
+          winRate: winRate
+        };
+
+      })
+      .filter(player =>
+        player.matches > 0
+      )
+      .sort((a, b) => {
+
+        if (b.winRate !== a.winRate) {
+          return b.winRate - a.winRate;
+        }
+
+        return b.matches - a.matches;
+
+      });
+
+
+  if (ranking.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "まだ対戦記録がありません。";
+
+    container.appendChild(empty);
+
+    return;
+  }
+
+
+  let previousRate = null;
+  let currentRank = 0;
+
+
+  ranking.forEach((player, index) => {
+
+    if (
+      player.winRate !== previousRate
+    ) {
+
+      currentRank =
+        index + 1;
+
+      previousRate =
+        player.winRate;
+
+    }
+
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "rank-item";
+
+
+    const rank =
+      document.createElement("span");
+
+    rank.className =
+      "rank-number";
+
+    rank.textContent =
+      `${currentRank}位`;
+
+
+    const name =
+      document.createElement("span");
+
+    name.className =
+      "rank-player";
+
+    name.textContent =
+      player.name;
+
+
+    const score =
+      document.createElement("span");
+
+    score.className =
+      "rank-score";
+
+    score.textContent =
+      `${player.winRate.toFixed(1)}%`;
+
+
+    const detail =
+      document.createElement("div");
+
+    detail.className =
+      "section-note";
+
+    detail.style.marginLeft =
+      "auto";
+
+    detail.style.marginRight =
+      "10px";
+
+    detail.textContent =
+      `${player.matches}戦 ${player.wins}勝`;
+
+
+    row.appendChild(rank);
+    row.appendChild(name);
+    row.appendChild(detail);
+    row.appendChild(score);
+
+    container.appendChild(row);
+
+  });
+
+}
 
 /* =========================
    ゲーム詳細

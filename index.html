@@ -1222,6 +1222,23 @@ const supabaseClient =
 
 let data = loadData();
 
+async function initializeSupabaseData() {
+
+  const supabaseData =
+    await loadDataFromSupabase();
+
+  if (!supabaseData) {
+    return;
+  }
+
+  data = supabaseData;
+
+  updateAll();
+
+}
+
+initializeSupabaseData();
+
 function loadData() {
 
   const saved =
@@ -2376,6 +2393,141 @@ async function loadGamesFromSupabase() {
   }
 
   return games;
+
+}
+
+async function loadDataFromSupabase() {
+
+  const {
+    data: games,
+    error: gamesError
+  } = await supabaseClient
+    .from("games")
+    .select("*")
+    .order("name");
+
+  if (gamesError) {
+    console.error(
+      "ゲーム取得エラー:",
+      gamesError
+    );
+    return null;
+  }
+
+  const {
+    data: players,
+    error: playersError
+  } = await supabaseClient
+    .from("players")
+    .select("*")
+    .order("name");
+
+  if (playersError) {
+    console.error(
+      "プレイヤー取得エラー:",
+      playersError
+    );
+    return null;
+  }
+
+  const {
+    data: matches,
+    error: matchesError
+  } = await supabaseClient
+    .from("matches")
+    .select("*")
+    .order("match_date");
+
+  if (matchesError) {
+    console.error(
+      "対戦記録取得エラー:",
+      matchesError
+    );
+    return null;
+  }
+
+  const {
+    data: scores,
+    error: scoresError
+  } = await supabaseClient
+    .from("match_scores")
+    .select("*");
+
+  if (scoresError) {
+    console.error(
+      "得点取得エラー:",
+      scoresError
+    );
+    return null;
+  }
+
+  const playerMap = {};
+
+  players.forEach(player => {
+    playerMap[player.id] =
+      player.name;
+  });
+
+  const gameMap = {};
+
+  games.forEach(game => {
+    gameMap[game.id] =
+      game;
+  });
+
+  const convertedMatches =
+    matches.map(match => {
+
+      const matchScores =
+        scores
+          .filter(score =>
+            score.match_id === match.id
+          )
+          .map(score => ({
+            player:
+              playerMap[score.player_id],
+            score:
+              Number(score.score)
+          }));
+
+      return {
+        id: match.id,
+        game:
+          gameMap[match.game_id]
+            ? gameMap[match.game_id].name
+            : "",
+        date:
+          match.match_date,
+        scores:
+          matchScores
+      };
+
+    });
+
+  return {
+
+    players:
+      players.map(player => ({
+        id: player.id,
+        name: player.name,
+        active:
+          player.active !== false
+      })),
+
+    games:
+      games.map(game => ({
+        id: game.id,
+        name: game.name,
+        direction:
+          game.direction || "high",
+        active:
+          game.active !== false
+      })),
+
+    matches:
+      convertedMatches
+
+  };
 
 }
 

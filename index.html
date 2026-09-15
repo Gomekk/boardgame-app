@@ -471,6 +471,40 @@ button.small {
   margin-bottom: 16px;
 }
 
+/* =========================
+   ゲーム別ランキング
+========================= */
+
+#selectedGameRanking > div {
+  margin-top: 24px;
+}
+
+#selectedGameRanking > div:first-of-type {
+  margin-top: 16px;
+}
+
+#selectedGameRanking h3 {
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+
+#selectedGameRanking .rank-item {
+  padding: 9px 0;
+}
+
+#selectedGameRanking .rank-number {
+  width: 42px;
+}
+
+#selectedGameRanking .rank-score {
+  font-size: 16px;
+}
+
+/* ゲーム名 */
+#selectedGameRankingTitle {
+  margin-bottom: 18px;
+}
+
 </style>
 </head>
 
@@ -5252,59 +5286,79 @@ function renderGameSpecificRanking(gameName) {
       }));
 
   function renderRanking(
-    target,
-    list,
-    valueFormatter
-  ) {
+  target,
+  list,
+  valueFormatter,
+  getValue
+) {
 
-    target.innerHTML = "";
+  target.innerHTML = "";
 
-    list.forEach(
-      (player, index) => {
+  let previousValue = null;
+  let currentRank = 0;
 
-        const row =
-          document.createElement("div");
+  list.forEach(
+    (player, index) => {
 
-        row.className =
-          "rank-item";
+      const value =
+        getValue(player);
 
-        const rank =
-          document.createElement("span");
+      if (
+        previousValue === null ||
+        value !== previousValue
+      ) {
 
-        rank.className =
-          "rank-number";
+        currentRank =
+          index + 1;
 
-        rank.textContent =
-          `${index + 1}位`;
-
-        const name =
-          document.createElement("span");
-
-        name.className =
-          "rank-player";
-
-        name.textContent =
-          player.name;
-
-        const value =
-          document.createElement("span");
-
-        value.className =
-          "rank-score";
-
-        value.textContent =
-          valueFormatter(player);
-
-        row.appendChild(rank);
-        row.appendChild(name);
-        row.appendChild(value);
-
-        target.appendChild(row);
+        previousValue =
+          value;
 
       }
-    );
 
-  }
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "rank-item";
+
+      const rank =
+        document.createElement("span");
+
+      rank.className =
+        "rank-number";
+
+      rank.textContent =
+        `${currentRank}位`;
+
+      const name =
+        document.createElement("span");
+
+      name.className =
+        "rank-player";
+
+      name.textContent =
+        player.name;
+
+      const score =
+        document.createElement("span");
+
+      score.className =
+        "rank-score";
+
+      score.textContent =
+        valueFormatter(player);
+
+      row.appendChild(rank);
+      row.appendChild(name);
+      row.appendChild(score);
+
+      target.appendChild(row);
+
+    }
+  );
+
+}
 
   const scoreList =
     ranking
@@ -5330,11 +5384,13 @@ function renderGameSpecificRanking(gameName) {
       });
 
   renderRanking(
-    scoreRanking,
-    scoreList,
-    player =>
-      `${player.bestScore}点`
-  );
+  scoreRanking,
+  scoreList,
+  player =>
+    `${player.bestScore}点`,
+  player =>
+    player.bestScore
+);
 
   const winRateList =
     ranking
@@ -5363,11 +5419,13 @@ function renderGameSpecificRanking(gameName) {
       });
 
   renderRanking(
-    winRateRanking,
-    winRateList,
-    player =>
-      `${player.winRate.toFixed(1)}%`
-  );
+  winRateRanking,
+  winRateList,
+  player =>
+    `${player.winRate.toFixed(1)}%`,
+  player =>
+    player.winRate.toFixed(1)
+);
 
   const winCountList =
     ranking
@@ -5394,11 +5452,13 @@ function renderGameSpecificRanking(gameName) {
       });
 
   renderRanking(
-    winCountRanking,
-    winCountList,
-    player =>
-      `${player.wins}勝`
-  );
+  winCountRanking,
+  winCountList,
+  player =>
+    `${player.wins}勝`,
+  player =>
+    player.wins
+);
 
   const streakList =
     ranking
@@ -5425,11 +5485,13 @@ function renderGameSpecificRanking(gameName) {
       });
 
   renderRanking(
-    streakRanking,
-    streakList,
-    player =>
-      `${player.bestStreak}連勝`
-  );
+  streakRanking,
+  streakList,
+  player =>
+    `${player.bestStreak}連勝`,
+  player =>
+    player.bestStreak
+);
 
   const averageRankList =
     ranking
@@ -5440,11 +5502,13 @@ function renderGameSpecificRanking(gameName) {
       );
 
   renderRanking(
-    averageRankRanking,
-    averageRankList,
-    player =>
-      `${player.averageRank.toFixed(2)}位`
-  );
+  averageRankRanking,
+  averageRankList,
+  player =>
+    `${player.averageRank.toFixed(2)}位`,
+  player =>
+    player.averageRank.toFixed(2)
+);
 
 }
 

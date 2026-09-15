@@ -770,9 +770,9 @@ button.small {
   </button>
 </div>
 
-<!-- 対戦相性ランキング -->
+<!-- 対戦相性分析 -->
 <div class="card">
-  <h2>⚔️ 対戦相性ランキング</h2>
+  <h2>⚔️ 対戦相性分析</h2>
 
   <select id="headToHeadPlayer" onchange="renderHeadToHeadRanking()">
   <option value="">プレイヤーを選択</option>
@@ -4017,12 +4017,6 @@ function showPlayerDetail(playerName) {
   document.getElementById(
     "playerDetail"
   ).classList.remove("hidden");
-
-
-  document.getElementById(
-    "gameDetail"
-  ).classList.add("hidden");
-
 
   document.getElementById(
     "detailPlayerName"

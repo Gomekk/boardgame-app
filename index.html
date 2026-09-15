@@ -1148,9 +1148,6 @@ button.small {
 
 <script>
 
-const STORAGE_KEY = "boardgameData";
-
-
 /* =========================
    データ読み込み
 ========================= */
@@ -1168,7 +1165,11 @@ const supabaseClient =
   );
 
 
-let data = loadData();
+let data = {
+  players: [],
+  games: [],
+  matches: []
+};
 
 async function initializeSupabaseData() {
 
@@ -1186,546 +1187,6 @@ async function initializeSupabaseData() {
 }
 
 initializeSupabaseData();
-
-function loadData() {
-
-  const saved =
-    localStorage.getItem(STORAGE_KEY);
-
-  if (!saved) {
-
-    return {
-      players: [],
-      games: [],
-      matches: []
-    };
-
-  }
-
-
-  try {
-
-    const old =
-      JSON.parse(saved);
-
-
-    const players =
-      Array.isArray(old.players)
-        ? old.players.map(p => {
-
-            if (typeof p === "string") {
-
-              return {
-                name: p,
-                active: true
-              };
-
-            }
-
-            return {
-              name: p.name,
-              active:
-                p.active !== false
-            };
-
-          })
-        : [];
-
-
-    const games =
-      Array.isArray(old.games)
-        ? old.games.map(g => {
-
-            if (typeof g === "string") {
-
-              return {
-                name: g,
-                direction: "high",
-                active: true
-              };
-
-            }
-
-            return {
-              name: g.name,
-              direction:
-                g.direction || "high",
-              active:
-                g.active !== false
-            };
-
-          })
-        : [];
-
-
-    const matches =
-      Array.isArray(old.matches)
-        ? old.matches
-        : [];
-
-
-    /*
-      過去記録にしか存在しない
-      プレイヤー・ゲームも復元
-    */
-
-    matches.forEach(match => {
-
-      if (match.game) {
-
-        const exists =
-          games.some(
-            g => g.name === match.game
-          );
-
-
-        if (!exists) {
-
-          games.push({
-            name: match.game,
-            direction: "high",
-            active: false
-          });
-
-        }
-
-      }
-
-
-      if (Array.isArray(match.scores)) {
-
-        match.scores.forEach(item => {
-
-          if (!item.player) return;
-
-
-          const exists =
-            players.some(
-              p => p.name === item.player
-            );
-
-
-          if (!exists) {
-
-            players.push({
-              name: item.player,
-              active: false
-            });
-
-          }
-
-        });
-
-      }
-
-    });
-
-
-    return {
-      players,
-      games,
-      matches
-    };
-
-
-  } catch (e) {
-
-    console.error(e);
-
-    return {
-      players: [],
-      games: [],
-      matches: []
-    };
-
-  }
-
-}
-
-
-async function migrateLocalDataToSupabase() {
-
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "データ移行にはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
-
-  if (!confirm(
-    "この端末のデータをSupabaseへ移行します。\n\n" +
-    "ゲーム・プレイヤー・対戦記録を登録します。\n" +
-    "実行してよろしいですか？"
-  )) {
-
-    return;
-
-  }
-
-  try {
-
-    /*
-      既存DBを空にする
-      ※現在DBにはデータがない前提
-    */
-
-    const {
-      error: deleteScoresError
-    } = await supabaseClient
-      .from("match_scores")
-      .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000");
-
-    if (deleteScoresError) {
-      throw deleteScoresError;
-    }
-
-
-    const {
-      error: deleteMatchesError
-    } = await supabaseClient
-      .from("matches")
-      .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000");
-
-    if (deleteMatchesError) {
-      throw deleteMatchesError;
-    }
-
-
-    const {
-      error: deleteGamesError
-    } = await supabaseClient
-      .from("games")
-      .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000");
-
-    if (deleteGamesError) {
-      throw deleteGamesError;
-    }
-
-
-    const {
-      error: deletePlayersError
-    } = await supabaseClient
-      .from("players")
-      .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000");
-
-    if (deletePlayersError) {
-      throw deletePlayersError;
-    }
-
-
-    /*
-      プレイヤー登録
-    */
-
-    const playerMap = {};
-
-    for (const player of data.players) {
-
-      const {
-        data: insertedPlayer,
-        error
-      } = await supabaseClient
-        .from("players")
-        .insert({
-          name: player.name,
-          active: player.active !== false
-        })
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      playerMap[player.name] =
-        insertedPlayer.id;
-
-    }
-
-
-    /*
-      ゲーム登録
-    */
-
-    const gameMap = {};
-
-    for (const game of data.games) {
-
-      const {
-        data: insertedGame,
-        error
-      } = await supabaseClient
-        .from("games")
-        .insert({
-          name: game.name,
-          direction: game.direction || "high",
-          active: game.active !== false
-        })
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      gameMap[game.name] =
-        insertedGame.id;
-
-    }
-
-
-    /*
-      対戦記録登録
-    */
-
-    let matchCount = 0;
-    let scoreCount = 0;
-
-    for (const match of data.matches) {
-
-      const gameId =
-        gameMap[match.game];
-
-      if (!gameId) {
-        continue;
-      }
-
-
-      const {
-        data: insertedMatch,
-        error: matchError
-      } = await supabaseClient
-        .from("matches")
-        .insert({
-          game_id: gameId,
-          match_date:
-            String(match.date).split(" ")[0]
-        })
-        .select()
-        .single();
-
-      if (matchError) {
-        throw matchError;
-      }
-
-
-      matchCount++;
-
-
-      if (
-        Array.isArray(match.scores)
-      ) {
-
-        for (const score of match.scores) {
-
-          const playerId =
-            playerMap[score.player];
-
-          if (!playerId) {
-            continue;
-          }
-
-
-          const {
-            error: scoreError
-          } = await supabaseClient
-            .from("match_scores")
-            .insert({
-              match_id:
-                insertedMatch.id,
-              player_id:
-                playerId,
-              score:
-                Number(score.score)
-            });
-
-          if (scoreError) {
-            throw scoreError;
-          }
-
-          scoreCount++;
-
-        }
-
-      }
-
-    }
-
-
-    alert(
-      "✅ データ移行完了！\n\n" +
-      "ゲーム: " +
-      data.games.length +
-      "件\n" +
-      "プレイヤー: " +
-      data.players.length +
-      "件\n" +
-      "対戦: " +
-      matchCount +
-      "件\n" +
-      "得点: " +
-      scoreCount +
-      "件"
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "Supabase移行エラー:",
-      error
-    );
-
-    alert(
-      "❌ データ移行に失敗しました。\n\n" +
-      error.message
-    );
-
-  }
-
-}
-
-async function loginUser() {
-
-  const email =
-    document.getElementById("loginEmail").value.trim();
-
-  const password =
-    document.getElementById("loginPassword").value;
-
-  const message =
-    document.getElementById("loginMessage");
-
-  if (!email || !password) {
-
-    message.textContent =
-      "メールアドレスとパスワードを入力してください。";
-
-    return;
-
-  }
-
-  message.textContent =
-    "ログイン中……";
-
-  const {
-    error
-  } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
-
-  if (error) {
-
-    message.textContent =
-      "ログインに失敗しました。メールアドレスまたはパスワードを確認してください。";
-
-    console.error(error);
-
-    return;
-
-  }
-
-  message.textContent =
-    "ログインしました。";
-
-  showScreen("recordScreen");
-
-}
-
-document
-  .getElementById("loginButton")
-  .addEventListener(
-    "click",
-    loginUser
-  );
-  
-async function signupUser() {
-
-  const email =
-    document.getElementById("loginEmail").value.trim();
-
-  const password =
-    document.getElementById("loginPassword").value;
-
-  const message =
-    document.getElementById("loginMessage");
-
-  if (!email || !password) {
-
-    message.textContent =
-      "メールアドレスとパスワードを入力してください。";
-
-    return;
-
-  }
-
-  if (password.length < 6) {
-
-    message.textContent =
-      "パスワードは6文字以上にしてください。";
-
-    return;
-
-  }
-
-  message.textContent =
-    "アカウントを作成中……";
-
-  const {
-    error
-  } = await supabaseClient.auth.signUp({
-    email: email,
-    password: password
-  });
-
-  if (error) {
-
-    message.textContent =
-      "登録に失敗しました。";
-
-    console.error(error);
-
-    return;
-
-  }
-
-  message.textContent =
-    "登録しました。確認メールが届いた場合は、メール内のリンクを開いてください。";
-
-}
-
-document
-  .getElementById("signupButton")
-  .addEventListener(
-    "click",
-    signupUser
-  );
-
-
-function saveData() {
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(data)
-  );
-
-}
 
 
 /* =========================
@@ -4262,307 +3723,6 @@ function renderAverageRankRanking() {
 
 }
 
-/* =========================
-   ゲーム詳細
-========================= */
-
-function showGameDetail(gameName) {
-
-  const game =
-    data.games.find(
-      g => g.name === gameName
-    );
-
-
-  if (!game) return;
-
-
-  document.getElementById(
-    "gameDetail"
-  ).classList.remove("hidden");
-
-
-  document.getElementById(
-    "playerDetail"
-  ).classList.add("hidden");
-
-
-  document.getElementById(
-    "detailGameName"
-  ).textContent =
-    gameName;
-
-
-  document.getElementById(
-    "detailGameDirection"
-  ).textContent =
-    game.direction === "high"
-      ? "高得点が上位"
-      : "低得点が上位";
-
-
-  renderBestRanking(
-    gameName,
-    game.direction
-  );
-
-
-  renderGameStats(gameName);
-
-  renderMatchHistory(gameName);
-
-}
-
-
-/* =========================
-   個人ベストランキング
-========================= */
-
-function renderBestRanking(
-  gameName,
-  direction
-) {
-
-  const container =
-    document.getElementById(
-      "bestRanking"
-    );
-
-
-  const matches =
-    data.matches.filter(
-      m => m.game === gameName
-    );
-
-
-  const bestScores = {};
-
-
-  matches.forEach(match => {
-
-    match.scores.forEach(item => {
-
-      const player =
-        item.player;
-
-      const score =
-        Number(item.score);
-
-
-      if (
-        bestScores[player] === undefined
-      ) {
-
-        bestScores[player] =
-          score;
-
-      } else if (
-        direction === "high" &&
-        score > bestScores[player]
-      ) {
-
-        bestScores[player] =
-          score;
-
-      } else if (
-        direction === "low" &&
-        score < bestScores[player]
-      ) {
-
-        bestScores[player] =
-          score;
-
-      }
-
-    });
-
-  });
-
-
-  const ranking =
-    Object.entries(bestScores)
-      .sort((a, b) => {
-
-        return direction === "high"
-          ? b[1] - a[1]
-          : a[1] - b[1];
-
-      });
-
-
-  if (ranking.length === 0) {
-
-    container.innerHTML =
-      `<div class="empty">
-        まだ対戦記録がありません
-      </div>`;
-
-    return;
-
-  }
-
-
-  let previousScore = null;
-  let currentRank = 0;
-
-
-  container.innerHTML = "";
-
-
-  ranking.forEach(
-    ([player, score], index) => {
-
-      if (score !== previousScore) {
-
-        currentRank =
-          index + 1;
-
-        previousScore =
-          score;
-
-      }
-
-
-      const item =
-        document.createElement("div");
-
-      item.className =
-        "rank-item";
-
-
-      const number =
-        document.createElement("div");
-
-      number.className =
-        "rank-number";
-
-      number.textContent =
-        `${currentRank}位`;
-
-
-      const playerDiv =
-        document.createElement("div");
-
-      playerDiv.className =
-        "rank-player";
-
-      playerDiv.textContent =
-        player;
-
-
-      const scoreDiv =
-        document.createElement("div");
-
-      scoreDiv.className =
-        "rank-score";
-
-      scoreDiv.textContent =
-        `${score}点`;
-
-
-      item.appendChild(number);
-      item.appendChild(playerDiv);
-      item.appendChild(scoreDiv);
-
-
-      container.appendChild(item);
-
-    }
-  );
-
-}
-
-
-/* =========================
-   ゲーム統計
-========================= */
-
-function renderGameStats(gameName) {
-
-  const container =
-    document.getElementById(
-      "gameStats"
-    );
-
-
-  const matches =
-    data.matches.filter(
-      m => m.game === gameName
-    );
-
-
-  const players =
-    new Set();
-
-
-  let totalScores = 0;
-  let scoreCount = 0;
-
-
-  matches.forEach(match => {
-
-    match.scores.forEach(item => {
-
-      players.add(item.player);
-
-      totalScores +=
-        Number(item.score);
-
-      scoreCount++;
-
-    });
-
-  });
-
-
-  const average =
-    scoreCount > 0
-      ? (totalScores / scoreCount).toFixed(1)
-      : "-";
-
-
-  container.innerHTML = `
-
-    <div class="stat-box">
-
-      <div class="stat-label">
-        対戦回数
-      </div>
-
-      <div class="stat-value">
-        ${matches.length}回
-      </div>
-
-    </div>
-
-    <div class="stat-box">
-
-      <div class="stat-label">
-        参加プレイヤー
-      </div>
-
-      <div class="stat-value">
-        ${players.size}人
-      </div>
-
-    </div>
-
-    <div class="stat-box">
-
-      <div class="stat-label">
-        全参加者の平均得点
-      </div>
-
-      <div class="stat-value">
-        ${average}点
-      </div>
-
-    </div>
-
-  `;
-
-}
-
 
 /* =========================
    対戦履歴
@@ -5399,18 +4559,18 @@ function exportData() {
    バックアップ復元
 ========================= */
 
-function importData(event) {
+async function importData(event) {
 
   const file =
     event.target.files[0];
 
-
   if (!file) return;
-
 
   if (
     !confirm(
-      "現在のデータをバックアップデータで置き換えます。\n\nよろしいですか？"
+      "現在のデータをバックアップデータで置き換えます。\n\n" +
+      "Supabase上の現在のゲーム・プレイヤー・対戦記録がすべて置き換わります。\n\n" +
+      "よろしいですか？"
     )
   ) {
 
@@ -5420,12 +4580,10 @@ function importData(event) {
 
   }
 
-
   const reader =
     new FileReader();
 
-
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
 
     try {
 
@@ -5434,18 +4592,11 @@ function importData(event) {
           e.target.result
         );
 
-
       if (
         !imported ||
-        !Array.isArray(
-          imported.players
-        ) ||
-        !Array.isArray(
-          imported.games
-        ) ||
-        !Array.isArray(
-          imported.matches
-        )
+        !Array.isArray(imported.players) ||
+        !Array.isArray(imported.games) ||
+        !Array.isArray(imported.matches)
       ) {
 
         throw new Error(
@@ -5455,25 +4606,236 @@ function importData(event) {
       }
 
 
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(imported)
-      );
+      /* 現在の得点を削除 */
+
+      const {
+        error: deleteScoresError
+      } =
+        await supabaseClient
+          .from("match_scores")
+          .delete()
+          .neq(
+            "id",
+            "00000000-0000-0000-0000-000000000000"
+          );
+
+      if (deleteScoresError) {
+        throw deleteScoresError;
+      }
 
 
-      data =
-        loadData();
+      /* 現在の対戦記録を削除 */
+
+      const {
+        error: deleteMatchesError
+      } =
+        await supabaseClient
+          .from("matches")
+          .delete()
+          .neq(
+            "id",
+            "00000000-0000-0000-0000-000000000000"
+          );
+
+      if (deleteMatchesError) {
+        throw deleteMatchesError;
+      }
 
 
-      updateAll();
+      /* 現在のゲームを削除 */
+
+      const {
+        error: deleteGamesError
+      } =
+        await supabaseClient
+          .from("games")
+          .delete()
+          .neq(
+            "id",
+            "00000000-0000-0000-0000-000000000000"
+          );
+
+      if (deleteGamesError) {
+        throw deleteGamesError;
+      }
 
 
-      document.getElementById(
-        "scorePlayers"
-      ).innerHTML = "";
+      /* 現在のプレイヤーを削除 */
+
+      const {
+        error: deletePlayersError
+      } =
+        await supabaseClient
+          .from("players")
+          .delete()
+          .neq(
+            "id",
+            "00000000-0000-0000-0000-000000000000"
+          );
+
+      if (deletePlayersError) {
+        throw deletePlayersError;
+      }
 
 
-      addScorePlayer();
+      /* ゲームを復元 */
+
+      const gameMap = {};
+
+      for (
+        const game of imported.games
+      ) {
+
+        const {
+          data: newGame,
+          error: gameError
+        } =
+          await supabaseClient
+            .from("games")
+            .insert({
+              name: game.name,
+              direction:
+                game.direction || "high",
+              active:
+                game.active !== false
+            })
+            .select("id")
+            .single();
+
+        if (gameError) {
+          throw gameError;
+        }
+
+        gameMap[game.name] =
+          newGame.id;
+
+      }
+
+
+      /* プレイヤーを復元 */
+
+      const playerMap = {};
+
+      for (
+        const player of imported.players
+      ) {
+
+        const {
+          data: newPlayer,
+          error: playerError
+        } =
+          await supabaseClient
+            .from("players")
+            .insert({
+              name: player.name,
+              active:
+                player.active !== false
+            })
+            .select("id")
+            .single();
+
+        if (playerError) {
+          throw playerError;
+        }
+
+        playerMap[player.name] =
+          newPlayer.id;
+
+      }
+
+
+      /* 対戦記録を復元 */
+
+      for (
+        const match of imported.matches
+      ) {
+
+        const gameId =
+          gameMap[match.game];
+
+        if (!gameId) {
+          continue;
+        }
+
+        const {
+          data: newMatch,
+          error: matchError
+        } =
+          await supabaseClient
+            .from("matches")
+            .insert({
+              game_id: gameId,
+              match_date:
+                match.date
+            })
+            .select("id")
+            .single();
+
+        if (matchError) {
+          throw matchError;
+        }
+
+
+        /* 得点を復元 */
+
+        if (
+          Array.isArray(match.scores)
+        ) {
+
+          for (
+            const score of match.scores
+          ) {
+
+            const playerId =
+              playerMap[score.player];
+
+            if (!playerId) {
+              continue;
+            }
+
+            const {
+              error: scoreError
+            } =
+              await supabaseClient
+                .from("match_scores")
+                .insert({
+                  match_id:
+                    newMatch.id,
+                  player_id:
+                    playerId,
+                  score:
+                    Number(score.score)
+                });
+
+            if (scoreError) {
+              throw scoreError;
+            }
+
+          }
+
+        }
+
+      }
+
+
+      /* Supabaseから最新データを読み込む */
+
+      await initializeSupabaseData();
+
+
+      const scorePlayers =
+        document.getElementById(
+          "scorePlayers"
+        );
+
+      if (scorePlayers) {
+
+        scorePlayers.innerHTML =
+          "";
+
+        addScorePlayer();
+
+      }
 
 
       alert(
@@ -5483,14 +4845,17 @@ function importData(event) {
 
     } catch (error) {
 
-      alert(
-        "バックアップファイルを読み込めませんでした。"
+      console.error(
+        "Supabaseデータ復元エラー:",
+        error
       );
 
-      console.error(error);
+      alert(
+        "バックアップファイルを読み込めませんでした。\n\n" +
+        error.message
+      );
 
     }
-
 
     event.target.value = "";
 

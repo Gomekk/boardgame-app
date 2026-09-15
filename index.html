@@ -4420,6 +4420,163 @@ rankValues.forEach((item, index) => {
 
 });
 
+const winRateTitle =
+  document.createElement("h3");
+
+winRateTitle.textContent =
+  "🏆 勝率の推移";
+
+winRateTitle.style.marginTop =
+  "24px";
+
+chart.appendChild(winRateTitle);
+
+const winRateChart =
+  document.createElement("div");
+
+winRateChart.style.width =
+  "100%";
+
+winRateChart.style.overflow =
+  "hidden";
+
+winRateChart.style.marginBottom =
+  "24px";
+
+chart.appendChild(winRateChart);
+
+const winRateCanvas =
+  document.createElement("canvas");
+
+winRateCanvas.width =
+  winRateChart.clientWidth;
+
+winRateCanvas.height =
+  240;
+
+winRateChart.appendChild(winRateCanvas);
+
+const winCtx =
+  winRateCanvas.getContext("2d");
+
+const winRateValues =
+  trendData.map(item =>
+    item.winRate
+  );
+
+const winPadding = 30;
+
+const winWidth =
+  winRateCanvas.width -
+  winPadding * 2;
+
+const winHeight =
+  winRateCanvas.height -
+  winPadding * 2;
+
+winCtx.beginPath();
+
+winRateValues.forEach((value, index) => {
+
+  const x =
+    winPadding +
+    (
+      winWidth *
+      index /
+      Math.max(
+        1,
+        winRateValues.length - 1
+      )
+    );
+
+  const y =
+    winPadding +
+    winHeight *
+    (1 - value / 100);
+
+  if (index === 0) {
+    winCtx.moveTo(x, y);
+  } else {
+    winCtx.lineTo(x, y);
+  }
+
+});
+
+winCtx.stroke();
+
+winRateValues.forEach((value, index) => {
+
+  const x =
+    winPadding +
+    (
+      winWidth *
+      index /
+      Math.max(
+        1,
+        winRateValues.length - 1
+      )
+    );
+
+  const y =
+    winPadding +
+    winHeight *
+    (1 - value / 100);
+
+  winCtx.beginPath();
+
+  winCtx.arc(
+    x,
+    y,
+    4,
+    0,
+    Math.PI * 2
+  );
+
+  winCtx.fill();
+
+});
+
+winCtx.font =
+  "12px sans-serif";
+
+winCtx.textAlign =
+  "center";
+
+winRateValues.forEach((value, index) => {
+
+  if (
+    winRateValues.length <= 10 ||
+    index === 0 ||
+    index === winRateValues.length - 1
+  ) {
+
+    const x =
+      winPadding +
+      (
+        winWidth *
+        index /
+        Math.max(
+          1,
+          winRateValues.length - 1
+        )
+      );
+
+    winCtx.fillText(
+      `${value.toFixed(0)}%`,
+      x,
+      18
+    );
+
+    winCtx.fillText(
+      `${index + 1}戦目`,
+      x,
+      winRateCanvas.height - 12
+    );
+
+  }
+
+});
+
   const title =
     document.createElement("h3");
 

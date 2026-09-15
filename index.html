@@ -4341,6 +4341,10 @@ function renderMatchHistory(gameName) {
       "matchHistory"
     );
 
+  if (!container) {
+    return;
+  }
+
 
   const game =
     data.games.find(

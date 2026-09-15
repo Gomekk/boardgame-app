@@ -4173,12 +4173,12 @@ function renderPlayerTrend() {
 
   matches.forEach((match, index) => {
 
-    const players =
-      match.players || [];
+    const scores =
+      match.scores || [];
 
     const player =
-      players.find(p =>
-        p.name === playerName
+      scores.find(p =>
+        p.player === playerName
       );
 
     if (!player) return;
@@ -4190,44 +4190,60 @@ function renderPlayerTrend() {
       wins++;
     }
 
+    const game =
+      data.games.find(g =>
+        g.name === match.game
+      );
+
+    const direction =
+      game ? game.direction : "high";
+
+    const sortedScores =
+      scores.slice().sort((a, b) => {
+
+        if (direction === "low") {
+          return Number(a.score) - Number(b.score);
+        }
+
+        return Number(b.score) - Number(a.score);
+
+      });
+
     const rank =
-      players
-        .slice()
-        .sort((a, b) => {
-
-          const game =
-            data.games.find(g =>
-              g.name === match.game
-            );
-
-          if (game && game.scoreDirection === "low") {
-            return Number(a.score) - Number(b.score);
-          }
-
-          return Number(b.score) - Number(a.score);
-
-        })
-        .findIndex(p =>
-          p.name === playerName
-        ) + 1;
+      sortedScores.findIndex(p =>
+        p.player === playerName
+      ) + 1;
 
     totalRank += rank;
-    totalScore += Number(player.score) || 0;
+
+    totalScore +=
+      Number(player.score) || 0;
 
     trendData.push({
+
       date: match.date,
+
       game: match.game,
+
       rank: rank,
-      score: Number(player.score) || 0,
-      winRate: wins / (index + 1) * 100
+
+      score:
+        Number(player.score) || 0,
+
+      winRate:
+        wins / (index + 1) * 100
+
     });
 
   });
 
   if (trendData.length === 0) {
+
     summary.innerHTML =
       '<div class="section-note">表示できる対戦記録がありません。</div>';
+
     return;
+
   }
 
   const averageRank =
@@ -4240,6 +4256,7 @@ function renderPlayerTrend() {
     totalScore / trendData.length;
 
   summary.innerHTML = `
+
     <div class="player-detail-item">
       <span>対戦数</span>
       <strong>${trendData.length}戦</strong>
@@ -4259,6 +4276,7 @@ function renderPlayerTrend() {
       <span>平均スコア</span>
       <strong>${averageScore.toFixed(1)}</strong>
     </div>
+
   `;
 
   const title =
@@ -4281,15 +4299,19 @@ function renderPlayerTrend() {
       "player-detail-item";
 
     row.innerHTML = `
+
       <span>
         ${index + 1}戦目<br>
-        <small>${item.date}　${item.game}</small>
+        <small>
+          ${item.date}　${item.game}
+        </small>
       </span>
 
       <span style="text-align:right;">
         ${item.rank}位<br>
         ${item.score}点
       </span>
+
     `;
 
     chart.appendChild(row);

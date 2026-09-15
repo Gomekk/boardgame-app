@@ -454,6 +454,12 @@ button.small {
   <div id="winCountRanking"></div>
 </div>
 
+<!-- 連勝ランキング -->
+<div class="card">
+  <h2>🔥 連勝ランキング</h2>
+  <div id="streakRanking"></div>
+</div>
+
 <!-- 平均順位ランキング -->
 <div class="card">
   <h2>📊 平均順位ランキング</h2>
@@ -1972,6 +1978,155 @@ function renderWinCountRanking() {
     score.textContent =
       `${player.wins}勝`;
 
+
+    row.appendChild(rank);
+    row.appendChild(name);
+    row.appendChild(detail);
+    row.appendChild(score);
+
+    container.appendChild(row);
+
+  });
+
+}
+
+function renderStreakRanking() {
+
+  const container =
+    document.getElementById("streakRanking");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const ranking =
+    data.players
+      .filter(player => player.active)
+      .map(player => {
+
+        const matches =
+          getPlayerMatches(player.name)
+            .sort((a, b) =>
+              new Date(a.date) - new Date(b.date)
+            );
+
+        let currentStreak = 0;
+        let bestStreak = 0;
+
+        matches.forEach(match => {
+
+          if (isWinner(match, player.name)) {
+
+            currentStreak++;
+            bestStreak =
+              Math.max(bestStreak, currentStreak);
+
+          } else {
+
+            currentStreak = 0;
+
+          }
+
+        });
+
+        return {
+          name: player.name,
+          currentStreak: currentStreak,
+          bestStreak: bestStreak,
+          matches: matches.length
+        };
+
+      })
+      .filter(player => player.matches > 0)
+      .sort((a, b) => {
+
+        if (b.currentStreak !== a.currentStreak) {
+          return b.currentStreak - a.currentStreak;
+        }
+
+        return b.bestStreak - a.bestStreak;
+
+      });
+
+  if (ranking.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "まだ対戦記録がありません。";
+
+    container.appendChild(empty);
+
+    return;
+
+  }
+
+  let previousStreak = null;
+  let currentRank = 0;
+
+  ranking.forEach((player, index) => {
+
+    if (player.currentStreak !== previousStreak) {
+
+      currentRank =
+        index + 1;
+
+      previousStreak =
+        player.currentStreak;
+
+    }
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "rank-item";
+
+    const rank =
+      document.createElement("span");
+
+    rank.className =
+      "rank-number";
+
+    rank.textContent =
+      `${currentRank}位`;
+
+    const name =
+      document.createElement("span");
+
+    name.className =
+      "rank-player";
+
+    name.textContent =
+      player.name;
+
+    const detail =
+      document.createElement("div");
+
+    detail.className =
+      "section-note";
+
+    detail.style.marginLeft =
+      "auto";
+
+    detail.style.marginRight =
+      "10px";
+
+    detail.textContent =
+      `最高 ${player.bestStreak}連勝`;
+
+    const score =
+      document.createElement("span");
+
+    score.className =
+      "rank-score";
+
+    score.textContent =
+      `${player.currentStreak}連勝`;
 
     row.appendChild(rank);
     row.appendChild(name);
@@ -3616,6 +3771,8 @@ function updateAll() {
   
   renderWinCountRanking();
   
+  renderStreakRanking();
+  
   renderAverageRankRanking();
   
   renderHeadToHeadPlayerSelect();
@@ -4178,6 +4335,8 @@ function showScreen(screenName) {
   renderWinRateRanking();
 
   renderWinCountRanking();
+
+  renderStreakRanking();
 
   renderAverageRankRanking();
 

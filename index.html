@@ -2151,13 +2151,85 @@ function randomSelectGame() {
     return;
   }
 
-  const gameSelect =
-    document.getElementById("matchGame");
+  const existing =
+    document.getElementById("gameRouletteOverlay");
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "gameRouletteOverlay";
+
+  overlay.innerHTML = `
+    <div class="game-roulette-box">
+
+      <div class="game-roulette-title">
+        🎲 今日のゲームは？
+      </div>
+
+      <div id="gameRouletteName">
+        START!
+      </div>
+
+      <div
+        id="gameRouletteSub"
+        class="game-roulette-sub"
+      >
+        ルーレット回転中……
+      </div>
+
+      <div
+        id="gameRouletteButtons"
+        style="display:none;"
+      >
+
+        <button
+          type="button"
+          id="gameRouletteRecord"
+        >
+          🎮 このゲームで記録
+        </button>
+
+        <button
+          type="button"
+          id="gameRouletteAgain"
+          class="secondary"
+        >
+          🔄 もう一回回す
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const nameElement =
+    document.getElementById("gameRouletteName");
+
+  const subElement =
+    document.getElementById("gameRouletteSub");
+
+  const buttonsElement =
+    document.getElementById("gameRouletteButtons");
+
+  const recordButton =
+    document.getElementById("gameRouletteRecord");
+
+  const againButton =
+    document.getElementById("gameRouletteAgain");
 
   let count = 0;
-  const totalCount = 20;
+  const totalCount = 30;
 
-  const roulette =
+  let selectedGame = null;
+
+  const timer =
     setInterval(() => {
 
       const randomIndex =
@@ -2166,40 +2238,57 @@ function randomSelectGame() {
       const game =
         games[randomIndex];
 
-      if (gameSelect) {
-        gameSelect.value = game.name;
-      }
+      nameElement.textContent =
+        game.name;
 
       count++;
 
       if (count >= totalCount) {
 
-        clearInterval(roulette);
+        clearInterval(timer);
 
         const finalIndex =
           Math.floor(Math.random() * games.length);
 
-        const selectedGame =
+        selectedGame =
           games[finalIndex];
 
-        if (gameSelect) {
-          gameSelect.value =
-            selectedGame.name;
-        }
+        nameElement.textContent =
+          `🎉 ${selectedGame.name} 🎉`;
 
-        setTimeout(() => {
+        subElement.textContent =
+          "このゲームに決定！";
 
-          alert(
-            `🎲 今日のゲームは……\n\n「${selectedGame.name}」！`
-          );
-
-        }, 300);
+        buttonsElement.style.display =
+          "flex";
 
       }
 
-    }, 80);
+    }, 100);
 
-  showScreen("recordScreen");
+  recordButton.onclick = () => {
+
+    const gameSelect =
+      document.getElementById("matchGame");
+
+    showScreen("recordScreen");
+
+    if (gameSelect && selectedGame) {
+      gameSelect.value =
+        selectedGame.name;
+    }
+
+    overlay.remove();
+
+  };
+
+  againButton.onclick = () => {
+
+    overlay.remove();
+
+    randomSelectGame();
+
+  };
 
 }
 

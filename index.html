@@ -4278,6 +4278,144 @@ function renderPlayerTrend() {
     </div>
 
   `;
+  
+  const rankTitle =
+  document.createElement("h3");
+
+rankTitle.textContent =
+  "📈 平均順位の推移";
+
+rankTitle.style.marginTop =
+  "24px";
+
+chart.appendChild(rankTitle);
+
+const rankChart =
+  document.createElement("div");
+
+rankChart.style.height =
+  "240px";
+
+rankChart.style.marginBottom =
+  "24px";
+
+chart.appendChild(rankChart);
+
+const rankCanvas =
+  document.createElement("canvas");
+
+rankCanvas.width = 600;
+rankCanvas.height = 240;
+
+rankChart.appendChild(rankCanvas);
+
+const ctx =
+  rankCanvas.getContext("2d");
+
+const rankValues = [];
+
+let rankTotal = 0;
+
+trendData.forEach((item, index) => {
+
+  rankTotal += item.rank;
+
+  rankValues.push({
+    label: `${index + 1}戦目`,
+    value: rankTotal / (index + 1)
+  });
+
+});
+
+const padding = 40;
+
+const chartWidth =
+  rankCanvas.width - padding * 2;
+
+const chartHeight =
+  rankCanvas.height - padding * 2;
+
+const maxRank =
+  Math.max(
+    2,
+    ...rankValues.map(item => item.value)
+  );
+
+ctx.beginPath();
+
+rankValues.forEach((item, index) => {
+
+  const x =
+    padding +
+    (chartWidth *
+      index /
+      Math.max(1, rankValues.length - 1));
+
+  const y =
+    padding +
+    chartHeight *
+    (item.value - 1) /
+    Math.max(1, maxRank - 1);
+
+  if (index === 0) {
+    ctx.moveTo(x, y);
+  } else {
+    ctx.lineTo(x, y);
+  }
+
+});
+
+ctx.stroke();
+
+rankValues.forEach((item, index) => {
+
+  const x =
+    padding +
+    (chartWidth *
+      index /
+      Math.max(1, rankValues.length - 1));
+
+  const y =
+    padding +
+    chartHeight *
+    (item.value - 1) /
+    Math.max(1, maxRank - 1);
+
+  ctx.beginPath();
+  ctx.arc(x, y, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+});
+
+ctx.font =
+  "12px sans-serif";
+
+ctx.textAlign =
+  "center";
+
+rankValues.forEach((item, index) => {
+
+  if (
+    rankValues.length <= 10 ||
+    index === 0 ||
+    index === rankValues.length - 1
+  ) {
+
+    const x =
+      padding +
+      (chartWidth *
+        index /
+        Math.max(1, rankValues.length - 1));
+
+    ctx.fillText(
+      item.label,
+      x,
+      rankCanvas.height - 12
+    );
+
+  }
+
+});
 
   const title =
     document.createElement("h3");

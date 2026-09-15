@@ -1852,9 +1852,7 @@ editButton.style.marginTop =
 
 editButton.onclick = () => {
 
-  alert(
-    "編集機能は次のステップで追加します！"
-  );
+  editMatch(match.id);
 
 };
 
@@ -2634,6 +2632,69 @@ function escapeHTML(str) {
 updateAll();
 
 addScorePlayer();
+
+/* =========================
+   対戦編集
+========================= */
+
+function editMatch(matchId) {
+
+  const match =
+    data.matches.find(
+      m => m.id === matchId
+    );
+
+  if (!match) return;
+
+  // ゲームを選択
+  const gameSelect =
+    document.getElementById("matchGame");
+
+  gameSelect.value =
+    match.game;
+
+  // 現在の入力欄をクリア
+  const container =
+    document.getElementById("scorePlayers");
+
+  container.innerHTML = "";
+
+  // メンバー・得点を読み込む
+  match.scores.forEach(item => {
+
+    addScorePlayer(
+      item.player,
+      item.score
+    );
+
+  });
+
+  // 編集中の対戦IDを保存
+  window.editingMatchId =
+    matchId;
+
+  // ボタンの表示を変更
+  const recordButton =
+    document.querySelector(
+      'button[onclick="recordMatch()"]'
+    );
+
+  if (recordButton) {
+
+    recordButton.textContent =
+      "対戦結果を更新する";
+
+  }
+
+  // 対戦記録の場所までスクロール
+  document.querySelector(
+    "#matchGame"
+  ).scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+
+}
 
 </script>
 

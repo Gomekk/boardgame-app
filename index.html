@@ -3241,11 +3241,26 @@ function editMatch(matchId) {
       scores;
 
 
-        saveData();
+            saveData();
+
+    // ゲーム詳細をすべて最新状態に更新
+    renderBestRanking(
+      match.game,
+      direction
+    );
+
+    renderGameStats(
+      match.game
+    );
 
     renderMatchHistory(
       match.game
     );
+
+    // ゲーム一覧・プレイヤー戦績も更新
+    renderGameList();
+
+    renderPlayerStatsList();
 
   };
 

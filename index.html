@@ -346,23 +346,28 @@ button.small {
 }
 
 .game-roulette-spinning {
-  animation: rouletteSlot 0.1s linear;
+  animation: rouletteSlot 0.18s ease-out;
 }
 
 @keyframes rouletteSlot {
   0% {
-    transform: translateY(-35px);
+    transform: translateY(-22px);
     opacity: 0;
   }
 
-  50% {
-    transform: translateY(0);
+  35% {
+    transform: translateY(-6px);
+    opacity: 0.7;
+  }
+
+  70% {
+    transform: translateY(2px);
     opacity: 1;
   }
 
   100% {
-    transform: translateY(35px);
-    opacity: 0;
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 

@@ -303,6 +303,10 @@ button.small {
     ⚙️ 情報登録
   </button>
 
+<button onclick="showScreen('backupScreen')">
+  💾 データ管理
+</button>
+
   <button
     class="secondary"
     onclick="showScreen('backupScreen')"
@@ -465,36 +469,7 @@ button.small {
 
 </div>
 
-  <!-- バックアップ -->
-  <div class="card">
-    <h2>💾 データ管理</h2>
-
-    <p class="section-note">
-      スマホの機種変更やSafariのデータ消去に備えて、
-      定期的にバックアップしてください。
-    </p>
-
-    <div class="backup-buttons">
-
-      <button onclick="exportData()">
-        データを書き出す
-      </button>
-
-      <button class="secondary"
-              onclick="document.getElementById('fileInput').click()">
-        データを復元
-      </button>
-
-    </div>
-
-    <input
-      type="file"
-      id="fileInput"
-      accept=".json"
-      onchange="importData(event)"
-    >
-
-  </div>
+  
 
 </div>
 </div>

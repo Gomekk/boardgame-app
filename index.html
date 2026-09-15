@@ -579,6 +579,63 @@ button.small {
 
 <body>
   
+  <div id="loginScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('homeScreen')"
+  >
+    ← ホームに戻る
+  </button>
+
+  <div class="card">
+
+    <h2>🔐 ログイン</h2>
+
+    <p class="section-note">
+      記録・編集するにはログインしてください。
+    </p>
+
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="メールアドレス"
+      autocomplete="email"
+    >
+
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="パスワード"
+      autocomplete="current-password"
+    >
+
+    <button
+      type="button"
+      id="loginButton"
+    >
+      ログイン
+    </button>
+
+    <button
+      type="button"
+      class="secondary"
+      id="signupButton"
+    >
+      新規登録
+    </button>
+
+    <div
+      id="loginMessage"
+      class="section-note"
+      style="margin-top:12px;"
+    ></div>
+
+  </div>
+
+</div>
+  
   <!-- ホーム画面 -->
 <div id="homeScreen" class="screen">
 
@@ -661,7 +718,7 @@ button.small {
 
     <button
       type="button"
-      onclick="showScreen('recordScreen')"
+      onclick="openRecordScreen()"
     >
       🎮 ゲームを記録
     </button>
@@ -1334,6 +1391,123 @@ async function testSupabaseConnection() {
 }
 
 testSupabaseConnection();
+
+async function loginUser() {
+
+  const email =
+    document.getElementById("loginEmail").value.trim();
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  const message =
+    document.getElementById("loginMessage");
+
+  if (!email || !password) {
+
+    message.textContent =
+      "メールアドレスとパスワードを入力してください。";
+
+    return;
+
+  }
+
+  message.textContent =
+    "ログイン中……";
+
+  const {
+    error
+  } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+
+    message.textContent =
+      "ログインに失敗しました。メールアドレスまたはパスワードを確認してください。";
+
+    console.error(error);
+
+    return;
+
+  }
+
+  message.textContent =
+    "ログインしました。";
+
+  showScreen("recordScreen");
+
+}
+
+document
+  .getElementById("loginButton")
+  .addEventListener(
+    "click",
+    loginUser
+  );
+  
+async function signupUser() {
+
+  const email =
+    document.getElementById("loginEmail").value.trim();
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  const message =
+    document.getElementById("loginMessage");
+
+  if (!email || !password) {
+
+    message.textContent =
+      "メールアドレスとパスワードを入力してください。";
+
+    return;
+
+  }
+
+  if (password.length < 6) {
+
+    message.textContent =
+      "パスワードは6文字以上にしてください。";
+
+    return;
+
+  }
+
+  message.textContent =
+    "アカウントを作成中……";
+
+  const {
+    error
+  } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+
+    message.textContent =
+      "登録に失敗しました。";
+
+    console.error(error);
+
+    return;
+
+  }
+
+  message.textContent =
+    "登録しました。確認メールが届いた場合は、メール内のリンクを開いてください。";
+
+}
+
+document
+  .getElementById("signupButton")
+  .addEventListener(
+    "click",
+    signupUser
+  );
 
 
 function saveData() {
@@ -6176,6 +6350,31 @@ function editMatch(matchId) {
   );
 
 }
+
+async function openRecordScreen() {
+
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+
+    alert(
+      "対戦を記録するにはログインが必要です。"
+    );
+
+    showScreen("loginScreen");
+
+    return;
+
+  }
+
+  showScreen("recordScreen");
+
+}
+
 
 /* =========================
    画面切り替え

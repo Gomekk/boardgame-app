@@ -2787,52 +2787,389 @@ function editMatch(matchId) {
 
   if (!match) return;
 
-  // ゲームを選択
-  const gameSelect =
-    document.getElementById("matchGame");
+  const wrapper =
+    document.querySelector(
+      `.history-item[data-match-id="${matchId}"]`
+    );
 
-  gameSelect.value =
-    match.game;
-    
-  const matchDate =
-  document.getElementById("matchDate");
+  if (!wrapper) return;
 
-matchDate.value =
-  new Date(match.date)
-    .toLocaleDateString("en-CA");
+  const game =
+    data.games.find(
+      g => g.name === match.game
+    );
 
-  // 現在の入力欄をクリア
-  const container =
-    document.getElementById("scorePlayers");
+  const direction =
+    game
+      ? game.direction
+      : "high";
 
-  container.innerHTML = "";
+  wrapper.innerHTML = "";
 
-  // メンバー・得点を読み込む
+  const title =
+    document.createElement("div");
+
+  title.textContent =
+    "✏️ 対戦結果を編集中";
+
+  title.style.fontWeight =
+    "bold";
+
+  title.style.marginBottom =
+    "10px";
+
+  wrapper.appendChild(title);
+
+
+  // 対戦日
+  const dateLabel =
+    document.createElement("label");
+
+  dateLabel.textContent =
+    "📅 対戦日";
+
+  dateLabel.className =
+    "section-note";
+
+  wrapper.appendChild(dateLabel);
+
+
+  const dateInput =
+    document.createElement("input");
+
+  dateInput.type =
+    "date";
+
+  dateInput.value =
+    new Date(match.date)
+      .toLocaleDateString("en-CA");
+
+  wrapper.appendChild(dateInput);
+
+
+  // プレイヤー入力欄
+  const playersArea =
+    document.createElement("div");
+
+  playersArea.style.marginTop =
+    "12px";
+
+  wrapper.appendChild(playersArea);
+
+
+  function addEditPlayer(
+    playerName = "",
+    score = ""
+  ) {
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "player-row";
+
+    const select =
+      document.createElement("select");
+
+    select.className =
+      "match-player";
+
+    const defaultOption =
+      document.createElement("option");
+
+    defaultOption.value = "";
+
+    defaultOption.textContent =
+      "プレイヤーを選択";
+
+    select.appendChild(
+      defaultOption
+    );
+
+
+    data.players
+      .filter(p => p.active || p.name === playerName)
+      .forEach(p => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          p.name;
+
+        option.textContent =
+          p.name;
+
+        if (p.name === playerName) {
+          option.selected = true;
+        }
+
+        select.appendChild(option);
+
+      });
+
+
+    const scoreInput =
+      document.createElement("input");
+
+    scoreInput.type =
+      "number";
+
+    scoreInput.className =
+      "match-score";
+
+    scoreInput.placeholder =
+      "得点";
+
+    scoreInput.value =
+      score;
+
+
+    const removeButton =
+      document.createElement("button");
+
+    removeButton.type =
+      "button";
+
+    removeButton.className =
+      "small danger";
+
+    removeButton.textContent =
+      "×";
+
+    removeButton.onclick = () => {
+      row.remove();
+    };
+
+
+    row.appendChild(select);
+    row.appendChild(scoreInput);
+    row.appendChild(removeButton);
+
+    playersArea.appendChild(row);
+
+  }
+
+
   match.scores.forEach(item => {
 
-    addScorePlayer(
+    addEditPlayer(
       item.player,
       item.score
     );
 
   });
 
-  // 編集中の対戦IDを保存
-  window.editingMatchId =
-    matchId;
 
-  // ボタンの表示を変更
-  const recordButton =
-    document.querySelector(
-      'button[onclick="recordMatch()"]'
+  // プレイヤー追加
+  const addButton =
+    document.createElement("button");
+
+  addButton.type =
+    "button";
+
+  addButton.className =
+    "secondary";
+
+  addButton.textContent =
+    "＋ プレイヤーを追加";
+
+  addButton.style.marginTop =
+    "8px";
+
+  addButton.onclick = () => {
+    addEditPlayer();
+  };
+
+  wrapper.appendChild(addButton);
+
+
+  // キャンセル
+  const cancelButton =
+    document.createElement("button");
+
+  cancelButton.type =
+    "button";
+
+  cancelButton.className =
+    "secondary";
+
+  cancelButton.textContent =
+    "キャンセル";
+
+  cancelButton.style.marginTop =
+    "8px";
+
+  cancelButton.onclick = () => {
+
+    renderMatchHistory(
+      match.game
     );
 
-  if (recordButton) {
+  };
 
-    recordButton.textContent =
-      "対戦結果を更新する";
+  wrapper.appendChild(cancelButton);
 
-  }
+
+  // 更新
+  const updateButton =
+    document.createElement("button");
+
+  updateButton.type =
+    "button";
+
+  updateButton.textContent =
+    "更新する";
+
+  updateButton.style.marginTop =
+    "8px";
+
+  updateButton.onclick = () => {
+
+    const rows =
+      playersArea.querySelectorAll(
+        ".player-row"
+      );
+
+    if (rows.length === 0) {
+
+      alert(
+        "プレイヤーを追加してください"
+      );
+
+      return;
+
+    }
+
+
+    if (!dateInput.value) {
+
+      alert(
+        "対戦日を入力してください"
+      );
+
+      return;
+
+    }
+
+
+    const scores = [];
+
+    const usedPlayers =
+      new Set();
+
+
+    for (const row of rows) {
+
+      const player =
+        row.querySelector(
+          ".match-player"
+        ).value;
+
+      const scoreText =
+        row.querySelector(
+          ".match-score"
+        ).value;
+
+
+      if (
+        !player ||
+        scoreText === ""
+      ) {
+
+        alert(
+          "プレイヤーと得点を入力してください"
+        );
+
+        return;
+
+      }
+
+
+      if (
+        usedPlayers.has(player)
+      ) {
+
+        alert(
+          `${player}が重複しています`
+        );
+
+        return;
+
+      }
+
+
+      usedPlayers.add(player);
+
+
+      scores.push({
+
+        player,
+
+        score:
+          Number(scoreText)
+
+      });
+
+    }
+
+
+    let bestScore =
+      direction === "high"
+        ? -Infinity
+        : Infinity;
+
+
+    scores.forEach(item => {
+
+      if (
+        direction === "high"
+      ) {
+
+        if (
+          item.score > bestScore
+        ) {
+          bestScore =
+            item.score;
+        }
+
+      } else {
+
+        if (
+          item.score < bestScore
+        ) {
+          bestScore =
+            item.score;
+        }
+
+      }
+
+    });
+
+
+    scores.forEach(item => {
+
+      item.winner =
+        item.score === bestScore;
+
+    });
+
+
+    match.date =
+      new Date(
+        dateInput.value +
+        "T12:00:00"
+      ).toISOString();
+
+    match.scores =
+      scores;
+
+
+    saveData();
+
+    renderMatchHistory(
+      match.game
+   
 
   // 対戦記録の場所までスクロール
   document.querySelector(

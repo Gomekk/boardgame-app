@@ -2094,20 +2094,11 @@ async function loadGamesFromSupabase() {
     error
   );
 
-  if (error) {
-
-  console.error(
-    "ゲーム取得エラー:",
-    error
-  );
-
   return null;
 
 }
 
-  return games;
-
-}
+return games;
 
 async function loadDataFromSupabase() {
 
@@ -5501,7 +5492,13 @@ function renderHomeRankings() {
     }
 
     item.target.innerHTML =
-      source.innerHTML;
+  source.innerHTML;
+
+console.log(
+  "ホームランキング:",
+  item.source,
+  source.innerHTML
+);
 
   });
 

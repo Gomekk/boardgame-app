@@ -6753,150 +6753,243 @@ function editMatch(matchId) {
   updateButton.style.marginTop =
     "8px";
 
-  updateButton.onclick = () => {
+  updateButton.onclick = async () => {
 
-    const rows =
-      playersArea.querySelectorAll(
-        ".player-row"
-      );
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
 
-    if (rows.length === 0) {
+  if (!session) {
+
+    alert(
+      "対戦記録を編集するにはログインが必要です。"
+    );
+
+    showScreen("loginScreen");
+
+    return;
+
+  }
+
+  const rows =
+    playersArea.querySelectorAll(
+      ".player-row"
+    );
+
+  if (rows.length === 0) {
+
+    alert(
+      "プレイヤーを追加してください"
+    );
+
+    return;
+
+  }
+
+  if (!dateInput.value) {
+
+    alert(
+      "対戦日を入力してください"
+    );
+
+    return;
+
+  }
+
+  const scores = [];
+
+  const usedPlayers =
+    new Set();
+
+  for (const row of rows) {
+
+    const player =
+      row.querySelector(
+        ".match-player"
+      ).value;
+
+    const scoreText =
+      row.querySelector(
+        ".match-score"
+      ).value;
+
+    if (
+      !player ||
+      scoreText === ""
+    ) {
 
       alert(
-        "プレイヤーを追加してください"
+        "プレイヤーと得点を入力してください"
       );
 
       return;
 
     }
 
-
-    if (!dateInput.value) {
+    if (
+      usedPlayers.has(player)
+    ) {
 
       alert(
-        "対戦日を入力してください"
+        `${player}が重複しています`
       );
 
       return;
 
     }
 
+    usedPlayers.add(player);
 
-    const scores = [];
+    scores.push({
+      player,
+      score:
+        Number(scoreText)
+    });
 
-    const usedPlayers =
-      new Set();
+  }
 
+  let bestScore =
+    direction === "high"
+      ? -Infinity
+      : Infinity;
 
-    for (const row of rows) {
+  scores.forEach(item => {
 
-      const player =
-        row.querySelector(
-          ".match-player"
-        ).value;
-
-      const scoreText =
-        row.querySelector(
-          ".match-score"
-        ).value;
-
-
-      if (
-        !player ||
-        scoreText === ""
-      ) {
-
-        alert(
-          "プレイヤーと得点を入力してください"
-        );
-
-        return;
-
-      }
-
-
-      if (
-        usedPlayers.has(player)
-      ) {
-
-        alert(
-          `${player}が重複しています`
-        );
-
-        return;
-
-      }
-
-
-      usedPlayers.add(player);
-
-
-      scores.push({
-
-        player,
-
-        score:
-          Number(scoreText)
-
-      });
-
-    }
-
-
-    let bestScore =
+    if (
       direction === "high"
-        ? -Infinity
-        : Infinity;
-
-
-    scores.forEach(item => {
+    ) {
 
       if (
-        direction === "high"
+        item.score > bestScore
       ) {
-
-        if (
-          item.score > bestScore
-        ) {
-          bestScore =
-            item.score;
-        }
-
-      } else {
-
-        if (
-          item.score < bestScore
-        ) {
-          bestScore =
-            item.score;
-        }
-
+        bestScore =
+          item.score;
       }
 
-    });
+    } else {
 
+      if (
+        item.score < bestScore
+      ) {
+        bestScore =
+          item.score;
+      }
 
-    scores.forEach(item => {
+    }
 
-      item.winner =
-        item.score === bestScore;
+  });
 
-    });
+  scores.forEach(item => {
 
+    item.winner =
+      item.score === bestScore;
+
+  });
+
+  try {
+
+    /* =========================
+       対戦日を更新
+    ========================= */
+
+    const {
+      error: matchError
+    } =
+      await supabaseClient
+        .from("matches")
+        .update({
+          match_date:
+            dateInput.value
+        })
+        .eq(
+          "id",
+          match.id
+        );
+
+    if (matchError) {
+      throw matchError;
+    }
+
+    /* =========================
+       既存の得点を削除
+    ========================= */
+
+    const {
+      error: deleteScoreError
+    } =
+      await supabaseClient
+        .from("match_scores")
+        .delete()
+        .eq(
+          "match_id",
+          match.id
+        );
+
+    if (deleteScoreError) {
+      throw deleteScoreError;
+    }
+
+    /* =========================
+       新しい得点を保存
+    ========================= */
+
+    for (const item of scores) {
+
+      const {
+        data: dbPlayer,
+        error: playerError
+      } =
+        await supabaseClient
+          .from("players")
+          .select("id")
+          .eq(
+            "name",
+            item.player
+          )
+          .single();
+
+      if (playerError) {
+        throw playerError;
+      }
+
+      const {
+        error: scoreError
+      } =
+        await supabaseClient
+          .from("match_scores")
+          .insert({
+            match_id:
+              match.id,
+            player_id:
+              dbPlayer.id,
+            score:
+              item.score
+          });
+
+      if (scoreError) {
+        throw scoreError;
+      }
+
+    }
+
+    /* =========================
+       画面上のデータも更新
+    ========================= */
 
     match.date =
-      new Date(
-        dateInput.value +
-        "T12:00:00"
-      ).toISOString();
+      dateInput.value;
 
     match.scores =
       scores;
 
+    alert(
+      "対戦結果を更新しました！"
+    );
 
-            saveData();
+    updateAll();
 
-    // ゲーム詳細をすべて最新状態に更新
     renderBestRanking(
       match.game,
       direction
@@ -6910,12 +7003,25 @@ function editMatch(matchId) {
       match.game
     );
 
-    // ゲーム一覧・プレイヤー戦績も更新
     renderGameList();
 
     renderPlayerStatsList();
 
-  };
+  } catch (error) {
+
+    console.error(
+      "Supabase更新エラー:",
+      error
+    );
+
+    alert(
+      "❌ 対戦結果の更新に失敗しました。\n\n" +
+      error.message
+    );
+
+  }
+
+};
 
   wrapper.appendChild(
     updateButton

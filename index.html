@@ -1392,6 +1392,36 @@ async function testSupabaseConnection() {
 
 testSupabaseConnection();
 
+async function testGamesFromDatabase() {
+
+  const {
+    data: games,
+    error
+  } = await supabaseClient
+    .from("games")
+    .select("*")
+    .limit(5);
+
+  if (error) {
+
+    console.error(
+      "games取得エラー:",
+      error
+    );
+
+    return;
+
+  }
+
+  console.log(
+    "DBのgames:",
+    games
+  );
+
+}
+
+testGamesFromDatabase();
+
 async function loginUser() {
 
   const email =

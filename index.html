@@ -1797,6 +1797,45 @@ function renderMatchHistory(gameName) {
     wrapper.className =
       "history-item";
 
+const deleteButton =
+  document.createElement("button");
+
+deleteButton.className =
+  "small danger";
+
+deleteButton.textContent =
+  "この対戦を削除";
+
+deleteButton.type =
+  "button";
+
+deleteButton.style.marginTop =
+  "8px";
+
+deleteButton.onclick = () => {
+
+  if (
+    !confirm(
+      "この対戦記録を削除しますか？\n\nこの操作は元に戻せません。"
+    )
+  ) {
+    return;
+  }
+
+  data.matches =
+    data.matches.filter(
+      m => m.id !== match.id
+    );
+
+  saveData();
+
+  updateAll();
+
+  renderMatchHistory(gameName);
+
+};
+
+wrapper.appendChild(deleteButton);
 
     const date =
       document.createElement("div");

@@ -573,6 +573,8 @@ button.small {
 }
 
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -1132,6 +1134,19 @@ const STORAGE_KEY = "boardgameData";
    データ読み込み
 ========================= */
 
+const SUPABASE_URL =
+  "https://tnjcfgtebiqxvipvklmn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable__8N4VJyVjYEdzDjyA2Andg_ZSq41DFT";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+
 let data = loadData();
 
 
@@ -1289,6 +1304,36 @@ function loadData() {
   }
 
 }
+
+async function testSupabaseConnection() {
+
+  const { data, error } =
+    await supabaseClient
+      .from("games")
+      .select("id")
+      .limit(1);
+
+  if (error) {
+
+    console.error(
+      "Supabase接続エラー:",
+      error
+    );
+
+    return false;
+
+  }
+
+  console.log(
+    "Supabase接続OK:",
+    data
+  );
+
+  return true;
+
+}
+
+testSupabaseConnection();
 
 
 function saveData() {

@@ -1227,6 +1227,8 @@ function renderGameSelect() {
       "matchGame"
     );
 
+  if (!select) return;
+
 
   const current =
     select.value;
@@ -1267,6 +1269,75 @@ function renderGameSelect() {
     select.value = current;
 
   }
+
+}
+
+
+/* =========================
+   対戦入力中のプレイヤー選択肢を更新
+========================= */
+
+function refreshMatchPlayerSelects() {
+
+  const selects =
+    document.querySelectorAll(
+      "#scorePlayers .match-player"
+    );
+
+
+  selects.forEach(select => {
+
+    const current =
+      select.value;
+
+
+    select.innerHTML = "";
+
+
+    const defaultOption =
+      document.createElement("option");
+
+    defaultOption.value = "";
+
+    defaultOption.textContent =
+      "プレイヤーを選択";
+
+
+    select.appendChild(
+      defaultOption
+    );
+
+
+    data.players
+      .filter(p => p.active)
+      .forEach(player => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          player.name;
+
+        option.textContent =
+          player.name;
+
+
+        if (
+          player.name === current
+        ) {
+
+          option.selected = true;
+
+        }
+
+
+        select.appendChild(
+          option
+        );
+
+      });
+
+  });
 
 }
 

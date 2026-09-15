@@ -1432,6 +1432,263 @@ async function testGamesFromDatabase() {
 
 testGamesFromDatabase();
 
+async function migrateLocalDataToSupabase() {
+
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+
+    alert(
+      "データ移行にはログインが必要です。"
+    );
+
+    showScreen("loginScreen");
+
+    return;
+
+  }
+
+  if (!confirm(
+    "この端末のデータをSupabaseへ移行します。\n\n" +
+    "ゲーム・プレイヤー・対戦記録を登録します。\n" +
+    "実行してよろしいですか？"
+  )) {
+
+    return;
+
+  }
+
+  try {
+
+    /*
+      既存DBを空にする
+      ※現在DBにはデータがない前提
+    */
+
+    const {
+      error: deleteScoresError
+    } = await supabaseClient
+      .from("match_scores")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+
+    if (deleteScoresError) {
+      throw deleteScoresError;
+    }
+
+
+    const {
+      error: deleteMatchesError
+    } = await supabaseClient
+      .from("matches")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+
+    if (deleteMatchesError) {
+      throw deleteMatchesError;
+    }
+
+
+    const {
+      error: deleteGamesError
+    } = await supabaseClient
+      .from("games")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+
+    if (deleteGamesError) {
+      throw deleteGamesError;
+    }
+
+
+    const {
+      error: deletePlayersError
+    } = await supabaseClient
+      .from("players")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+
+    if (deletePlayersError) {
+      throw deletePlayersError;
+    }
+
+
+    /*
+      プレイヤー登録
+    */
+
+    const playerMap = {};
+
+    for (const player of data.players) {
+
+      const {
+        data: insertedPlayer,
+        error
+      } = await supabaseClient
+        .from("players")
+        .insert({
+          name: player.name,
+          active: player.active !== false
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      playerMap[player.name] =
+        insertedPlayer.id;
+
+    }
+
+
+    /*
+      ゲーム登録
+    */
+
+    const gameMap = {};
+
+    for (const game of data.games) {
+
+      const {
+        data: insertedGame,
+        error
+      } = await supabaseClient
+        .from("games")
+        .insert({
+          name: game.name,
+          direction: game.direction || "high",
+          active: game.active !== false
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      gameMap[game.name] =
+        insertedGame.id;
+
+    }
+
+
+    /*
+      対戦記録登録
+    */
+
+    let matchCount = 0;
+    let scoreCount = 0;
+
+    for (const match of data.matches) {
+
+      const gameId =
+        gameMap[match.game];
+
+      if (!gameId) {
+        continue;
+      }
+
+
+      const {
+        data: insertedMatch,
+        error: matchError
+      } = await supabaseClient
+        .from("matches")
+        .insert({
+          game_id: gameId,
+          match_date:
+            String(match.date).split(" ")[0]
+        })
+        .select()
+        .single();
+
+      if (matchError) {
+        throw matchError;
+      }
+
+
+      matchCount++;
+
+
+      if (
+        Array.isArray(match.scores)
+      ) {
+
+        for (const score of match.scores) {
+
+          const playerId =
+            playerMap[score.player];
+
+          if (!playerId) {
+            continue;
+          }
+
+
+          const {
+            error: scoreError
+          } = await supabaseClient
+            .from("match_scores")
+            .insert({
+              match_id:
+                insertedMatch.id,
+              player_id:
+                playerId,
+              score:
+                Number(score.score)
+            });
+
+          if (scoreError) {
+            throw scoreError;
+          }
+
+          scoreCount++;
+
+        }
+
+      }
+
+    }
+
+
+    alert(
+      "✅ データ移行完了！\n\n" +
+      "ゲーム: " +
+      data.games.length +
+      "件\n" +
+      "プレイヤー: " +
+      data.players.length +
+      "件\n" +
+      "対戦: " +
+      matchCount +
+      "件\n" +
+      "得点: " +
+      scoreCount +
+      "件"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Supabase移行エラー:",
+      error
+    );
+
+    alert(
+      "❌ データ移行に失敗しました。\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
 async function loginUser() {
 
   const email =

@@ -1066,6 +1066,14 @@ if (wasEditing) {
 
   window.editingMatchId = null;
 
+const recordButton = document.querySelector(
+  'button[onclick="recordMatch()"]'
+);
+
+if (recordButton) {
+  recordButton.textContent = "対戦を記録する";
+}
+
 } else {
 
   data.matches.push({

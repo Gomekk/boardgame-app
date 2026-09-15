@@ -1914,20 +1914,36 @@ async function registerGame() {
    ゲームを登録から外す
 ========================= */
 
-function archiveGame(name) {
+async function archiveGame(name) {
+
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+
+    alert(
+      "ゲームを削除するにはログインが必要です。"
+    );
+
+    showScreen("loginScreen");
+
+    return;
+
+  }
 
   const game =
     data.games.find(
       g => g.name === name
     );
 
-
   if (!game) return;
-
 
   if (
     !confirm(
-      `${name}を登録一覧から外しますか？\n\n過去の対戦記録は残ります。`
+      `${name}を削除しますか？\n\nこのゲームの対戦記録もすべて削除されます。\n\nこの操作は元に戻せません。`
     )
   ) {
 
@@ -1935,12 +1951,108 @@ function archiveGame(name) {
 
   }
 
+  try {
 
-  game.active = false;
+    /*
+     * このゲームに紐づく対戦を取得
+     */
 
-  saveData();
+    const {
+      data: matches,
+      error: matchesError
+    } =
+      await supabaseClient
+        .from("matches")
+        .select("id")
+        .eq(
+          "game_id",
+          game.id
+        );
 
-  updateAll();
+    if (matchesError) {
+      throw matchesError;
+    }
+
+    /*
+     * 対戦に紐づく得点を削除
+     */
+
+    for (const match of matches) {
+
+      const {
+        error: scoreError
+      } =
+        await supabaseClient
+          .from("match_scores")
+          .delete()
+          .eq(
+            "match_id",
+            match.id
+          );
+
+      if (scoreError) {
+        throw scoreError;
+      }
+
+    }
+
+    /*
+     * 対戦を削除
+     */
+
+    const {
+      error: matchError
+    } =
+      await supabaseClient
+        .from("matches")
+        .delete()
+        .eq(
+          "game_id",
+          game.id
+        );
+
+    if (matchError) {
+      throw matchError;
+    }
+
+    /*
+     * ゲームを削除
+     */
+
+    const {
+      error: gameError
+    } =
+      await supabaseClient
+        .from("games")
+        .delete()
+        .eq(
+          "id",
+          game.id
+        );
+
+    if (gameError) {
+      throw gameError;
+    }
+
+    await initializeSupabaseData();
+
+    alert(
+      "ゲームと対戦記録を削除しました。"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Supabaseゲーム削除エラー:",
+      error
+    );
+
+    alert(
+      "❌ ゲームの削除に失敗しました。\n\n" +
+      error.message
+    );
+
+  }
 
 }
 

@@ -1898,24 +1898,6 @@ async function registerGame() {
 
 async function archiveGame(name) {
 
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "ゲームを削除するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
-
   const game =
     data.games.find(
       g => g.name === name
@@ -2144,24 +2126,6 @@ async function registerPlayer() {
 ========================= */
 
 async function archivePlayer(name) {
-
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "プレイヤーを削除するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
 
   const player =
     data.players.find(
@@ -4740,24 +4704,6 @@ deleteButton.style.marginTop =
 
 deleteButton.onclick = async () => {
 
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "対戦記録を削除するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
-
   if (
     !confirm(
       "この対戦記録を削除しますか？\n\nこの操作は元に戻せません。"
@@ -7085,24 +7031,6 @@ function editMatch(matchId) {
     "8px";
 
   updateButton.onclick = async () => {
-
-  const {
-    data: {
-      session
-    }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    alert(
-      "対戦記録を編集するにはログインが必要です。"
-    );
-
-    showScreen("loginScreen");
-
-    return;
-
-  }
 
   const rows =
     playersArea.querySelectorAll(

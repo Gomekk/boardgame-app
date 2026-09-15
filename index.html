@@ -1835,6 +1835,31 @@ deleteButton.onclick = () => {
 
 };
 
+const editButton =
+  document.createElement("button");
+
+editButton.className =
+  "small";
+
+editButton.textContent =
+  "✏️ 編集";
+
+editButton.type =
+  "button";
+
+editButton.style.marginTop =
+  "8px";
+
+editButton.onclick = () => {
+
+  alert(
+    "編集機能は次のステップで追加します！"
+  );
+
+};
+
+wrapper.appendChild(editButton);
+
 wrapper.appendChild(deleteButton);
 
     const date =

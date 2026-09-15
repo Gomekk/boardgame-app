@@ -294,6 +294,8 @@ button.small {
   <button onclick="showScreen('recordScreen')">
     🎲 ゲームを記録
   </button>
+  
+  <button onclick="randomSelectGame()">🎲 ランダムでゲームを決める</button>
 
   <button onclick="showScreen('rankingScreen')">
     🏆 ランキング
@@ -2136,6 +2138,39 @@ function renderStreakRanking() {
     container.appendChild(row);
 
   });
+
+}
+
+function randomSelectGame() {
+
+  const games =
+    data.games.filter(game => game.active);
+
+  if (games.length === 0) {
+
+    alert("登録されているゲームがありません。");
+
+    return;
+  }
+
+  const randomIndex =
+    Math.floor(Math.random() * games.length);
+
+  const selectedGame =
+    games[randomIndex];
+
+  showScreen("recordScreen");
+
+  const gameSelect =
+    document.getElementById("matchGame");
+
+  if (gameSelect) {
+    gameSelect.value = selectedGame.name;
+  }
+
+  alert(
+    `🎲 今日のゲームは……\n\n「${selectedGame.name}」！`
+  );
 
 }
 

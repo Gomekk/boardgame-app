@@ -1165,10 +1165,11 @@ if (wasEditing) {
   if (matchIndex !== -1) {
 
     data.matches[matchIndex] = {
-      ...data.matches[matchIndex],
-      game: gameName,
-      scores
-    };
+  ...data.matches[matchIndex],
+  date: new Date(matchDate + "T12:00:00").toISOString(),
+  game: gameName,
+  scores
+};
 
   }
 
@@ -2789,6 +2790,13 @@ function editMatch(matchId) {
 
   gameSelect.value =
     match.game;
+    
+  const matchDate =
+  document.getElementById("matchDate");
+
+matchDate.value =
+  new Date(match.date)
+    .toLocaleDateString("en-CA");
 
   // 現在の入力欄をクリア
   const container =

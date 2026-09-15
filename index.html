@@ -2094,12 +2094,11 @@ async function loadGamesFromSupabase() {
     error
   );
 
-  alert(
-    "Supabaseエラー\n\n" +
-    "message: " + error.message + "\n" +
-    "details: " + error.details + "\n" +
-    "hint: " + error.hint + "\n" +
-    "code: " + error.code
+  if (error) {
+
+  console.error(
+    "ゲーム取得エラー:",
+    error
   );
 
   return null;

@@ -1043,18 +1043,39 @@ function recordMatch() {
   });
 
 
+  const wasEditing =
+  window.editingMatchId !== null &&
+  window.editingMatchId !== undefined;
+
+if (wasEditing) {
+
+  const matchIndex =
+    data.matches.findIndex(
+      m => m.id === window.editingMatchId
+    );
+
+  if (matchIndex !== -1) {
+
+    data.matches[matchIndex] = {
+      ...data.matches[matchIndex],
+      game: gameName,
+      scores
+    };
+
+  }
+
+  window.editingMatchId = null;
+
+} else {
+
   data.matches.push({
-
     id: Date.now(),
-
-    date:
-      new Date().toISOString(),
-
+    date: new Date().toISOString(),
     game: gameName,
-
     scores
-
   });
+
+}
 
 
   saveData();

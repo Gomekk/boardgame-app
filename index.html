@@ -4402,7 +4402,25 @@ deleteButton.type =
 deleteButton.style.marginTop =
   "8px";
 
-deleteButton.onclick = () => {
+deleteButton.onclick = async () => {
+
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+
+    alert(
+      "対戦記録を削除するにはログインが必要です。"
+    );
+
+    showScreen("loginScreen");
+
+    return;
+
+  }
 
   if (
     !confirm(
@@ -4412,16 +4430,76 @@ deleteButton.onclick = () => {
     return;
   }
 
-  data.matches =
-    data.matches.filter(
-      m => m.id !== match.id
+  try {
+
+    /* =========================
+       得点を削除
+    ========================= */
+
+    const {
+      error: scoreError
+    } =
+      await supabaseClient
+        .from("match_scores")
+        .delete()
+        .eq(
+          "match_id",
+          match.id
+        );
+
+    if (scoreError) {
+      throw scoreError;
+    }
+
+    /* =========================
+       対戦記録を削除
+    ========================= */
+
+    const {
+      error: matchError
+    } =
+      await supabaseClient
+        .from("matches")
+        .delete()
+        .eq(
+          "id",
+          match.id
+        );
+
+    if (matchError) {
+      throw matchError;
+    }
+
+    /* =========================
+       画面上のデータも削除
+    ========================= */
+
+    data.matches =
+      data.matches.filter(
+        m => m.id !== match.id
+      );
+
+    alert(
+      "対戦記録を削除しました。"
     );
 
-  saveData();
+    updateAll();
 
-  updateAll();
+    renderMatchHistory(gameName);
 
-  renderMatchHistory(gameName);
+  } catch (error) {
+
+    console.error(
+      "Supabase削除エラー:",
+      error
+    );
+
+    alert(
+      "❌ 対戦記録の削除に失敗しました。\n\n" +
+      error.message
+    );
+
+  }
 
 };
 

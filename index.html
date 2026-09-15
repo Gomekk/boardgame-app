@@ -1185,20 +1185,55 @@ function renderPreviousMembers() {
 
   button.onclick = () => {
 
-    document.getElementById(
-      "scorePlayers"
-    ).innerHTML = "";
+  const currentRows =
+    document.querySelectorAll(
+      "#scorePlayers .player-row"
+    );
 
-    latestMatch.scores.forEach(item => {
+  const hasInput =
+    Array.from(currentRows).some(row => {
 
-      addScorePlayer(
-        item.player,
-        ""
-      );
+      const player =
+        row.querySelector(
+          ".match-player"
+        ).value;
+
+      const score =
+        row.querySelector(
+          ".match-score"
+        ).value;
+
+      return player !== "" || score !== "";
 
     });
 
-  };
+  if (hasInput) {
+
+    const confirmed =
+      confirm(
+        "現在入力中のメンバー・得点を置き換えます。\n\n前回のメンバーを使用しますか？"
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+  }
+
+  document.getElementById(
+    "scorePlayers"
+  ).innerHTML = "";
+
+  latestMatch.scores.forEach(item => {
+
+    addScorePlayer(
+      item.player,
+      ""
+    );
+
+  });
+
+};
 
   container.appendChild(button);
 

@@ -6543,9 +6543,17 @@ function renderGameRankingGameList() {
       .filter(game => {
 
         const gameName =
-          normalizeGameSearch(game.name);
+  normalizeGameSearch(game.name);
 
-        return gameName.includes(keyword);
+const gameReading =
+  normalizeGameSearch(
+    game.reading || ""
+  );
+
+return (
+  gameName.includes(keyword) ||
+  gameReading.includes(keyword)
+);
 
       })
       .sort((a, b) =>

@@ -4656,26 +4656,38 @@ if (allGames.length === 0) {
 <div
   id="gameRouletteMode"
   style="
-    display:flex;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
     gap:6px;
-    flex-wrap:wrap;
-    justify-content:center;
     margin:12px 0;
   "
 >
-  <button type="button" data-weight="">
-    🎲 全体
+  <button
+    type="button"
+    data-weight=""
+    style="grid-column:1 / -1;"
+  >
+    🎲 全てのゲーム
   </button>
 
-  <button type="button" data-weight="light">
+  <button
+    type="button"
+    data-weight="light"
+  >
     🟢 軽量級
   </button>
 
-  <button type="button" data-weight="medium">
+  <button
+    type="button"
+    data-weight="medium"
+  >
     🟠 中量級
   </button>
 
-  <button type="button" data-weight="heavy">
+  <button
+    type="button"
+    data-weight="heavy"
+  >
     🔴 重量級
   </button>
 </div>
@@ -4691,7 +4703,6 @@ if (allGames.length === 0) {
         id="gameRouletteSub"
         class="game-roulette-sub"
       >
-        ルーレット回転中……
       </div>
 
       <div
@@ -4771,7 +4782,7 @@ const weightLabel =
       ? "🟠 中量級"
       : selectedWeight === "heavy"
         ? "🔴 重量級"
-        : "🎲 全体";
+        : "🎲 全てのゲーム";
 
 subElement.textContent =
   `${weightLabel}のゲームをルーレット中……`;

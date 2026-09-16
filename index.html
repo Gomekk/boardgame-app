@@ -8391,15 +8391,17 @@ button.style.gap =
 const championNames =
   getGameChampionNames(game);
   
-      const holderColors =
+          const holderColors =
       championNames
         .map(name => {
+
           const player =
             data.players.find(
               p => p.name === name
             );
 
           return player?.color;
+
         })
         .filter(Boolean);
 
@@ -8412,23 +8414,32 @@ const championNames =
         holderColors[1] ||
         holderColors[0];
 
-      button.style.backgroundImage = `
+      const baseColor =
+        getComputedStyle(button)
+          .backgroundColor;
+
+      button.style.background = `
         radial-gradient(
-          ellipse 70% 80% at 100% 0%,
-          ${color1}55 0%,
-          transparent 70%
+          ellipse 90% 70% at 105% 15%,
+          ${color1}30 0%,
+          transparent 65%
         ),
         radial-gradient(
-          ellipse 70% 70% at 100% 100%,
-          ${color2}44 0%,
+          ellipse 80% 65% at 95% 90%,
+          ${color2}24 0%,
+          transparent 65%
+        ),
+        radial-gradient(
+          ellipse 55% 45% at 65% 55%,
+          ${color1}12 0%,
           transparent 70%
-        )
+        ),
+        ${baseColor}
       `;
 
     }
     
-        button.style.backgroundColor = "#2b2b2b";
-    button.style.backgroundBlendMode = "screen";
+       
 
 const championText =
   championNames.length > 0

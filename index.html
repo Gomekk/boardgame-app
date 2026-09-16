@@ -8405,7 +8405,7 @@ const championNames =
         })
         .filter(Boolean);
 
-            if (holderColors.length > 0) {
+                if (holderColors.length > 0) {
 
       const color1 =
         holderColors[0];
@@ -8414,28 +8414,11 @@ const championNames =
         holderColors[1] ||
         holderColors[0];
 
-      button.style.backgroundColor =
-        "#e5e7eb";
-
-      button.style.backgroundImage = `
-        radial-gradient(
-          ellipse 85% 80% at 105% 15%,
-          ${color1}66 0%,
-          ${color1}32 35%,
-          transparent 75%
-        ),
-        radial-gradient(
-          ellipse 85% 75% at 100% 90%,
-          ${color2}55 0%,
-          ${color2}28 35%,
-          transparent 75%
-        ),
-        radial-gradient(
-          ellipse 65% 55% at 75% 50%,
-          ${color1}22 0%,
-          transparent 70%
-        )
-      `;
+      /*
+       * グレーのベースは変更しない
+       */
+      button.style.backgroundImage =
+        "none";
 
       button.style.position =
         "relative";
@@ -8450,13 +8433,13 @@ const championNames =
         "absolute";
 
       flow.style.left =
-        "-10%";
+        "0";
 
       flow.style.top =
         "0";
 
       flow.style.width =
-        "120%";
+        "100%";
 
       flow.style.height =
         "100%";
@@ -8468,72 +8451,87 @@ const championNames =
         "0";
 
       flow.style.opacity =
-        "0.75";
+        "1";
 
-                        const svg =
-        `
+      const svg = `
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 600 120"
           preserveAspectRatio="none"
+          width="100%"
+          height="100%"
         >
 
-          <!-- 細いカラーフロー -->
+          <!-- 上側の細い流線 -->
           <path
             d="
-              M-40 88
-              C80 72, 115 108, 205 88
-              C315 64, 390 18, 650 42
-            "
-            fill="none"
-            stroke="${color1}"
-            stroke-width="12"
-            stroke-linecap="round"
-            opacity="0.20"
-          />
-
-          <path
-            d="
-              M-40 92
-              C80 76, 115 112, 205 92
-              C315 68, 390 22, 650 46
+              M-40 38
+              C80 5, 145 75, 260 52
+              C380 28, 475 15, 650 48
             "
             fill="none"
             stroke="${color1}"
             stroke-width="3"
             stroke-linecap="round"
-            opacity="0.38"
+            opacity="0.42"
           />
 
-          <!-- 2本目の流線 -->
           <path
             d="
-              M-40 42
-              C90 25, 140 68, 240 54
-              C350 38, 430 20, 650 72
+              M-40 43
+              C80 10, 145 80, 260 57
+              C380 33, 475 20, 650 53
             "
             fill="none"
-            stroke="${color2}"
-            stroke-width="9"
+            stroke="${color1}"
+            stroke-width="1.5"
             stroke-linecap="round"
-            opacity="0.16"
+            opacity="0.28"
+          />
+
+          <!-- 下側の細い流線 -->
+          <path
+            d="
+              M-40 88
+              C80 55, 145 112, 270 82
+              C390 53, 490 62, 650 82
+            "
+            fill="none"
+            stroke="${color2}"
+            stroke-width="3"
+            stroke-linecap="round"
+            opacity="0.40"
           />
 
           <path
             d="
-              M-40 42
-              C90 25, 140 68, 240 54
-              C350 38, 430 20, 650 72
+              M-40 93
+              C80 60, 145 117, 270 87
+              C390 58, 490 67, 650 87
             "
             fill="none"
             stroke="${color2}"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            opacity="0.25"
+          />
+
+          <!-- 交差する1本 -->
+          <path
+            d="
+              M-40 105
+              C100 100, 155 20, 285 38
+              C410 55, 500 105, 650 28
+            "
+            fill="none"
+            stroke="${color1}"
             stroke-width="2"
             stroke-linecap="round"
-            opacity="0.35"
+            opacity="0.24"
           />
 
         </svg>
-        `;
+      `;
 
       flow.style.backgroundImage =
         `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;

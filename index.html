@@ -1222,8 +1222,8 @@ async function uploadGameImage(file, gameName) {
     file.name.split(".").pop();
 
   const filePath =
-    `${Date.now()}_${gameName}.${fileExt}`;
-
+  `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
+  
   const {
     error: uploadError
   } =

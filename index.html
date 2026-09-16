@@ -1888,7 +1888,7 @@ playTimeNote.style.marginTop =
   "4px";
 
 playTimeNote.textContent =
-  "※現在の設定：軽量級＝<span id="weightLightNote">30</span>分以内／中量級＝<span id="weightMediumNote">60</span>分以内／重量級＝<span id="weightMediumNoteHeavy">60</span>分超
+  `※現在の設定：軽量級＝${weightSettings.lightMax}分以内／中量級＝${weightSettings.mediumMax}分以内／重量級＝${weightSettings.mediumMax}分超`;
 
 form.appendChild(
   playTimeNote

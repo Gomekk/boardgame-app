@@ -2674,8 +2674,11 @@ function renderPlayerColorPalette() {
         return;
       }
 
-      selectedColor =
+            selectedColor =
         color;
+
+      palette.dataset.selectedColor =
+        selectedColor;
 
       palette
         .querySelectorAll("button")

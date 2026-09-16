@@ -1329,6 +1329,12 @@ async function loadWeightSettings() {
 
   weightSettings.mediumMax =
     settings.weight_medium_max;
+    
+    document.getElementById("weightLightMax").value =
+  weightSettings.lightMax;
+
+document.getElementById("weightMediumMax").value =
+  weightSettings.mediumMax;
 
   const lightNote =
     document.getElementById("weightLightNote");

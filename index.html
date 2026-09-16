@@ -6542,123 +6542,8 @@ function renderGameRankingGameList() {
       .filter(game => game.active)
       .filter(game => {
 
-        function renderGameRankingGameList() {
-
-  const container =
-    document.getElementById("gameRankingGameList");
-
-  if (!container) return;
-
-  const searchInput =
-    document.getElementById("gameRankingSearch");
-
-  const keyword =
-    searchInput
-      ? normalizeGameSearch(searchInput.value)
-      : "";
-
-
-  const games =
-    data.games
-      .filter(game => game.active)
-      .filter(game => {
-
         const gameName =
           normalizeGameSearch(game.name);
-
-        const gameReading =
-          normalizeGameSearch(
-            game.reading || ""
-          );
-
-        return (
-          gameName.includes(keyword) ||
-          gameReading.includes(keyword)
-        );
-
-      })
-      .sort((a, b) =>
-        (a.reading || a.name || "").localeCompare(
-          b.reading || b.name || "",
-          "ja"
-        )
-      );
-
-
-  container.innerHTML = "";
-
-
-  if (games.length === 0) {
-
-    const empty =
-      document.createElement("div");
-
-    empty.className =
-      "section-note";
-
-    empty.textContent =
-      keyword
-        ? "該当するゲームがありません。"
-        : "登録されているゲームがありません。";
-
-    container.appendChild(empty);
-
-    return;
-  }
-
-
-  games.forEach(game => {
-
-    const button =
-      document.createElement("button");
-
-    button.type =
-      "button";
-
-    button.className =
-      "secondary";
-
-    button.style.width =
-      "100%";
-
-    button.style.textAlign =
-      "left";
-
-    button.style.marginBottom =
-      "8px";
-
-    button.style.display =
-      "flex";
-
-    button.style.alignItems =
-      "center";
-
-    button.style.gap =
-      "10px";
-
-
-    button.innerHTML =
-      game.image
-        ? `<img src="${escapeHTML(game.image)}" class="game-thumb">🎲 ${escapeHTML(game.name)}`
-        : `🎲 ${escapeHTML(game.name)}`;
-
-
-    button.onclick = () => {
-
-      renderGameSpecificRanking(
-        game.name
-      );
-
-    };
-
-
-    container.appendChild(
-      button
-    );
-
-  });
-
-}
 
         return gameName.includes(keyword);
 
@@ -6707,9 +6592,6 @@ function renderGameRankingGameList() {
       "left";
 
     button.style.marginBottom =
-      "8px";
-
-        button.style.marginBottom =
       "8px";
 
     button.style.display =

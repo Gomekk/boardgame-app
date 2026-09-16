@@ -8405,7 +8405,7 @@ const championNames =
         })
         .filter(Boolean);
 
-    if (holderColors.length > 0) {
+        if (holderColors.length > 0) {
 
       const color1 =
         holderColors[0];
@@ -8414,27 +8414,27 @@ const championNames =
         holderColors[1] ||
         holderColors[0];
 
-      const baseColor =
-        getComputedStyle(button)
-          .backgroundColor;
+      button.style.backgroundColor =
+        "#e5e7eb";
 
-      button.style.background = `
+      button.style.backgroundImage = `
         radial-gradient(
-          ellipse 90% 70% at 105% 15%,
-          ${color1}55 0%,
-          transparent 65%
+          ellipse 85% 80% at 105% 15%,
+          ${color1}99 0%,
+          ${color1}55 35%,
+          transparent 75%
         ),
         radial-gradient(
-          ellipse 80% 65% at 95% 90%,
-          ${color2}45 0%,
-          transparent 65%
+          ellipse 85% 75% at 100% 90%,
+          ${color2}88 0%,
+          ${color2}44 35%,
+          transparent 75%
         ),
         radial-gradient(
-          ellipse 55% 45% at 65% 55%,
-          ${color1}25 0%,
+          ellipse 65% 55% at 75% 50%,
+          ${color1}44 0%,
           transparent 70%
-        ),
-        ${baseColor}
+        )
       `;
 
     }

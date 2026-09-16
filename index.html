@@ -4885,6 +4885,8 @@ function renderBestScoreCountRanking() {
 
   const holderCounts = {};
 
+  const holderGames = {};
+
   data.games
     .filter(game => game.active)
     .forEach(game => {
@@ -4905,12 +4907,21 @@ function renderBestScoreCountRanking() {
 
         (match.scores || []).forEach(item => {
 
-          const score = Number(item.score);
+          const score =
+            Number(item.score);
 
           if (game.direction === "low") {
-            if (score < bestScore) bestScore = score;
+
+            if (score < bestScore) {
+              bestScore = score;
+            }
+
           } else {
-            if (score > bestScore) bestScore = score;
+
+            if (score > bestScore) {
+              bestScore = score;
+            }
+
           }
 
         });
@@ -4923,8 +4934,12 @@ function renderBestScoreCountRanking() {
 
         (match.scores || []).forEach(item => {
 
-          if (Number(item.score) === bestScore) {
+          if (
+            Number(item.score) === bestScore
+          ) {
+
             holders.add(item.player);
+
           }
 
         });
@@ -4939,6 +4954,12 @@ function renderBestScoreCountRanking() {
 
         holderCounts[playerName]++;
 
+        if (!holderGames[playerName]) {
+          holderGames[playerName] = [];
+        }
+
+        holderGames[playerName].push(game);
+
       });
 
     });
@@ -4948,10 +4969,15 @@ function renderBestScoreCountRanking() {
       .filter(player => player.active)
       .map(player => ({
         name: player.name,
-        count: holderCounts[player.name] || 0
+        count:
+          holderCounts[player.name] || 0,
+        games:
+          holderGames[player.name] || []
       }))
       .filter(player => player.count > 0)
-      .sort((a, b) => b.count - a.count);
+      .sort((a, b) =>
+        b.count - a.count
+      );
 
   if (ranking.length === 0) {
 
@@ -4974,46 +5000,160 @@ function renderBestScoreCountRanking() {
 
   ranking.forEach((player, index) => {
 
-    if (player.count !== previousCount) {
+    if (
+      player.count !== previousCount
+    ) {
 
-      currentRank = index + 1;
-      previousCount = player.count;
+      currentRank =
+        index + 1;
+
+      previousCount =
+        player.count;
 
     }
 
     const row =
       document.createElement("div");
 
-    row.className = "rank-item";
+    row.className =
+      "rank-item";
 
+    /*
+     * プレイヤー情報
+     */
+    const playerArea =
+      document.createElement("div");
+
+    playerArea.style.flex =
+      "1";
+
+    playerArea.style.minWidth =
+      "0";
+
+    /*
+     * プレイヤー名
+     */
+    const name =
+      document.createElement("div");
+
+    name.className =
+      "rank-player";
+
+    name.textContent =
+      player.name;
+
+    /*
+     * 保有ゲームのアイコン
+     */
+    const gameIcons =
+      document.createElement("div");
+
+    gameIcons.style.display =
+      "flex";
+
+    gameIcons.style.alignItems =
+      "center";
+
+    gameIcons.style.gap =
+      "5px";
+
+    gameIcons.style.marginTop =
+      "5px";
+
+    gameIcons.style.flexWrap =
+      "wrap";
+
+    player.games.forEach(game => {
+
+      if (!game.image) return;
+
+      const image =
+        document.createElement("img");
+
+      image.src =
+        game.image;
+
+      image.alt =
+        game.name;
+
+      image.title =
+        game.name;
+
+      image.style.width =
+        "28px";
+
+      image.style.height =
+        "28px";
+
+      image.style.objectFit =
+        "cover";
+
+      image.style.borderRadius =
+        "5px";
+
+      image.style.display =
+        "block";
+
+      image.style.boxShadow =
+        "0 1px 4px rgba(0,0,0,.15)";
+
+      gameIcons.appendChild(
+        image
+      );
+
+    });
+
+    playerArea.appendChild(
+      name
+    );
+
+    playerArea.appendChild(
+      gameIcons
+    );
+
+    /*
+     * 順位
+     */
     const rank =
       document.createElement("span");
 
-    rank.className = "rank-number";
-    rank.textContent = `${currentRank}位`;
+    rank.className =
+      "rank-number";
 
-    const name =
-      document.createElement("span");
+    rank.textContent =
+      `${currentRank}位`;
 
-    name.className = "rank-player";
-    name.textContent = player.name;
-
+    /*
+     * タイトル保有数
+     */
     const score =
       document.createElement("span");
 
-    score.className = "rank-score";
-    score.textContent = `${player.count} 冠`;
+    score.className =
+      "rank-score";
 
-    row.appendChild(rank);
-    row.appendChild(name);
-    row.appendChild(score);
+    score.textContent =
+      `${player.count} 冠`;
 
-    container.appendChild(row);
+    row.appendChild(
+      rank
+    );
+
+    row.appendChild(
+      playerArea
+    );
+
+    row.appendChild(
+      score
+    );
+
+    container.appendChild(
+      row
+    );
 
   });
 
 }
-
 
 function renderWinRateRanking() {
 

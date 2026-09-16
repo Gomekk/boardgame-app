@@ -4665,14 +4665,24 @@ if (allGames.length === 0) {
   <button
     type="button"
     data-weight=""
-    style="grid-column:1 / -1;"
+    style="
+      grid-column:1 / -1;
+      background:#F1F5F9;
+      color:#1E293B;
+      border:1px solid #CBD5E1;
+    "
   >
-    🎲 全てのゲーム
+    全てのゲーム
   </button>
 
   <button
     type="button"
     data-weight="light"
+    style="
+      background:#E8F5E9;
+      color:#2E7D32;
+      border:1px solid #A5D6A7;
+    "
   >
     🟢 軽量級
   </button>
@@ -4680,6 +4690,11 @@ if (allGames.length === 0) {
   <button
     type="button"
     data-weight="medium"
+    style="
+      background:#FFF3E0;
+      color:#E65100;
+      border:1px solid #FFCC80;
+    "
   >
     🟠 中量級
   </button>
@@ -4687,6 +4702,11 @@ if (allGames.length === 0) {
   <button
     type="button"
     data-weight="heavy"
+    style="
+      background:#FDECEC;
+      color:#C62828;
+      border:1px solid #EF9A9A;
+    "
   >
     🔴 重量級
   </button>
@@ -4695,6 +4715,11 @@ if (allGames.length === 0) {
 <button
   type="button"
   id="gameRouletteName"
+  style="
+    background:#ffffff;
+    color:#1E3A5F;
+    border:2px solid #1E3A5F;
+  "
 >
   <span id="gameRouletteText">START!</span>
 </button>
@@ -4804,24 +4829,32 @@ modeButtons.forEach(button => {
 
     modeButtons.forEach(b => {
 
-      b.classList.remove("selected");
+  b.classList.remove("selected");
 
-      b.style.background =
-        "#111827";
+  if (b.dataset.weight === "") {
+    b.style.background = "#F1F5F9";
+    b.style.color = "#1E293B";
+  } else if (b.dataset.weight === "light") {
+    b.style.background = "#E8F5E9";
+    b.style.color = "#2E7D32";
+  } else if (b.dataset.weight === "medium") {
+    b.style.background = "#FFF3E0";
+    b.style.color = "#E65100";
+  } else if (b.dataset.weight === "heavy") {
+    b.style.background = "#FDECEC";
+    b.style.color = "#C62828";
+  }
 
-      b.style.color =
-        "#ffffff";
-
-    });
+});
 
     button.classList.add("selected");
 
-    button.style.background =
-      "#4F46E5";
+   button.style.background =
+  "#1E3A5F";
 
-    button.style.color =
-      "#ffffff";
-
+   button.style.color =
+  "#ffffff";
+  
   };
 
 });

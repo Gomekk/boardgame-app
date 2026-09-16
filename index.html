@@ -3971,6 +3971,14 @@ function renderPlayerList() {
     data.players.filter(
       p => p.active
     );
+    
+    console.log(
+  "プレイヤーカラー確認:",
+  activePlayers.map(p => ({
+    name: p.name,
+    color: p.color
+  }))
+);
 
 
   if (activePlayers.length === 0) {

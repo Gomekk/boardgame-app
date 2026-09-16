@@ -8403,15 +8403,53 @@ const championText =
         <div style="
           font-size:10px;
           color:#aaa;
-          margin-bottom:2px;
+          margin-bottom:4px;
         ">
           Title Holder
         </div>
+
         <div style="
-          font-size:13px;
-          color:#555;
+          display:flex;
+          flex-wrap:wrap;
+          justify-content:flex-end;
+          gap:4px;
         ">
-          ${championNames.map(name => escapeHTML(name)).join(" / ")}
+          ${championNames.map(name => {
+
+            const player =
+              data.players.find(
+                p => p.name === name
+              );
+
+            const color =
+              player?.color ||
+              "#BDBDBD";
+
+            return `
+              <span style="
+                display:inline-block;
+                padding:4px 8px;
+                border-radius:7px;
+                color:#333;
+                font-size:13px;
+                font-weight:600;
+                background:
+                  repeating-linear-gradient(
+                    135deg,
+                    ${color} 0px,
+                    ${color} 5px,
+                    rgba(255,255,255,.45) 5px,
+                    rgba(255,255,255,.45) 9px
+                  );
+                box-shadow:
+                  0 1px 4px rgba(0,0,0,.15);
+                white-space:nowrap;
+              ">
+                ${escapeHTML(name)}
+              </span>
+            `;
+
+          }).join("")}
         </div>
       </div>
     `

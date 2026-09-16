@@ -8417,26 +8417,21 @@ const championText =
     `
     : "";
 
-button.innerHTML =
-  game.image
-    ? `
-      <img src="${escapeHTML(game.image)}" class="game-thumb">
-      <span style="min-width:0;">
-        ${escapeHTML(game.name)}
-      </span>
-      ${championText}
-    `
-    : `
-      <span style="min-width:0;">
-        ${escapeHTML(game.name)}
-      </span>
-      ${championText}
-    `;
-      <span style="min-width:0;">
-        ${escapeHTML(game.name)}
-      </span>
-      ${championText}
-    `;
+    button.innerHTML =
+      game.image
+        ? `
+          <img src="${escapeHTML(game.image)}" class="game-thumb">
+          <span style="min-width:0;">
+            ${escapeHTML(game.name)}
+          </span>
+          ${championText}
+        `
+        : `
+          <span style="min-width:0;">
+            ${escapeHTML(game.name)}
+          </span>
+          ${championText}
+        `;
 
     button.onclick = () => {
 

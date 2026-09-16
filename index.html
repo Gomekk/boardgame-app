@@ -3475,58 +3475,279 @@ function renderPlayerList() {
       showPlayerDetail(player.name);
 
 
+    /*
+     * 編集ボタン
+     */
+
     const editButton =
-  document.createElement("button");
+      document.createElement("button");
 
-editButton.className =
-  "small";
+    editButton.className =
+      "small";
 
-editButton.textContent =
-  "✏️ 編集";
+    editButton.textContent =
+      "✏️ 編集";
 
-editButton.type =
-  "button";
+    editButton.type =
+      "button";
 
-editButton.onclick = event => {
+    editButton.onclick = event => {
 
-  event.stopPropagation();
+      event.stopPropagation();
 
-  editGame(game.id);
+      editPlayer(player.id);
 
-};
-
-
-const button =
-  document.createElement("button");
-
-button.className =
-  "small danger";
-
-button.textContent =
-  "登録から外す";
-
-button.type =
-  "button";
-
-button.onclick = event => {
-
-  event.stopPropagation();
-
-  archiveGame(game.name);
-
-};
+    };
 
 
-    button.onclick = () =>
+    /*
+     * 登録から外す
+     */
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "small danger";
+
+    button.textContent =
+      "登録から外す";
+
+    button.type =
+      "button";
+
+    button.onclick = event => {
+
+      event.stopPropagation();
+
       archivePlayer(player.name);
+
+    };
 
 
     row.appendChild(name);
+
+    row.appendChild(editButton);
+
     row.appendChild(button);
 
     container.appendChild(row);
 
   });
+
+}
+
+function editPlayer(playerId) {
+
+  const player =
+    data.players.find(
+      p => String(p.id) === String(playerId)
+    );
+
+  if (!player) return;
+
+
+  const rows =
+    document.querySelectorAll(
+      "#playerList .row"
+    );
+
+
+  let targetRow = null;
+
+
+  rows.forEach(row => {
+
+    const nameElement =
+      row.querySelector("div");
+
+    if (
+      nameElement &&
+      nameElement.textContent === player.name
+    ) {
+
+      targetRow = row;
+
+    }
+
+  });
+
+
+  if (!targetRow) {
+
+    console.error(
+      "編集対象のプレイヤー行が見つかりません:",
+      playerId
+    );
+
+    return;
+
+  }
+
+
+  targetRow.innerHTML = "";
+
+
+  const input =
+    document.createElement("input");
+
+  input.type =
+    "text";
+
+  input.value =
+    player.name;
+
+  input.placeholder =
+    "プレイヤー名";
+
+
+  const updateButton =
+    document.createElement("button");
+
+  updateButton.className =
+    "small";
+
+  updateButton.textContent =
+    "更新";
+
+  updateButton.type =
+    "button";
+
+
+  const cancelButton =
+    document.createElement("button");
+
+  cancelButton.className =
+    "small secondary";
+
+  cancelButton.textContent =
+    "キャンセル";
+
+  cancelButton.type =
+    "button";
+
+  cancelButton.style.marginLeft =
+    "8px";
+
+
+  targetRow.appendChild(input);
+
+  targetRow.appendChild(updateButton);
+
+  targetRow.appendChild(cancelButton);
+
+
+  input.focus();
+
+
+  /*
+   * キャンセル
+   */
+
+  cancelButton.onclick = () => {
+
+    renderPlayerList();
+
+  };
+
+
+  /*
+   * 更新
+   */
+
+  updateButton.onclick = async () => {
+
+    const newName =
+      input.value.trim();
+
+
+    if (!newName) {
+
+      alert(
+        "プレイヤー名を入力してください。"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      newName === player.name
+    ) {
+
+      renderPlayerList();
+
+      return;
+
+    }
+
+
+    const duplicate =
+      data.players.some(
+        p =>
+          p.active &&
+          p.id !== player.id &&
+          p.name === newName
+      );
+
+
+    if (duplicate) {
+
+      alert(
+        "同じ名前のプレイヤーがすでに存在します。"
+      );
+
+      return;
+
+    }
+
+
+    try {
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("players")
+          .update({
+            name:
+              newName
+          })
+          .eq(
+            "id",
+            player.id
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      await initializeSupabaseData();
+
+
+      alert(
+        "プレイヤー名を更新しました。"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Supabaseプレイヤー更新エラー:",
+        error
+      );
+
+      alert(
+        "❌ プレイヤー名の更新に失敗しました。\n\n" +
+        error.message
+      );
+
+    }
+
+  };
 
 }
 

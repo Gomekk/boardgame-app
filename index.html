@@ -923,7 +923,7 @@ button.small {
       🎲 ゲーム管理
     </button>
 
-   <button
+  <button
   type="button"
   onclick="
     showScreen('playerManageScreen');
@@ -1141,7 +1141,7 @@ button.small {
 
 </div>
 
-<div id="playerManageScreen" class="screenContent">
+<<div id="playerManageScreen" class="screenContent">
 
   <button
     class="secondary"
@@ -1158,44 +1158,58 @@ button.small {
 
     <div>
 
-  <input
-    id="playerName"
-    placeholder="プレイヤー名"
-  >
+      <input
+        id="playerName"
+        placeholder="プレイヤー名"
+      >
 
-  <div
-    style="
-      font-size:12px;
-      color:#777;
-      margin-top:10px;
-      margin-bottom:6px;
-    "
-  >
-    プレイヤーカラー
+      <div
+        style="
+          font-size:12px;
+          color:#777;
+          margin-top:10px;
+          margin-bottom:6px;
+        "
+      >
+        プレイヤーカラー
+      </div>
+
+      <div
+        id="playerColorPalette"
+        style="
+          display:grid;
+          grid-template-columns:repeat(7, 32px);
+          gap:8px;
+          margin-top:8px;
+          margin-bottom:12px;
+          width:100%;
+          box-sizing:border-box;
+        "
+      ></div>
+
+      <button
+        onclick="registerPlayer()"
+      >
+        追加
+      </button>
+
+    </div>
+
   </div>
 
-  <div
-    id="playerColorPalette"
-    style="
-      display:grid;
-      grid-template-columns:repeat(7, 32px);
-      gap:8px;
-      margin-top:8px;
-      margin-bottom:12px;
-      width:100%;
-      box-sizing:border-box;
-    "
-  ></div>
+  <!-- プレイヤー一覧 -->
+  <div class="card">
 
-  <button
-    onclick="registerPlayer()"
-  >
-    追加
-  </button>
+    <h2>👥 プレイヤー一覧</h2>
+
+    <div
+      id="playerList"
+      style="margin-top:12px;"
+    ></div>
+
+  </div>
 
 </div>
-
-  </div>
 
   <!-- プレイヤー一覧 -->
   <div class="card">

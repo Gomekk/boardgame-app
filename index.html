@@ -8468,9 +8468,9 @@ const championNames =
         "0";
 
       flow.style.opacity =
-        "0.45";
+        "0.75";
 
-                  const svg =
+                        const svg =
         `
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -8478,147 +8478,58 @@ const championNames =
           preserveAspectRatio="none"
         >
 
-          <!-- 大きな流線 1 -->
+          <!-- 細いカラーフロー -->
           <path
             d="
-              M-80 30
-              C40 -15, 100 85, 220 55
-              C340 25, 420 -5, 680 35
-              L680 58
-              C430 25, 350 55, 225 78
-              C100 102, 35 5, -80 55
-              Z
-            "
-            fill="${color1}"
-            opacity="0.16"
-          />
-
-          <!-- 大きな流線 2 -->
-          <path
-            d="
-              M-80 92
-              C70 35, 125 125, 260 88
-              C390 52, 470 65, 680 92
-              L680 112
-              C470 88, 390 82, 265 108
-              C120 140, 55 55, -80 112
-              Z
-            "
-            fill="${color2}"
-            opacity="0.14"
-          />
-
-          <!-- 大きな流線 3 -->
-          <path
-            d="
-              M-60 65
-              C80 105, 150 5, 285 38
-              C420 72, 500 115, 660 70
-              L660 82
-              C500 130, 410 88, 280 55
-              C150 22, 85 120, -60 80
-              Z
-            "
-            fill="${color1}"
-            opacity="0.10"
-          />
-
-          <!-- 細い流線群 -->
-          <path
-            d="
-              M-50 42
-              C90 0, 155 80, 285 50
-              S470 12, 650 48
+              M-40 88
+              C80 72, 115 108, 205 88
+              C315 64, 390 18, 650 42
             "
             fill="none"
             stroke="${color1}"
-            stroke-width="3"
-            opacity="0.30"
-          />
-
-          <path
-            d="
-              M-50 47
-              C90 5, 155 85, 285 55
-              S470 17, 650 53
-            "
-            fill="none"
-            stroke="${color1}"
-            stroke-width="2"
-            opacity="0.22"
-          />
-
-          <path
-            d="
-              M-50 52
-              C90 10, 155 90, 285 60
-              S470 22, 650 58
-            "
-            fill="none"
-            stroke="${color1}"
-            stroke-width="1.5"
-            opacity="0.18"
-          />
-
-          <path
-            d="
-              M-60 82
-              C80 38, 150 120, 285 82
-              S470 48, 660 88
-            "
-            fill="none"
-            stroke="${color2}"
-            stroke-width="3"
-            opacity="0.28"
-          />
-
-          <path
-            d="
-              M-60 87
-              C80 43, 150 125, 285 87
-              S470 53, 660 93
-            "
-            fill="none"
-            stroke="${color2}"
-            stroke-width="2"
+            stroke-width="12"
+            stroke-linecap="round"
             opacity="0.20"
           />
 
           <path
             d="
-              M-60 92
-              C80 48, 150 130, 285 92
-              S470 58, 660 98
-            "
-            fill="none"
-            stroke="${color2}"
-            stroke-width="1.5"
-            opacity="0.16"
-          />
-
-          <!-- 交差する細い流線 -->
-          <path
-            d="
-              M-40 110
-              C100 100, 160 20, 300 35
-              C430 50, 500 105, 650 20
+              M-40 92
+              C80 76, 115 112, 205 92
+              C315 68, 390 22, 650 46
             "
             fill="none"
             stroke="${color1}"
-            stroke-width="2"
-            opacity="0.20"
+            stroke-width="3"
+            stroke-linecap="round"
+            opacity="0.38"
+          />
+
+          <!-- 2本目の流線 -->
+          <path
+            d="
+              M-40 42
+              C90 25, 140 68, 240 54
+              C350 38, 430 20, 650 72
+            "
+            fill="none"
+            stroke="${color2}"
+            stroke-width="9"
+            stroke-linecap="round"
+            opacity="0.16"
           />
 
           <path
             d="
-              M-40 115
-              C100 105, 160 25, 300 40
-              C430 55, 500 110, 650 25
+              M-40 42
+              C90 25, 140 68, 240 54
+              C350 38, 430 20, 650 72
             "
             fill="none"
             stroke="${color2}"
-            stroke-width="1.5"
-            opacity="0.14"
+            stroke-width="2"
+            stroke-linecap="round"
+            opacity="0.35"
           />
 
         </svg>

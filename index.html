@@ -4230,14 +4230,20 @@ function editPlayer(playerId) {
   colorPalette.style.display =
     "grid";
 
-  colorPalette.style.gridTemplateColumns =
-    "repeat(8, minmax(0, 1fr))";
+  colorPalette.style.display =
+  "flex";
 
-  colorPalette.style.width =
-    "100%";
+colorPalette.style.flexWrap =
+  "wrap";
 
-  colorPalette.style.boxSizing =
-    "border-box";
+colorPalette.style.gap =
+  "8px";
+
+colorPalette.style.width =
+  "100%";
+
+colorPalette.style.boxSizing =
+  "border-box";
 
   colorPalette.style.gap =
     "6px";
@@ -4286,13 +4292,19 @@ function editPlayer(playerId) {
       "button";
 
     colorButton.style.width =
-      "100%";
+  "32px";
 
-    colorButton.style.aspectRatio =
-      "1";
+colorButton.style.height =
+  "32px";
 
-    colorButton.style.minHeight =
-      "28px";
+colorButton.style.minWidth =
+  "32px";
+
+colorButton.style.padding =
+  "0";
+
+colorButton.style.flexShrink =
+  "0";
 
     colorButton.style.borderRadius =
       "8px";
@@ -4316,7 +4328,7 @@ function editPlayer(playerId) {
      * 使用中の色
      */
 
-    if (
+   if (
   usedColors.has(color) &&
   color !== player.color
 ) {
@@ -4325,7 +4337,7 @@ function editPlayer(playerId) {
     true;
 
   colorButton.style.opacity =
-    "0.45";
+    "0.55";
 
   colorButton.style.cursor =
     "not-allowed";
@@ -4336,16 +4348,47 @@ function editPlayer(playerId) {
   colorButton.style.overflow =
     "hidden";
 
-  colorButton.style.backgroundImage =
-    `
-      repeating-linear-gradient(
-        135deg,
-        transparent 0px,
-        transparent 5px,
-        rgba(0,0,0,.45) 5px,
-        rgba(0,0,0,.45) 7px
-      )
-    `;
+
+  const disabledMark =
+    document.createElement("span");
+
+  disabledMark.textContent =
+    "×";
+
+  disabledMark.style.position =
+    "absolute";
+
+  disabledMark.style.left =
+    "50%";
+
+  disabledMark.style.top =
+    "50%";
+
+  disabledMark.style.transform =
+    "translate(-50%, -50%)";
+
+  disabledMark.style.color =
+    "#D32F2F";
+
+  disabledMark.style.fontSize =
+    "25px";
+
+  disabledMark.style.fontWeight =
+    "900";
+
+  disabledMark.style.lineHeight =
+    "1";
+
+  disabledMark.style.textShadow =
+    "0 0 2px white, 0 0 2px white";
+
+  disabledMark.style.pointerEvents =
+    "none";
+
+
+  colorButton.appendChild(
+    disabledMark
+  );
 
 }
 

@@ -5469,9 +5469,16 @@ function renderWinCountRanking() {
 
 function renderStreakRanking() {
 
+  alert(
+    JSON.stringify(
+      data.matches[0],
+      null,
+      2
+    )
+  );
+
   const container =
     document.getElementById("homeStreakRanking");
-
   if (!container) return;
 
   container.innerHTML = "";
@@ -5482,10 +5489,18 @@ function renderStreakRanking() {
       .map(player => {
 
         const matches =
-          getPlayerMatches(player.name)
-            .sort((a, b) =>
-              new Date(a.date) - new Date(b.date)
-            );
+  getPlayerMatches(player.name)
+    .sort((a, b) => {
+
+      const dateA =
+        new Date(a.date).getTime();
+
+      const dateB =
+        new Date(b.date).getTime();
+
+      return dateA - dateB;
+
+    });
 
         let currentStreak = 0;
         let bestStreak = 0;

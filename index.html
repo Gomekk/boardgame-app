@@ -1153,20 +1153,44 @@ button.small {
 
     <h2>👤 プレイヤーを登録</h2>
 
-    <div class="row">
+    <div>
 
-      <input
-        id="playerName"
-        placeholder="プレイヤー名"
-      >
+  <input
+    id="playerName"
+    placeholder="プレイヤー名"
+  >
 
-      <button
-        onclick="registerPlayer()"
-      >
-        追加
-      </button>
+  <div
+    style="
+      font-size:12px;
+      color:#777;
+      margin-top:10px;
+      margin-bottom:6px;
+    "
+  >
+    プレイヤーカラー
+  </div>
 
-    </div>
+  <div
+    id="playerColorPalette"
+    style="
+      display:grid;
+      grid-template-columns:repeat(7, 32px);
+      gap:8px;
+      margin-top:8px;
+      margin-bottom:12px;
+      width:100%;
+      box-sizing:border-box;
+    "
+  ></div>
+
+  <button
+    onclick="registerPlayer()"
+  >
+    追加
+  </button>
+
+</div>
 
   </div>
 
@@ -2455,10 +2479,186 @@ if (
    プレイヤー登録
 ========================= */
 
+function renderPlayerColorPalette() {
+
+  const palette =
+    document.getElementById(
+      "playerColorPalette"
+    );
+
+  if (!palette) return;
+
+  palette.innerHTML = "";
+
+  const usedColors =
+    new Set(
+      data.players
+        .filter(p =>
+          p.active &&
+          p.color
+        )
+        .map(p =>
+          p.color
+        )
+    );
+
+  let selectedColor =
+    PLAYER_COLOR_PALETTE.find(
+      color =>
+        !usedColors.has(color)
+    ) ||
+    PLAYER_COLOR_PALETTE[0];
+
+  PLAYER_COLOR_PALETTE.forEach(color => {
+
+    const colorButton =
+      document.createElement("button");
+
+    colorButton.type =
+      "button";
+
+    colorButton.style.width =
+      "32px";
+
+    colorButton.style.height =
+      "32px";
+
+    colorButton.style.minWidth =
+      "32px";
+
+    colorButton.style.padding =
+      "0";
+
+    colorButton.style.flexShrink =
+      "0";
+
+    colorButton.style.borderRadius =
+      "8px";
+
+    colorButton.style.border =
+      "2px solid transparent";
+
+    colorButton.style.background =
+      color;
+
+    colorButton.style.cursor =
+      "pointer";
+
+    colorButton.style.position =
+      "relative";
+
+    colorButton.style.overflow =
+      "hidden";
+
+    if (usedColors.has(color)) {
+
+      colorButton.disabled =
+        true;
+
+      colorButton.style.opacity =
+        "0.55";
+
+      colorButton.style.cursor =
+        "not-allowed";
+
+      const disabledMark =
+        document.createElement("span");
+
+      disabledMark.style.position =
+        "absolute";
+
+      disabledMark.style.left =
+        "0";
+
+      disabledMark.style.top =
+        "0";
+
+      disabledMark.style.width =
+        "100%";
+
+      disabledMark.style.height =
+        "100%";
+
+      disabledMark.style.pointerEvents =
+        "none";
+
+      disabledMark.style.background =
+        `
+          linear-gradient(
+            to bottom right,
+            transparent 46%,
+            #D32F2F 47%,
+            #D32F2F 53%,
+            transparent 54%
+          )
+        `;
+
+      colorButton.appendChild(
+        disabledMark
+      );
+
+    }
+
+    if (color === selectedColor) {
+
+      colorButton.style.border =
+        "3px solid #222";
+
+      colorButton.style.boxShadow =
+        "0 0 0 2px white, 0 0 0 4px #222";
+
+    }
+
+    colorButton.onclick = () => {
+
+      if (
+        usedColors.has(color)
+      ) {
+        return;
+      }
+
+      selectedColor =
+        color;
+
+      palette
+        .querySelectorAll("button")
+        .forEach(button => {
+
+          button.style.border =
+            "2px solid transparent";
+
+          button.style.boxShadow =
+            "none";
+
+        });
+
+      colorButton.style.border =
+        "3px solid #222";
+
+      colorButton.style.boxShadow =
+        "0 0 0 2px white, 0 0 0 4px #222";
+
+    };
+
+    palette.appendChild(
+      colorButton
+    );
+
+  });
+
+  palette.dataset.selectedColor =
+    selectedColor;
+}
+
 async function registerPlayer() {
 
   const input =
     document.getElementById("playerName");
+
+  const palette =
+    document.getElementById(
+      "playerColorPalette"
+    );
 
   const name =
     input.value.trim();
@@ -2473,6 +2673,18 @@ async function registerPlayer() {
 
   }
 
+  const selectedColor =
+    palette?.dataset.selectedColor ||
+    PLAYER_COLOR_PALETTE.find(
+      color =>
+        !data.players.some(
+          p =>
+            p.active &&
+            p.color === color
+        )
+    ) ||
+    PLAYER_COLOR_PALETTE[0];
+
   try {
 
     const {
@@ -2481,7 +2693,7 @@ async function registerPlayer() {
     } =
       await supabaseClient
         .from("players")
-        .select("id")
+        .select("id, color")
         .eq("name", name)
         .maybeSingle();
 
@@ -2497,7 +2709,9 @@ async function registerPlayer() {
         await supabaseClient
           .from("players")
           .update({
-            active: true
+            active: true,
+            color:
+              selectedColor
           })
           .eq(
             "id",
@@ -2517,7 +2731,9 @@ async function registerPlayer() {
           .from("players")
           .insert({
             name: name,
-            active: true
+            active: true,
+            color:
+              selectedColor
           });
 
       if (insertError) {
@@ -2529,6 +2745,8 @@ async function registerPlayer() {
     input.value = "";
 
     await initializeSupabaseData();
+
+    renderPlayerColorPalette();
 
     alert(
       "プレイヤーを登録しました"
@@ -4425,6 +4643,9 @@ colorButton.appendChild(
 
       selectedColor =
         color;
+        
+        palette.dataset.selectedColor =
+  selectedColor;
 
 
       /*

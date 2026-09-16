@@ -4375,8 +4375,10 @@ wrapper.appendChild(deleteButton);
       const score =
         document.createElement("strong");
 
-      score.textContent =
-        `${item.score}点`;
+     score.textContent =
+  direction === "rank"
+    ? `${item.score}位`
+    : `${item.score}点`;
 
 
       row.appendChild(name);
@@ -4840,12 +4842,10 @@ function isWinner(
       g => g.name === match.game
     );
 
-
   const direction =
     game
       ? game.direction
       : "high";
-
 
   const item =
     match.scores.find(
@@ -4853,21 +4853,29 @@ function isWinner(
         s.player === playerName
     );
 
-
   if (!item) return false;
-
 
   const scores =
     match.scores.map(
       s => Number(s.score)
     );
 
+  let best;
 
-  const best =
-    direction === "high"
-      ? Math.max(...scores)
-      : Math.min(...scores);
+  if (direction === "high") {
 
+    best =
+      Math.max(...scores);
+
+  } else if (
+    direction === "low" ||
+    direction === "rank"
+  ) {
+
+    best =
+      Math.min(...scores);
+
+  }
 
   return Number(item.score) === best;
 
@@ -5950,6 +5958,8 @@ function renderGameSpecificRanking(gameName) {
   const averageRankRanking =
     document.getElementById("gameAverageRankRanking");
 
+  
+
   if (
     !title ||
     !scoreRanking ||
@@ -5967,6 +5977,20 @@ function renderGameSpecificRanking(gameName) {
     );
 
   if (!game) return;
+  
+  const scoreRankingTitle =
+  scoreRanking
+    .parentElement
+    ?.querySelector("h3");
+
+if (scoreRankingTitle) {
+
+  scoreRankingTitle.textContent =
+    game.direction === "rank"
+      ? "📊 順位ランキング"
+      : "🏆 得点ランキング";
+
+}
 
   const matches =
     data.matches
@@ -6060,50 +6084,62 @@ function renderGameSpecificRanking(gameName) {
       }
 
       if (
-        player.bestScore === null ||
-        (
-          game.direction === "low"
-            ? Number(item.score) <
-              Number(player.bestScore)
-            : Number(item.score) >
-              Number(player.bestScore)
-        )
-      ) {
+  player.bestScore === null ||
+  (
+    game.direction === "low" ||
+    game.direction === "rank"
+      ? Number(item.score) <
+        Number(player.bestScore)
+      : Number(item.score) >
+        Number(player.bestScore)
+  )
+) {
 
-        player.bestScore =
-          Number(item.score);
+  player.bestScore =
+    Number(item.score);
 
-      }
+}
 
-      const sorted =
-        scores
-          .slice()
-          .sort((a, b) => {
+      let rank;
 
-            if (game.direction === "low") {
+if (game.direction === "rank") {
 
-              return (
-                Number(a.score) -
-                Number(b.score)
-              );
+  rank =
+    Number(item.score);
 
-            }
+} else {
 
-            return (
-              Number(b.score) -
-              Number(a.score)
-            );
+  const sorted =
+    scores
+      .slice()
+      .sort((a, b) => {
 
-          });
+        if (game.direction === "low") {
 
-      const rank =
-        sorted.findIndex(
-          p =>
-            p.player ===
-            item.player
-        ) + 1;
+          return (
+            Number(a.score) -
+            Number(b.score)
+          );
 
-      player.totalRank += rank;
+        }
+
+        return (
+          Number(b.score) -
+          Number(a.score)
+        );
+
+      });
+
+  rank =
+    sorted.findIndex(
+      p =>
+        p.player ===
+        item.player
+    ) + 1;
+
+}
+
+player.totalRank += rank;
 
     });
 
@@ -6213,34 +6249,39 @@ function renderGameSpecificRanking(gameName) {
 
 }
 
-  const scoreList =
-    ranking
-      .filter(player =>
-        player.bestScore !== null
-      )
-      .sort((a, b) => {
+ const scoreList =
+  ranking
+    .filter(player =>
+      player.bestScore !== null
+    )
+    .sort((a, b) => {
 
-        if (game.direction === "low") {
-
-          return (
-            a.bestScore -
-            b.bestScore
-          );
-
-        }
+      if (
+        game.direction === "low" ||
+        game.direction === "rank"
+      ) {
 
         return (
-          b.bestScore -
-          a.bestScore
+          a.bestScore -
+          b.bestScore
         );
 
-      });
+      }
 
-  renderRanking(
+      return (
+        b.bestScore -
+        a.bestScore
+      );
+
+    });
+
+renderRanking(
   scoreRanking,
   scoreList,
   player =>
-    `${player.bestScore}点`,
+    game.direction === "rank"
+      ? `${player.bestScore}位`
+      : `${player.bestScore}点`,
   player =>
     player.bestScore
 );
@@ -6542,6 +6583,9 @@ function editMatch(matchId) {
       ? game.direction
       : "high";
 
+  const isRankGame =
+    direction === "rank";
+
   wrapper.innerHTML = "";
 
   const title =
@@ -6626,7 +6670,11 @@ function editMatch(matchId) {
 
 
     data.players
-      .filter(p => p.active || p.name === playerName)
+      .filter(
+        p =>
+          p.active ||
+          p.name === playerName
+      )
       .forEach(p => {
 
         const option =
@@ -6647,20 +6695,67 @@ function editMatch(matchId) {
       });
 
 
-    const scoreInput =
-      document.createElement("input");
+    let scoreInput;
 
-    scoreInput.type =
-      "number";
+    if (isRankGame) {
 
-    scoreInput.className =
-      "match-score";
+      scoreInput =
+        document.createElement("select");
 
-    scoreInput.placeholder =
-      "得点";
+      scoreInput.className =
+        "match-score";
 
-    scoreInput.value =
-      score;
+      const activePlayerCount =
+        data.players.filter(
+          p => p.active
+        ).length;
+
+      for (
+        let rank = 1;
+        rank <= activePlayerCount;
+        rank++
+      ) {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          rank;
+
+        option.textContent =
+          `${rank}位`;
+
+        if (
+          String(score) ===
+          String(rank)
+        ) {
+          option.selected = true;
+        }
+
+        scoreInput.appendChild(
+          option
+        );
+
+      }
+
+    } else {
+
+      scoreInput =
+        document.createElement("input");
+
+      scoreInput.type =
+        "number";
+
+      scoreInput.className =
+        "match-score";
+
+      scoreInput.placeholder =
+        "得点";
+
+      scoreInput.value =
+        score;
+
+    }
 
 
     const removeButton =
@@ -6764,255 +6859,290 @@ function editMatch(matchId) {
 
   updateButton.onclick = async () => {
 
-  const rows =
-    playersArea.querySelectorAll(
-      ".player-row"
-    );
+    const rows =
+      playersArea.querySelectorAll(
+        ".player-row"
+      );
 
-  if (rows.length === 0) {
-
-    alert(
-      "プレイヤーを追加してください"
-    );
-
-    return;
-
-  }
-
-  if (!dateInput.value) {
-
-    alert(
-      "対戦日を入力してください"
-    );
-
-    return;
-
-  }
-
-  const scores = [];
-
-  const usedPlayers =
-    new Set();
-
-  for (const row of rows) {
-
-    const player =
-      row.querySelector(
-        ".match-player"
-      ).value;
-
-    const scoreText =
-      row.querySelector(
-        ".match-score"
-      ).value;
-
-    if (
-      !player ||
-      scoreText === ""
-    ) {
+    if (rows.length === 0) {
 
       alert(
-        "プレイヤーと得点を入力してください"
+        "プレイヤーを追加してください"
       );
 
       return;
 
     }
 
-    if (
-      usedPlayers.has(player)
-    ) {
+    if (!dateInput.value) {
 
       alert(
-        `${player}が重複しています`
+        "対戦日を入力してください"
       );
 
       return;
 
     }
 
-    usedPlayers.add(player);
+    const scores = [];
 
-    scores.push({
-      player,
-      score:
-        Number(scoreText)
-    });
+    const usedPlayers =
+      new Set();
 
-  }
+    for (const row of rows) {
 
-  let bestScore =
-    direction === "high"
-      ? -Infinity
-      : Infinity;
+      const player =
+        row.querySelector(
+          ".match-player"
+        ).value;
 
-  scores.forEach(item => {
-
-    if (
-      direction === "high"
-    ) {
+      const scoreText =
+        row.querySelector(
+          ".match-score"
+        ).value;
 
       if (
-        item.score > bestScore
+        !player ||
+        scoreText === ""
       ) {
-        bestScore =
-          item.score;
-      }
 
-    } else {
-
-      if (
-        item.score < bestScore
-      ) {
-        bestScore =
-          item.score;
-      }
-
-    }
-
-  });
-
-  scores.forEach(item => {
-
-    item.winner =
-      item.score === bestScore;
-
-  });
-
-  try {
-
-    /* =========================
-       対戦日を更新
-    ========================= */
-
-    const {
-  data: updatedMatch,
-  error: matchError
-} =
-  await supabaseClient
-    .from("matches")
-    .update({
-      match_date:
-        dateInput.value
-    })
-    .eq(
-      "id",
-      match.id
-    )
-    .select()
-    .single();
-
-if (matchError) {
-  throw matchError;
-}
-
-if (!updatedMatch) {
-  throw new Error(
-    "Supabase上の対戦記録が見つかりませんでした。"
-  );
-}
-
-    if (matchError) {
-      throw matchError;
-    }
-
-    /* =========================
-       既存の得点を削除
-    ========================= */
-
-    const {
-      error: deleteScoreError
-    } =
-      await supabaseClient
-        .from("match_scores")
-        .delete()
-        .eq(
-          "match_id",
-          match.id
+        alert(
+          isRankGame
+            ? "プレイヤーと順位を入力してください"
+            : "プレイヤーと得点を入力してください"
         );
 
-    if (deleteScoreError) {
-      throw deleteScoreError;
-    }
+        return;
 
-    /* =========================
-       新しい得点を保存
-    ========================= */
-
-    for (const item of scores) {
-
-      const {
-        data: dbPlayer,
-        error: playerError
-      } =
-        await supabaseClient
-          .from("players")
-          .select("id")
-          .eq(
-            "name",
-            item.player
-          )
-          .single();
-
-      if (playerError) {
-        throw playerError;
       }
 
+      if (
+        usedPlayers.has(player)
+      ) {
+
+        alert(
+          `${player}が重複しています`
+        );
+
+        return;
+
+      }
+
+      usedPlayers.add(player);
+
+      const score =
+        Number(scoreText);
+
+      if (!Number.isFinite(score)) {
+
+        alert(
+          isRankGame
+            ? "順位を正しく入力してください"
+            : "得点を正しく入力してください"
+        );
+
+        return;
+
+      }
+
+      scores.push({
+        player:
+          player,
+
+        score:
+          score
+      });
+
+    }
+
+
+    /* =========================
+       勝者判定
+    ========================= */
+
+    let bestScore =
+      direction === "high"
+        ? -Infinity
+        : Infinity;
+
+    scores.forEach(item => {
+
+      if (
+        direction === "high"
+      ) {
+
+        if (
+          item.score >
+          bestScore
+        ) {
+
+          bestScore =
+            item.score;
+
+        }
+
+      } else {
+
+        if (
+          item.score <
+          bestScore
+        ) {
+
+          bestScore =
+            item.score;
+
+        }
+
+      }
+
+    });
+
+
+    scores.forEach(item => {
+
+      item.winner =
+        item.score === bestScore;
+
+    });
+
+
+    try {
+
+      /* =========================
+         対戦日を更新
+      ========================= */
+
       const {
-        error: scoreError
+        data: updatedMatch,
+        error: matchError
+      } =
+        await supabaseClient
+          .from("matches")
+          .update({
+            match_date:
+              dateInput.value
+          })
+          .eq(
+            "id",
+            match.id
+          )
+          .select()
+          .single();
+
+      if (matchError) {
+        throw matchError;
+      }
+
+      if (!updatedMatch) {
+        throw new Error(
+          "Supabase上の対戦記録が見つかりませんでした。"
+        );
+      }
+
+
+      /* =========================
+         既存の得点・順位を削除
+      ========================= */
+
+      const {
+        error: deleteScoreError
       } =
         await supabaseClient
           .from("match_scores")
-          .insert({
-            match_id:
-              match.id,
-            player_id:
-              dbPlayer.id,
-            score:
-              item.score
-          });
+          .delete()
+          .eq(
+            "match_id",
+            match.id
+          );
 
-      if (scoreError) {
-        throw scoreError;
+      if (deleteScoreError) {
+        throw deleteScoreError;
       }
+
+
+      /* =========================
+         新しい得点・順位を保存
+      ========================= */
+
+      for (const item of scores) {
+
+        const {
+          data: dbPlayer,
+          error: playerError
+        } =
+          await supabaseClient
+            .from("players")
+            .select("id")
+            .eq(
+              "name",
+              item.player
+            )
+            .single();
+
+        if (playerError) {
+          throw playerError;
+        }
+
+        const {
+          error: scoreError
+        } =
+          await supabaseClient
+            .from("match_scores")
+            .insert({
+              match_id:
+                match.id,
+
+              player_id:
+                dbPlayer.id,
+
+              score:
+                item.score
+            });
+
+        if (scoreError) {
+          throw scoreError;
+        }
+
+      }
+
+
+      /* =========================
+         画面上のデータも更新
+      ========================= */
+
+      match.date =
+        dateInput.value;
+
+      match.scores =
+        scores;
+
+      alert(
+        "対戦結果を更新しました！"
+      );
+
+      updateAll();
+
+      renderGameSpecificRanking(
+        match.game
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Supabase更新エラー:",
+        error
+      );
+
+      alert(
+        "❌ 対戦結果の更新に失敗しました。\n\n" +
+        error.message
+      );
 
     }
 
-    /* =========================
-       画面上のデータも更新
-    ========================= */
+  };
 
-    match.date =
-      dateInput.value;
-
-    match.scores =
-      scores;
-
-    alert(
-      "対戦結果を更新しました！"
-    );
-
-    updateAll();
-
-renderGameSpecificRanking(
-  match.game
-);
-
-  } catch (error) {
-
-    console.error(
-      "Supabase更新エラー:",
-      error
-    );
-
-    alert(
-      "❌ 対戦結果の更新に失敗しました。\n\n" +
-      error.message
-    );
-
-  }
-
-};
 
   wrapper.appendChild(
     updateButton

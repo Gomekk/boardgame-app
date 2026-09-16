@@ -3484,19 +3484,123 @@ item.dataset.gameId =
       "row";
 
 
-    const thumb =
-      document.createElement("img");
+    const thumbArea =
+  document.createElement("div");
 
-    thumb.className =
-      "game-thumb";
+thumbArea.style.display =
+  "flex";
 
-    if (game.image) {
-      thumb.src = game.image;
-    } else {
-      thumb.classList.add("hidden");
-    }
+thumbArea.style.flexDirection =
+  "column";
 
-    row.appendChild(thumb);
+thumbArea.style.alignItems =
+  "center";
+
+thumbArea.style.flexShrink =
+  "0";
+
+
+const thumb =
+  document.createElement("img");
+
+thumb.className =
+  "game-thumb";
+
+if (game.image) {
+
+  thumb.src =
+    game.image;
+
+} else {
+
+  thumb.classList.add(
+    "hidden"
+  );
+
+}
+
+
+thumbArea.appendChild(
+  thumb
+);
+
+
+/*
+ * 重さバッジ
+ */
+
+const weight =
+  getGameWeightClass(
+    game.playTime
+  );
+
+const weightBadge =
+  document.createElement("div");
+
+weightBadge.textContent =
+  weightLabel;
+
+weightBadge.style.fontSize =
+  "11px";
+
+weightBadge.style.fontWeight =
+  "600";
+
+weightBadge.style.padding =
+  "3px 8px";
+
+weightBadge.style.borderRadius =
+  "999px";
+
+weightBadge.style.marginTop =
+  "5px";
+
+weightBadge.style.whiteSpace =
+  "nowrap";
+
+
+if (weight === "light") {
+
+  weightBadge.style.background =
+    "#E8F5E9";
+
+  weightBadge.style.color =
+    "#2E7D32";
+
+} else if (weight === "medium") {
+
+  weightBadge.style.background =
+    "#FFF3E0";
+
+  weightBadge.style.color =
+    "#E65100";
+
+} else if (weight === "heavy") {
+
+  weightBadge.style.background =
+    "#FDECEC";
+
+  weightBadge.style.color =
+    "#C62828";
+
+} else {
+
+  weightBadge.style.background =
+    "#F1F1F1";
+
+  weightBadge.style.color =
+    "#777";
+
+}
+
+
+thumbArea.appendChild(
+  weightBadge
+);
+
+row.appendChild(
+  thumbArea
+);
 
 
     const info =
@@ -3508,8 +3612,6 @@ item.dataset.gameId =
       </div>
 
       <div class="game-meta">
-  ${weightLabel}
-  ／
   ${direction}
   ／
   ${matchCount}回対戦

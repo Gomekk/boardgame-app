@@ -923,12 +923,15 @@ button.small {
       🎲 ゲーム管理
     </button>
 
-    <button
-      type="button"
-      onclick="showScreen('playerManageScreen')"
-    >
-      👥 プレイヤー管理
-    </button>
+   <button
+  type="button"
+  onclick="
+    showScreen('playerManageScreen');
+    renderPlayerColorPalette();
+  "
+>
+  👥 プレイヤー管理
+</button>
     
     <button
       type="button"
@@ -2649,6 +2652,8 @@ function renderPlayerColorPalette() {
   palette.dataset.selectedColor =
     selectedColor;
 }
+
+renderPlayerColorPalette();
 
 async function registerPlayer() {
 

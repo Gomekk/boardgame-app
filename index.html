@@ -959,15 +959,23 @@ button.small {
       id="gameName"
       placeholder="ゲーム名"
     >
-    
-        <div style="margin-top:12px;">
-      <label class="section-note">📷 ゲーム写真（任意）</label>
-      <input type="file" id="gameImageInput" accept="image/*">
-      <img id="gameImagePreview" class="game-thumb-large hidden" style="margin-top:8px;">
-    </div>
 
     <div style="margin-top:12px;">
-  <label class="section-note">上位設定</label>
+      <label class="section-note">📷 ゲーム写真（任意）</label>
+      <input
+        type="file"
+        id="gameImageInput"
+        accept="image/*"
+      >
+      <img
+        id="gameImagePreview"
+        class="game-thumb-large hidden"
+        style="margin-top:8px;"
+      >
+    </div>
+
+    <div style="margin-top:24px;">
+      <label class="section-note">上位設定</label>
     </div>
 
     <div class="radio-group">
@@ -989,6 +997,15 @@ button.small {
           value="low"
         >
         低得点が上位
+      </label>
+
+      <label class="radio-option">
+        <input
+          type="radio"
+          name="scoreDirection"
+          value="rank"
+        >
+        順位のみ
       </label>
 
     </div>
@@ -1766,21 +1783,19 @@ function addScorePlayer(
       "scorePlayers"
     );
 
+  if (!container) return;
 
   const div =
     document.createElement("div");
 
-
   div.className =
     "player-row";
-
 
   const select =
     document.createElement("select");
 
   select.className =
     "match-player";
-
 
   const defaultOption =
     document.createElement("option");
@@ -1789,11 +1804,9 @@ function addScorePlayer(
   defaultOption.textContent =
     "プレイヤーを選択";
 
-
   select.appendChild(
     defaultOption
   );
-
 
   data.players
     .filter(p => p.active)
@@ -1809,9 +1822,7 @@ function addScorePlayer(
         p.name;
 
       if (p.name === playerName) {
-
         option.selected = true;
-
       }
 
       select.appendChild(option);
@@ -1819,20 +1830,93 @@ function addScorePlayer(
     });
 
 
-  const input =
-    document.createElement("input");
+  /*
+   * 現在選択されているゲームを確認
+   */
+  const gameSelect =
+    document.getElementById("matchGame");
 
-  input.className =
-    "match-score";
+  const selectedGame =
+    gameSelect
+      ? data.games.find(
+          game =>
+            game.name ===
+            gameSelect.value
+        )
+      : null;
 
-  input.type =
-    "number";
 
-  input.placeholder =
-    "得点";
+  /*
+   * 順位のみのゲーム
+   */
+  if (
+    selectedGame &&
+    selectedGame.direction === "rank"
+  ) {
 
-  input.value =
-    score;
+    const rankSelect =
+      document.createElement("select");
+
+    rankSelect.className =
+      "match-score";
+
+    for (
+      let rank = 1;
+      rank <= data.players.filter(p => p.active).length;
+      rank++
+    ) {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        rank;
+
+      option.textContent =
+        `${rank}位`;
+
+      if (
+        String(score) ===
+        String(rank)
+      ) {
+        option.selected = true;
+      }
+
+      rankSelect.appendChild(
+        option
+      );
+
+    }
+
+    div.appendChild(select);
+    div.appendChild(rankSelect);
+
+  }
+
+  /*
+   * 通常の得点ゲーム
+   */
+  else {
+
+    const input =
+      document.createElement("input");
+
+    input.className =
+      "match-score";
+
+    input.type =
+      "number";
+
+    input.placeholder =
+      "得点";
+
+    input.value =
+      score;
+
+    div.appendChild(select);
+    div.appendChild(input);
+
+  }
 
 
   const remove =
@@ -1851,8 +1935,6 @@ function addScorePlayer(
     div.remove();
 
 
-  div.appendChild(select);
-  div.appendChild(input);
   div.appendChild(remove);
 
   container.appendChild(div);
@@ -6361,6 +6443,68 @@ if (gameImageInputEl) {
     preview.classList.remove("hidden");
 
   });
+
+}
+
+
+
+const matchGameEl =
+  document.getElementById("matchGame");
+
+if (matchGameEl) {
+
+  matchGameEl.addEventListener(
+    "change",
+    () => {
+
+      const container =
+        document.getElementById(
+          "scorePlayers"
+        );
+
+      if (!container) return;
+
+      const existingPlayers =
+        Array.from(
+          container.querySelectorAll(
+            ".player-row"
+          )
+        ).map(row => {
+
+          const playerSelect =
+            row.querySelector(
+              ".match-player"
+            );
+
+          const scoreInput =
+            row.querySelector(
+              ".match-score"
+            );
+
+          return {
+            player:
+              playerSelect
+                ? playerSelect.value
+                : "",
+            score:
+              scoreInput
+                ? scoreInput.value
+                : ""
+          };
+
+        });
+
+      container.innerHTML = "";
+
+      existingPlayers.forEach(item => {
+        addScorePlayer(
+          item.player,
+          item.score
+        );
+      });
+
+    }
+  );
 
 }
 

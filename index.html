@@ -6549,11 +6549,11 @@ function renderGameRankingGameList() {
 
       })
       .sort((a, b) =>
-        a.name.localeCompare(
-          b.name,
-          "ja"
-        )
-      );
+  (a.reading || a.name || "").localeCompare(
+    b.reading || b.name || "",
+    "ja"
+  )
+);
 
   container.innerHTML = "";
 

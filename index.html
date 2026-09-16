@@ -7543,6 +7543,125 @@ function updateAll() {
 
 }
 
+function getGameChampionNames(game) {
+
+  const matches =
+    data.matches.filter(
+      match => match.game === game.name
+    );
+
+  if (matches.length === 0) {
+    return [];
+  }
+
+  const stats = {};
+
+  matches.forEach(match => {
+
+    const scores =
+      match.scores || [];
+
+    scores.forEach(item => {
+
+      if (!stats[item.player]) {
+        stats[item.player] = {
+          bestScore: null,
+          wins: 0
+        };
+      }
+
+      const player =
+        stats[item.player];
+
+      const score =
+        Number(item.score);
+
+      // 順位型
+      if (game.direction === "rank") {
+
+        if (score === 1) {
+          player.wins++;
+        }
+
+      }
+      // スコア型
+      else if (Number.isFinite(score)) {
+
+        if (
+          player.bestScore === null ||
+          (
+            game.direction === "low"
+              ? score < player.bestScore
+              : score > player.bestScore
+          )
+        ) {
+          player.bestScore = score;
+        }
+
+      }
+
+    });
+
+  });
+
+  const players =
+    Object.entries(stats);
+
+  if (game.direction === "rank") {
+
+    const maxWins =
+      Math.max(
+        ...players.map(
+          ([, stat]) => stat.wins
+        )
+      );
+
+    return players
+      .filter(
+        ([, stat]) =>
+          stat.wins === maxWins &&
+          maxWins > 0
+      )
+      .map(
+        ([name]) => name
+      );
+
+  }
+
+  const validPlayers =
+    players.filter(
+      ([, stat]) =>
+        stat.bestScore !== null
+    );
+
+  if (validPlayers.length === 0) {
+    return [];
+  }
+
+  const bestScore =
+    game.direction === "low"
+      ? Math.min(
+          ...validPlayers.map(
+            ([, stat]) => stat.bestScore
+          )
+        )
+      : Math.max(
+          ...validPlayers.map(
+            ([, stat]) => stat.bestScore
+          )
+        );
+
+  return validPlayers
+    .filter(
+      ([, stat]) =>
+        stat.bestScore === bestScore
+    )
+    .map(
+      ([name]) => name
+    );
+
+}
+
 function renderGameRankingGameList() {
 
   const container =
@@ -7632,10 +7751,50 @@ return (
     button.style.gap =
       "10px";
 
-    button.innerHTML =
-      game.image
-        ? `<img src="${escapeHTML(game.image)}" class="game-thumb"> ${escapeHTML(game.name)}`
-        : ` ${escapeHTML(game.name)}`;
+    const championNames =
+  getGameChampionNames(game);
+
+const championText =
+  championNames.length > 0
+    ? `
+      <div style="
+        margin-left:auto;
+        text-align:right;
+        line-height:1.2;
+        flex-shrink:0;
+      ">
+        <div style="
+          font-size:10px;
+          color:#aaa;
+          margin-bottom:2px;
+        ">
+          Title Holder
+        </div>
+        <div style="
+          font-size:13px;
+          color:#555;
+        ">
+          ${championNames.map(name => escapeHTML(name)).join(" / ")}
+        </div>
+      </div>
+    `
+    : "";
+
+button.innerHTML =
+  game.image
+    ? `
+      <img src="${escapeHTML(game.image)}" class="game-thumb">
+      <span style="min-width:0;">
+        ${escapeHTML(game.name)}
+      </span>
+      ${championText}
+    `
+    : `
+      <span style="min-width:0;">
+        ${escapeHTML(game.name)}
+      </span>
+      ${championText}
+    `;
 
     button.onclick = () => {
 

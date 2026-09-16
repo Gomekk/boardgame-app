@@ -4231,7 +4231,13 @@ function editPlayer(playerId) {
     "grid";
 
   colorPalette.style.gridTemplateColumns =
-    "repeat(10, 1fr)";
+    "repeat(8, minmax(0, 1fr))";
+
+  colorPalette.style.width =
+    "100%";
+
+  colorPalette.style.boxSizing =
+    "border-box";
 
   colorPalette.style.gap =
     "6px";
@@ -4311,20 +4317,37 @@ function editPlayer(playerId) {
      */
 
     if (
-      usedColors.has(color) &&
-      color !== player.color
-    ) {
+  usedColors.has(color) &&
+  color !== player.color
+) {
 
-      colorButton.disabled =
-        true;
+  colorButton.disabled =
+    true;
 
-      colorButton.style.opacity =
-        "0.25";
+  colorButton.style.opacity =
+    "0.45";
 
-      colorButton.style.cursor =
-        "not-allowed";
+  colorButton.style.cursor =
+    "not-allowed";
 
-    }
+  colorButton.style.position =
+    "relative";
+
+  colorButton.style.overflow =
+    "hidden";
+
+  colorButton.style.backgroundImage =
+    `
+      repeating-linear-gradient(
+        135deg,
+        transparent 0px,
+        transparent 5px,
+        rgba(0,0,0,.45) 5px,
+        rgba(0,0,0,.45) 7px
+      )
+    `;
+
+}
 
 
     /*

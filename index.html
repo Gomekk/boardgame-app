@@ -5502,10 +5502,22 @@ function renderStreakRanking() {
 
     });
 
-        let currentStreak = 0;
-        let bestStreak = 0;
+      let currentStreak = 0;
+let bestStreak = 0;
 
-        matches.forEach(match => {
+alert(
+  player.name +
+  "\n\n" +
+  matches.map(match =>
+    match.date +
+    " / " +
+    match.game +
+    " / " +
+    (isWinner(match, player.name) ? "WIN" : "LOSE")
+  ).join("\n")
+);
+
+matches.forEach(match => {
 
           if (isWinner(match, player.name)) {
 

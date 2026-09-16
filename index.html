@@ -941,45 +941,6 @@ button.small {
 
 </div>
 
-<div id="settingsScreen" class="screenContent">
-
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('homeScreen')"
-  >
-    ← ホームに戻る
-  </button>
-
-  <div class="card">
-
-    <h2>⚙️ 設定</h2>
-
-    <button
-      type="button"
-      onclick="showScreen('gameManageScreen')"
-    >
-      🎲 ゲーム管理
-    </button>
-
-    <button
-      type="button"
-      onclick="showScreen('playerManageScreen')"
-    >
-      👥 プレイヤー管理
-    </button>
-
-    <button
-      type="button"
-      onclick="showScreen('backupScreen')"
-    >
-      💾 データ管理
-    </button>
-
-  </div>
-
-</div>
-
 <div id="gameManageScreen" class="screenContent">
 
   <button
@@ -5769,8 +5730,13 @@ function updateAll() {
 
   renderPlayerStatsList();
 
-  document.getElementById("matchDate").value =
-   new Date().toLocaleDateString("en-CA");
+  const matchDate =
+  document.getElementById("matchDate");
+
+  if (matchDate) {
+    matchDate.value =
+      new Date().toLocaleDateString("en-CA");
+  }
 
 }
 

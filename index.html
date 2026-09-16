@@ -1576,6 +1576,30 @@ function editGame(gameId) {
 
 
   /*
+   * 読み仮名
+   */
+
+  const readingInput =
+    document.createElement("input");
+
+  readingInput.type =
+    "text";
+
+  readingInput.value =
+    game.reading || "";
+
+  readingInput.placeholder =
+    "読み仮名（ひらがな）";
+
+  readingInput.style.marginTop =
+    "8px";
+
+  form.appendChild(
+    readingInput
+  );
+
+
+  /*
    * 現在の写真
    */
 
@@ -1840,247 +1864,267 @@ function editGame(gameId) {
 
   updateButton.onclick = async () => {
 
-  const newName =
-    nameInput.value.trim();
+    const newName =
+      nameInput.value.trim();
 
-  if (!newName) {
-
-    alert(
-      "ゲーム名を入力してください。"
-    );
-
-    return;
-
-  }
-
-
-  const selectedDirection =
-    form.querySelector(
-      'input[name="editScoreDirection_' +
-      game.id +
-      '"]:checked'
-    );
-
-  if (!selectedDirection) {
-
-    alert(
-      "上位設定を選択してください。"
-    );
-
-    return;
-
-  }
-
-
-  const newDirection =
-    selectedDirection.value;
-
-
-  /*
-   * 写真
-   */
-
-  let newImageUrl =
-    game.image || null;
-
-  let oldImagePath =
-  null;
-
-if (game.image) {
-
-  const marker =
-    "/storage/v1/object/public/game-images/";
-
-  const markerIndex =
-    game.image.indexOf(marker);
-
-  if (markerIndex !== -1) {
-
-    oldImagePath =
-      decodeURIComponent(
-        game.image.substring(
-          markerIndex +
-          marker.length
-        )
-      );
-
-  }
-
-}
-
-  const newFile =
-    imageInput.files[0];
-
-
-  if (newFile) {
-
-    try {
-
-      const fileExt =
-        newFile.name
-          .split(".")
-          .pop()
-          .toLowerCase();
-
-
-      const filePath =
-        `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
-
-
-      const {
-        error: uploadError
-      } =
-        await supabaseClient
-          .storage
-          .from("game-images")
-          .upload(
-            filePath,
-            newFile,
-            {
-              upsert: false
-            }
-          );
-
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-
-      const {
-        data: publicUrlData
-      } =
-        supabaseClient
-          .storage
-          .from("game-images")
-          .getPublicUrl(
-            filePath
-          );
-
-
-      newImageUrl =
-        publicUrlData.publicUrl;
-
-
-    } catch (error) {
-
-      console.error(
-        "ゲーム画像アップロードエラー:",
-        error
-      );
+    if (!newName) {
 
       alert(
-        "❌ 写真のアップロードに失敗しました。\n\n" +
-        error.message
+        "ゲーム名を入力してください。"
       );
 
       return;
 
     }
 
-  } else if (
-    deleteImageCheckbox.checked
-  ) {
 
-    newImageUrl =
-      null;
+    const newReading =
+      readingInput.value.trim();
 
-  }
+    if (!newReading) {
 
+      alert(
+        "読み仮名を入力してください。"
+      );
 
-  /*
-   * ゲーム情報を更新
-   */
+      return;
 
-  try {
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("games")
-        .update({
-          name:
-            newName,
-
-          direction:
-            newDirection,
-
-          image_url:
-            newImageUrl
-        })
-        .eq(
-          "id",
-          game.id
-        );
-
-
-    if (error) {
-      throw error;
     }
 
 
-    await initializeSupabaseData();
+    const selectedDirection =
+      form.querySelector(
+        'input[name="editScoreDirection_' +
+        game.id +
+        '"]:checked'
+      );
+
+    if (!selectedDirection) {
+
+      alert(
+        "上位設定を選択してください。"
+      );
+
+      return;
+
+    }
 
 
-/*
- * 古い写真をStorageから削除
- *
- * 新しい写真に変更した場合、
- * または写真を削除した場合のみ実行
- */
-
-if (
-  oldImagePath &&
-  (
-    newFile ||
-    deleteImageCheckbox.checked
-  )
-) {
-
-  const {
-    error: deleteImageError
-  } =
-    await supabaseClient
-      .storage
-      .from("game-images")
-      .remove([
-        oldImagePath
-      ]);
+    const newDirection =
+      selectedDirection.value;
 
 
-  if (deleteImageError) {
+    /*
+     * 写真
+     */
 
-    console.error(
-      "古いゲーム画像の削除エラー:",
-      deleteImageError
-    );
+    let newImageUrl =
+      game.image || null;
 
-  }
-
-}
-
-
-alert(
-  "ゲームを更新しました。"
-);
+    let oldImagePath =
+      null;
 
 
-  } catch (error) {
+    if (game.image) {
 
-    console.error(
-      "Supabaseゲーム更新エラー:",
-      error
-    );
+      const marker =
+        "/storage/v1/object/public/game-images/";
 
-    alert(
-      "❌ ゲームの更新に失敗しました。\n\n" +
-      error.message
-    );
+      const markerIndex =
+        game.image.indexOf(marker);
 
-  }
+      if (markerIndex !== -1) {
 
-};
+        oldImagePath =
+          decodeURIComponent(
+            game.image.substring(
+              markerIndex +
+              marker.length
+            )
+          );
+
+      }
+
+    }
+
+
+    const newFile =
+      imageInput.files[0];
+
+
+    if (newFile) {
+
+      try {
+
+        const fileExt =
+          newFile.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+        const filePath =
+          `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
+
+
+        const {
+          error: uploadError
+        } =
+          await supabaseClient
+            .storage
+            .from("game-images")
+            .upload(
+              filePath,
+              newFile,
+              {
+                upsert: false
+              }
+            );
+
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+
+        const {
+          data: publicUrlData
+        } =
+          supabaseClient
+            .storage
+            .from("game-images")
+            .getPublicUrl(
+              filePath
+            );
+
+
+        newImageUrl =
+          publicUrlData.publicUrl;
+
+
+      } catch (error) {
+
+        console.error(
+          "ゲーム画像アップロードエラー:",
+          error
+        );
+
+        alert(
+          "❌ 写真のアップロードに失敗しました。\n\n" +
+          error.message
+        );
+
+        return;
+
+      }
+
+    } else if (
+      deleteImageCheckbox.checked
+    ) {
+
+      newImageUrl =
+        null;
+
+    }
+
+
+    /*
+     * ゲーム情報を更新
+     */
+
+    try {
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("games")
+          .update({
+            name:
+              newName,
+
+            reading:
+              newReading,
+
+            direction:
+              newDirection,
+
+            image_url:
+              newImageUrl
+          })
+          .eq(
+            "id",
+            game.id
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      await initializeSupabaseData();
+
+
+      /*
+       * 古い写真をStorageから削除
+       *
+       * 新しい写真に変更した場合、
+       * または写真を削除した場合のみ実行
+       */
+
+      if (
+        oldImagePath &&
+        (
+          newFile ||
+          deleteImageCheckbox.checked
+        )
+      ) {
+
+        const {
+          error: deleteImageError
+        } =
+          await supabaseClient
+            .storage
+            .from("game-images")
+            .remove([
+              oldImagePath
+            ]);
+
+
+        if (deleteImageError) {
+
+          console.error(
+            "古いゲーム画像の削除エラー:",
+            deleteImageError
+          );
+
+        }
+
+      }
+
+
+      alert(
+        "ゲームを更新しました。"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Supabaseゲーム更新エラー:",
+        error
+      );
+
+      alert(
+        "❌ ゲームの更新に失敗しました。\n\n" +
+        error.message
+      );
+
+    }
+
+  };
+
 }
 
 /* =========================

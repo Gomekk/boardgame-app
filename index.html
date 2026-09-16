@@ -8453,94 +8453,117 @@ const championNames =
       flow.style.opacity =
         "1";
 
-      const svg = `
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 600 120"
-          preserveAspectRatio="none"
-          width="100%"
-          height="100%"
-        >
+            /*
+       * 曲線の流線を作る
+       */
 
-          <!-- 上側の細い流線 -->
-          <path
-            d="
-              M-40 38
-              C80 5, 145 75, 260 52
-              C380 28, 475 15, 650 48
-            "
-            fill="none"
-            stroke="${color1}"
-            stroke-width="3"
-            stroke-linecap="round"
-            opacity="0.42"
-          />
+      function createFlowLine(
+        color,
+        top,
+        width,
+        height,
+        rotate,
+        borderWidth,
+        opacity
+      ) {
 
-          <path
-            d="
-              M-40 43
-              C80 10, 145 80, 260 57
-              C380 33, 475 20, 650 53
-            "
-            fill="none"
-            stroke="${color1}"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            opacity="0.28"
-          />
+        const line =
+          document.createElement("span");
 
-          <!-- 下側の細い流線 -->
-          <path
-            d="
-              M-40 88
-              C80 55, 145 112, 270 82
-              C390 53, 490 62, 650 82
-            "
-            fill="none"
-            stroke="${color2}"
-            stroke-width="3"
-            stroke-linecap="round"
-            opacity="0.40"
-          />
+        line.style.position =
+          "absolute";
 
-          <path
-            d="
-              M-40 93
-              C80 60, 145 117, 270 87
-              C390 58, 490 67, 650 87
-            "
-            fill="none"
-            stroke="${color2}"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            opacity="0.25"
-          />
+        line.style.left =
+          "-15%";
 
-          <!-- 交差する1本 -->
-          <path
-            d="
-              M-40 105
-              C100 100, 155 20, 285 38
-              C410 55, 500 105, 650 28
-            "
-            fill="none"
-            stroke="${color1}"
-            stroke-width="2"
-            stroke-linecap="round"
-            opacity="0.24"
-          />
+        line.style.top =
+          top;
 
-        </svg>
-      `;
+        line.style.width =
+          width;
 
-      flow.style.backgroundImage =
-        `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+        line.style.height =
+          height;
 
-      flow.style.backgroundSize =
-        "100% 100%";
+        line.style.borderTop =
+          `${borderWidth}px solid ${color}`;
 
-      flow.style.backgroundRepeat =
-        "no-repeat";
+        line.style.borderRadius =
+          "50%";
+
+        line.style.transform =
+          `rotate(${rotate}deg)`;
+
+        line.style.pointerEvents =
+          "none";
+
+        line.style.opacity =
+          opacity;
+
+        return line;
+
+      }
+
+      /*
+       * 上側の流線
+       */
+      const line1 =
+        createFlowLine(
+          color1,
+          "8%",
+          "125%",
+          "70px",
+          "-8deg",
+          3,
+          0.55
+        );
+
+      /*
+       * 上側の細い流線
+       */
+      const line2 =
+        createFlowLine(
+          color1,
+          "15%",
+          "125%",
+          "58px",
+          "-8deg",
+          1.5,
+          0.38
+        );
+
+      /*
+       * 下側の流線
+       */
+      const line3 =
+        createFlowLine(
+          color2,
+          "58%",
+          "125%",
+          "65px",
+          "7deg",
+          3,
+          0.50
+        );
+
+      /*
+       * 下側の細い流線
+       */
+      const line4 =
+        createFlowLine(
+          color2,
+          "66%",
+          "125%",
+          "55px",
+          "7deg",
+          1.5,
+          0.34
+        );
+
+      flow.appendChild(line1);
+      flow.appendChild(line2);
+      flow.appendChild(line3);
+      flow.appendChild(line4);
 
       button.appendChild(flow);
 

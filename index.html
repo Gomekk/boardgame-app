@@ -8405,7 +8405,7 @@ const championNames =
         })
         .filter(Boolean);
 
-        if (holderColors.length > 0) {
+            if (holderColors.length > 0) {
 
       const color1 =
         holderColors[0];
@@ -8420,22 +8420,88 @@ const championNames =
       button.style.backgroundImage = `
         radial-gradient(
           ellipse 85% 80% at 105% 15%,
-          ${color1}99 0%,
-          ${color1}55 35%,
+          ${color1}66 0%,
+          ${color1}32 35%,
           transparent 75%
         ),
         radial-gradient(
           ellipse 85% 75% at 100% 90%,
-          ${color2}88 0%,
-          ${color2}44 35%,
+          ${color2}55 0%,
+          ${color2}28 35%,
           transparent 75%
         ),
         radial-gradient(
           ellipse 65% 55% at 75% 50%,
-          ${color1}44 0%,
+          ${color1}22 0%,
           transparent 70%
         )
       `;
+
+      button.style.position =
+        "relative";
+
+      button.style.overflow =
+        "hidden";
+
+      const flow =
+        document.createElement("span");
+
+      flow.style.position =
+        "absolute";
+
+      flow.style.left =
+        "-10%";
+
+      flow.style.top =
+        "0";
+
+      flow.style.width =
+        "120%";
+
+      flow.style.height =
+        "100%";
+
+      flow.style.pointerEvents =
+        "none";
+
+      flow.style.zIndex =
+        "0";
+
+      flow.style.opacity =
+        "0.45";
+
+      flow.style.background = `
+        repeating-linear-gradient(
+          165deg,
+          transparent 0px,
+          transparent 22px,
+          ${color1}22 23px,
+          ${color1}22 25px,
+          transparent 26px,
+          transparent 42px
+        )
+      `;
+
+      flow.style.transform =
+        "skewX(-12deg)";
+
+      button.appendChild(flow);
+
+      Array.from(
+        button.children
+      ).forEach(child => {
+
+        if (child !== flow) {
+
+          child.style.position =
+            "relative";
+
+          child.style.zIndex =
+            "1";
+
+        }
+
+      });
 
     }
     

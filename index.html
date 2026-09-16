@@ -3265,8 +3265,16 @@ function renderGameList() {
 
 
   const activeGames =
-    data.games.filter(
+  data.games
+    .filter(
       g => g.active
+    )
+    .sort(
+      (a, b) =>
+        (a.reading || a.name || "").localeCompare(
+          b.reading || b.name || "",
+          "ja"
+        )
     );
 
 

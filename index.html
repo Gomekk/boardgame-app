@@ -929,6 +929,13 @@ button.small {
     >
       👥 プレイヤー管理
     </button>
+    
+    <button
+      type="button"
+      onclick="showScreen('weightSettingScreen')"
+    >
+      ⚖️ 重さ基準設定
+    </button>
 
     <button
       type="button"
@@ -978,7 +985,7 @@ button.small {
     margin-top:4px;
   "
 >
-  ※目安：軽量級＝30分以内／中量級＝30分超〜120分以内／重量級＝120分超
+  ※現在の設定：軽量級＝<span id="weightLightNote">30</span>分以内／中量級＝<span id="weightMediumNote">60</span>分以内／重量級＝<span id="weightMediumNoteHeavy">60</span>分超
 </div>
 
     <div style="margin-top:12px;">
@@ -1046,6 +1053,86 @@ button.small {
     <h2>🎲 ゲーム一覧</h2>
 
     <div id="gameList"></div>
+
+  </div>
+
+</div>
+
+<div id="weightSettingScreen" class="screenContent">
+
+  <button
+    class="secondary"
+    type="button"
+    onclick="showScreen('settingsScreen')"
+  >
+    ← 設定に戻る
+  </button>
+
+  <div class="card">
+
+    <h2>⚖️ 重さ基準設定</h2>
+
+    <p class="section-note">
+      ゲームのプレイ時間を基準に、軽量級・中量級・重量級を設定します。
+    </p>
+
+    <label class="section-note">
+      軽量級
+    </label>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span>0〜</span>
+
+      <input
+  id="weightLightMax"
+  type="number"
+  min="1"
+  value="30"
+  style="width:100px;"
+>
+
+      <span>分</span>
+    </div>
+
+    <label
+      class="section-note"
+      style="display:block;margin-top:16px;"
+    >
+      中量級
+    </label>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span>軽量級の上限超〜</span>
+
+      <input
+  id="weightMediumMax"
+  type="number"
+  min="1"
+  value="60"
+  style="width:100px;"
+>
+
+      <span>分</span>
+    </div>
+
+    <label
+      class="section-note"
+      style="display:block;margin-top:16px;"
+    >
+      重量級
+    </label>
+
+    <div style="margin-top:8px;">
+      <span>中量級の上限超〜</span>
+    </div>
+
+    <button
+      type="button"
+      style="margin-top:20px;"
+      onclick="saveWeightSettings()"
+    >
+      💾 基準を保存
+    </button>
 
   </div>
 
@@ -1213,14 +1300,70 @@ let data = {
   matches: []
 };
 
+async function loadWeightSettings() {
+
+  const {
+    data: settings,
+    error
+  } = await supabaseClient
+    .from("app_settings")
+    .select("*")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+
+    console.error(
+      "重さ基準取得エラー:",
+      error
+    );
+
+    return;
+
+  }
+
+    if (!settings) return;
+
+  weightSettings.lightMax =
+    settings.weight_light_max;
+
+  weightSettings.mediumMax =
+    settings.weight_medium_max;
+
+  const lightNote =
+    document.getElementById("weightLightNote");
+
+  const mediumNote =
+    document.getElementById("weightMediumNote");
+
+  const heavyNote =
+    document.getElementById("weightMediumNoteHeavy");
+
+  if (lightNote) {
+    lightNote.textContent =
+      weightSettings.lightMax;
+  }
+
+  if (mediumNote) {
+    mediumNote.textContent =
+      weightSettings.mediumMax;
+  }
+
+  if (heavyNote) {
+    heavyNote.textContent =
+      weightSettings.mediumMax;
+  }
+
+}
+
 async function initializeSupabaseData() {
+
+  await loadWeightSettings();
 
   const supabaseData =
     await loadDataFromSupabase();
 
-  if (!supabaseData) {
-    return;
-  }
+  if (!supabaseData) return;
 
   data = supabaseData;
 
@@ -1229,6 +1372,73 @@ async function initializeSupabaseData() {
 }
 
 initializeSupabaseData();
+
+async function saveWeightSettings() {
+
+  const lightMax =
+    Number(
+      document.getElementById(
+        "weightLightMax"
+      ).value
+    );
+
+  const mediumMax =
+    Number(
+      document.getElementById(
+        "weightMediumMax"
+      ).value
+    );
+
+  if (
+    !Number.isInteger(lightMax) ||
+    lightMax <= 0
+  ) {
+    alert(
+      "軽量級の上限を1分以上の整数で入力してください。"
+    );
+    return;
+  }
+
+  if (
+    !Number.isInteger(mediumMax) ||
+    mediumMax <= lightMax
+  ) {
+    alert(
+      "中量級の上限は、軽量級の上限より大きい値を入力してください。"
+    );
+    return;
+  }
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("app_settings")
+      .upsert({
+        id: 1,
+        weight_light_max: lightMax,
+        weight_medium_max: mediumMax
+      });
+
+  if (error) {
+
+    console.error(
+      "重さ基準保存エラー:",
+      error
+    );
+
+    alert(
+      "重さ基準の保存に失敗しました。"
+    );
+
+    return;
+  }
+
+  alert(
+    "重さ基準を保存しました。"
+  );
+
+}
 
 
 /* =========================
@@ -1678,7 +1888,7 @@ playTimeNote.style.marginTop =
   "4px";
 
 playTimeNote.textContent =
-  "※目安：軽量級＝30分以内／中量級＝30分超〜120分以内／重量級＝120分超";
+  "※現在の設定：軽量級＝<span id="weightLightNote">30</span>分以内／中量級＝<span id="weightMediumNote">60</span>分以内／重量級＝<span id="weightMediumNoteHeavy">60</span>分超
 
 form.appendChild(
   playTimeNote
@@ -3114,6 +3324,12 @@ async function loadDataFromSupabase() {
 
 }
 
+let weightSettings = {
+  lightMax: 30,
+  mediumMax: 60
+};
+
+
 function getGameWeightClass(playTime) {
 
   const time =
@@ -3126,11 +3342,11 @@ function getGameWeightClass(playTime) {
     return "";
   }
 
-  if (time <= 30) {
+  if (time <= weightSettings.lightMax) {
     return "light";
   }
 
-  if (time <= 120) {
+  if (time <= weightSettings.mediumMax) {
     return "medium";
   }
 

@@ -8405,105 +8405,31 @@ const championNames =
         })
         .filter(Boolean);
 
-                      if (holderColors.length > 0) {
+                         if (holderColors.length > 0) {
 
       const color1 =
         holderColors[0];
 
-      const color2 =
-        holderColors[1] ||
-        holderColors[0];
-
-      /*
-       * ゲーム名から毎回同じ「ランダム値」を作る
-       * → ページを更新しても模様が変わらない
-       */
-      let seed = 0;
-
-      for (let i = 0; i < game.name.length; i++) {
-        seed =
-          (seed * 31 +
-            game.name.charCodeAt(i)) >>> 0;
-      }
-
-      function random() {
-        seed =
-          (seed * 1664525 + 1013904223) >>> 0;
-
-        return seed / 4294967296;
-      }
-
-      /*
-       * ゲームごとに流線の位置を変える
-       */
-      const x1 =
-        75 + random() * 35;
-
-      const y1 =
-        20 + random() * 70;
-
-      const x2 =
-        75 + random() * 35;
-
-      const y2 =
-        20 + random() * 70;
-
-      const x3 =
-        70 + random() * 40;
-
-      const y3 =
-        25 + random() * 55;
-
-      const size1 =
-        80 + random() * 45;
-
-      const size2 =
-        75 + random() * 50;
-
-      const size3 =
-        85 + random() * 40;
-
       /*
        * グレーのベースはそのまま
        */
+      button.style.backgroundImage =
+        "none";
+
       button.style.backgroundColor =
         "#e5e7eb";
 
       /*
-       * 流線だけを描く
+       * 右端にプレイヤーカラーを縦に入れる
        */
-      button.style.backgroundImage = `
+      button.style.borderRight =
+        `12px solid ${color1}`;
 
-        radial-gradient(
-          ellipse ${size1}% 150%
-          at ${x1}% ${y1}%,
-          transparent 0%,
-          transparent 56%,
-          ${color1}45 57%,
-          ${color1}45 58.5%,
-          transparent 60%
-        ),
-
-        radial-gradient(
-          ellipse ${size2}% 145%
-          at ${x2}% ${y2}%,
-          transparent 0%,
-          transparent 59%,
-          ${color2}38 60%,
-          ${color2}38 61.5%,
-          transparent 63%
-        ),
-
-        radial-gradient(
-          ellipse ${size3}% 170%
-          at ${x3}% ${y3}%,
-          transparent 0%,
-          transparent 67%,
-          ${color1}28 68%,
-          ${color1}28 69%,
-          transparent 70.5%
-        )
-      `;
+      /*
+       * 右端の角をきれいに見せる
+       */
+      button.style.overflow =
+        "hidden";
 
     }
     

@@ -8405,7 +8405,7 @@ const championNames =
         })
         .filter(Boolean);
 
-                if (holderColors.length > 0) {
+                   if (holderColors.length > 0) {
 
       const color1 =
         holderColors[0];
@@ -8414,174 +8414,35 @@ const championNames =
         holderColors[1] ||
         holderColors[0];
 
-      /*
-       * グレーのベースは変更しない
-       */
-      button.style.backgroundImage =
-        "none";
+      button.style.backgroundColor =
+        "#e5e7eb";
 
-      button.style.position =
-        "relative";
-
-      button.style.overflow =
-        "hidden";
-
-      const flow =
-        document.createElement("span");
-
-      flow.style.position =
-        "absolute";
-
-      flow.style.left =
-        "0";
-
-      flow.style.top =
-        "0";
-
-      flow.style.width =
-        "100%";
-
-      flow.style.height =
-        "100%";
-
-      flow.style.pointerEvents =
-        "none";
-
-      flow.style.zIndex =
-        "0";
-
-      flow.style.opacity =
-        "1";
-
-            /*
-       * 曲線の流線を作る
-       */
-
-      function createFlowLine(
-        color,
-        top,
-        width,
-        height,
-        rotate,
-        borderWidth,
-        opacity
-      ) {
-
-        const line =
-          document.createElement("span");
-
-        line.style.position =
-          "absolute";
-
-        line.style.left =
-          "-15%";
-
-        line.style.top =
-          top;
-
-        line.style.width =
-          width;
-
-        line.style.height =
-          height;
-
-        line.style.borderTop =
-          `${borderWidth}px solid ${color}`;
-
-        line.style.borderRadius =
-          "50%";
-
-        line.style.transform =
-          `rotate(${rotate}deg)`;
-
-        line.style.pointerEvents =
-          "none";
-
-        line.style.opacity =
-          opacity;
-
-        return line;
-
-      }
-
-      /*
-       * 上側の流線
-       */
-      const line1 =
-        createFlowLine(
-          color1,
-          "8%",
-          "125%",
-          "70px",
-          "-8deg",
-          3,
-          0.55
-        );
-
-      /*
-       * 上側の細い流線
-       */
-      const line2 =
-        createFlowLine(
-          color1,
-          "15%",
-          "125%",
-          "58px",
-          "-8deg",
-          1.5,
-          0.38
-        );
-
-      /*
-       * 下側の流線
-       */
-      const line3 =
-        createFlowLine(
-          color2,
-          "58%",
-          "125%",
-          "65px",
-          "7deg",
-          3,
-          0.50
-        );
-
-      /*
-       * 下側の細い流線
-       */
-      const line4 =
-        createFlowLine(
-          color2,
-          "66%",
-          "125%",
-          "55px",
-          "7deg",
-          1.5,
-          0.34
-        );
-
-      flow.appendChild(line1);
-      flow.appendChild(line2);
-      flow.appendChild(line3);
-      flow.appendChild(line4);
-
-      button.appendChild(flow);
-
-      Array.from(
-        button.children
-      ).forEach(child => {
-
-        if (child !== flow) {
-
-          child.style.position =
-            "relative";
-
-          child.style.zIndex =
-            "1";
-
-        }
-
-      });
+      button.style.backgroundImage = `
+        radial-gradient(
+          ellipse 95% 150% at 105% 100%,
+          transparent 0%,
+          transparent 54%,
+          ${color1}55 55%,
+          ${color1}55 57%,
+          transparent 58%
+        ),
+        radial-gradient(
+          ellipse 90% 140% at 110% 0%,
+          transparent 0%,
+          transparent 58%,
+          ${color2}45 59%,
+          ${color2}45 61%,
+          transparent 62%
+        ),
+        radial-gradient(
+          ellipse 100% 160% at 100% 50%,
+          transparent 0%,
+          transparent 70%,
+          ${color1}30 71%,
+          ${color1}30 72%,
+          transparent 73%
+        )
+      `;
 
     }
     

@@ -6986,8 +6986,8 @@ return (
 
     button.innerHTML =
       game.image
-        ? `<img src="${escapeHTML(game.image)}" class="game-thumb">🎲 ${escapeHTML(game.name)}`
-        : `🎲 ${escapeHTML(game.name)}`;
+        ? `<img src="${escapeHTML(game.image)}" class="game-thumb"> ${escapeHTML(game.name)}`
+        : ` ${escapeHTML(game.name)}`;
 
     button.onclick = () => {
 

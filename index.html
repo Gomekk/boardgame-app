@@ -1507,6 +1507,345 @@ async function archiveGame(name) {
 
 }
 
+function editGame(gameId) {
+
+  const game =
+    data.games.find(
+      g => g.id === gameId
+    );
+
+  if (!game) return;
+
+  const items =
+    document.querySelectorAll(
+      "#gameList .game-item"
+    );
+
+  let targetItem = null;
+
+  items.forEach(item => {
+
+    const editButton =
+      item.querySelector(
+        "button:not(.danger)"
+      );
+
+    if (
+      editButton &&
+      editButton.textContent === "✏️ 編集"
+    ) {
+      const row =
+        editButton.closest(".game-item");
+
+      if (row) {
+        const title =
+          row.querySelector(
+            ".game-title"
+          );
+
+        if (
+          title &&
+          title.textContent === game.name
+        ) {
+          targetItem = row;
+        }
+      }
+    }
+
+  });
+
+  if (!targetItem) return;
+
+  targetItem.innerHTML = "";
+
+  const form =
+    document.createElement("div");
+
+  form.className = "card";
+
+  const title =
+    document.createElement("h3");
+
+  title.textContent =
+    "✏️ ゲームを編集";
+
+  form.appendChild(title);
+
+
+  /*
+   * ゲーム名
+   */
+
+  const nameInput =
+    document.createElement("input");
+
+  nameInput.type = "text";
+  nameInput.value = game.name;
+  nameInput.placeholder = "ゲーム名";
+
+  form.appendChild(nameInput);
+
+
+  /*
+   * 現在の写真
+   */
+
+  if (game.image) {
+
+    const currentImage =
+      document.createElement("img");
+
+    currentImage.src =
+      game.image;
+
+    currentImage.className =
+      "game-thumb-large";
+
+    currentImage.style.marginTop =
+      "12px";
+
+    form.appendChild(
+      currentImage
+    );
+
+  }
+
+
+  /*
+   * 新しい写真
+   */
+
+  const imageLabel =
+    document.createElement("label");
+
+  imageLabel.className =
+    "section-note";
+
+  imageLabel.style.display =
+    "block";
+
+  imageLabel.style.marginTop =
+    "12px";
+
+  imageLabel.textContent =
+    "📷 写真を変更";
+
+  form.appendChild(
+    imageLabel
+  );
+
+
+  const imageInput =
+    document.createElement("input");
+
+  imageInput.type = "file";
+  imageInput.accept = "image/*";
+
+  form.appendChild(
+    imageInput
+  );
+
+
+  /*
+   * 写真削除
+   */
+
+  const deleteImageLabel =
+    document.createElement("label");
+
+  deleteImageLabel.className =
+    "radio-option";
+
+  deleteImageLabel.style.display =
+    "block";
+
+  deleteImageLabel.style.marginTop =
+    "8px";
+
+
+  const deleteImageCheckbox =
+    document.createElement("input");
+
+  deleteImageCheckbox.type =
+    "checkbox";
+
+  deleteImageLabel.appendChild(
+    deleteImageCheckbox
+  );
+
+  deleteImageLabel.appendChild(
+    document.createTextNode(
+      " 写真を削除"
+    )
+  );
+
+  form.appendChild(
+    deleteImageLabel
+  );
+
+
+  /*
+   * 上位設定
+   */
+
+  const directionTitle =
+    document.createElement("div");
+
+  directionTitle.className =
+    "section-note";
+
+  directionTitle.style.marginTop =
+    "24px";
+
+  directionTitle.textContent =
+    "上位設定";
+
+  form.appendChild(
+    directionTitle
+  );
+
+
+  const radioGroup =
+    document.createElement("div");
+
+  radioGroup.className =
+    "radio-group";
+
+
+  [
+    ["high", "高得点が上位"],
+    ["low", "低得点が上位"],
+    ["rank", "順位のみ"]
+  ].forEach(
+    ([value, labelText]) => {
+
+      const label =
+        document.createElement("label");
+
+      label.className =
+        "radio-option";
+
+
+      const radio =
+        document.createElement("input");
+
+      radio.type = "radio";
+      radio.name =
+        `editScoreDirection_${game.id}`;
+
+      radio.value = value;
+
+      if (
+        game.direction === value
+      ) {
+        radio.checked = true;
+      }
+
+
+      label.appendChild(
+        radio
+      );
+
+      label.appendChild(
+        document.createTextNode(
+          ` ${labelText}`
+        )
+      );
+
+      radioGroup.appendChild(
+        label
+      );
+
+    }
+  );
+
+
+  form.appendChild(
+    radioGroup
+  );
+
+
+  /*
+   * ボタン
+   */
+
+  const buttonArea =
+    document.createElement("div");
+
+  buttonArea.style.marginTop =
+    "12px";
+
+
+  const updateButton =
+    document.createElement("button");
+
+  updateButton.textContent =
+    "更新";
+
+  updateButton.type =
+    "button";
+
+
+  const cancelButton =
+    document.createElement("button");
+
+  cancelButton.className =
+    "secondary";
+
+  cancelButton.textContent =
+    "キャンセル";
+
+  cancelButton.type =
+    "button";
+
+  cancelButton.style.marginLeft =
+    "8px";
+
+
+  buttonArea.appendChild(
+    updateButton
+  );
+
+  buttonArea.appendChild(
+    cancelButton
+  );
+
+  form.appendChild(
+    buttonArea
+  );
+
+  targetItem.appendChild(
+    form
+  );
+
+
+  /*
+   * キャンセル
+   */
+
+  cancelButton.onclick = () => {
+
+    renderGameList();
+
+  };
+
+
+  /*
+   * 更新
+   *
+   * 今は次のステップで実装
+   */
+
+  updateButton.onclick = () => {
+
+    alert(
+      "更新処理は次のステップで追加します。"
+    );
+
+  };
+
+}
+
 
 /* =========================
    プレイヤー登録
@@ -2746,6 +3085,7 @@ function renderGameList() {
 
 
     row.appendChild(info);
+    row.appendChild(editButton);
     row.appendChild(button);
 
     item.appendChild(row);
@@ -2815,14 +3155,46 @@ function renderPlayerList() {
       showPlayerDetail(player.name);
 
 
-    const button =
-      document.createElement("button");
+    const editButton =
+  document.createElement("button");
 
-    button.className =
-      "small danger";
+editButton.className =
+  "small";
 
-    button.textContent =
-      "登録から外す";
+editButton.textContent =
+  "✏️ 編集";
+
+editButton.type =
+  "button";
+
+editButton.onclick = event => {
+
+  event.stopPropagation();
+
+  editGame(game.id);
+
+};
+
+
+const button =
+  document.createElement("button");
+
+button.className =
+  "small danger";
+
+button.textContent =
+  "登録から外す";
+
+button.type =
+  "button";
+
+button.onclick = event => {
+
+  event.stopPropagation();
+
+  archiveGame(game.name);
+
+};
 
 
     button.onclick = () =>

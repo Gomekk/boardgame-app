@@ -5703,33 +5703,65 @@ const info =
   const weightInfo =
   document.createElement("div");
 
-weightInfo.style.fontSize =
-  "12px";
+weightInfo.style.display =
+  "flex";
+
+weightInfo.style.flexWrap =
+  "wrap";
+
+weightInfo.style.gap =
+  "6px";
 
 weightInfo.style.marginTop =
-  "4px";
-
-weightInfo.style.color =
-  "#6b7280";
+  "6px";
 
 
 const weightLabels = [
-  ["light", "🟢 軽量級"],
-  ["medium", "🟠 中量級"],
-  ["heavy", "🔴 重量級"]
+  ["light", "軽量級"],
+  ["medium", "中量級"],
+  ["heavy", "重量級"]
 ];
 
 
-weightInfo.textContent =
-  weightLabels
-    .map(([key, label]) => {
+weightLabels.forEach(
+  ([key, label]) => {
 
-      const stat =
-        weightStats[key];
+    const stat =
+      weightStats[key];
 
-      if (stat.matches === 0) {
-        return `${label} -`;
-      }
+    const badge =
+      document.createElement("span");
+
+    badge.style.display =
+      "inline-block";
+
+    badge.style.fontSize =
+      "11px";
+
+    badge.style.fontWeight =
+      "600";
+
+    badge.style.padding =
+      "3px 8px";
+
+    badge.style.borderRadius =
+  "999px";
+
+    badge.style.whiteSpace =
+      "nowrap";
+
+    if (stat.matches === 0) {
+
+      badge.textContent =
+        `${label} -`;
+
+      badge.style.background =
+        "#F1F1F1";
+
+      badge.style.color =
+        "#777";
+
+    } else {
 
       const rate =
         (
@@ -5738,10 +5770,44 @@ weightInfo.textContent =
           100
         ).toFixed(1);
 
-      return `${label} ${rate}%`;
+      badge.textContent =
+        `${label} ${rate}%`;
 
-    })
-    .join(" ／ ");
+
+      if (key === "light") {
+
+        badge.style.background =
+          "#E8F5E9";
+
+        badge.style.color =
+          "#2E7D32";
+
+      } else if (key === "medium") {
+
+        badge.style.background =
+          "#FFF3E0";
+
+        badge.style.color =
+          "#E65100";
+
+      } else if (key === "heavy") {
+
+        badge.style.background =
+          "#FDECEC";
+
+        badge.style.color =
+          "#C62828";
+
+      }
+
+    }
+
+    weightInfo.appendChild(
+      badge
+    );
+
+  }
+);
 
 const winRate =
   matches.length > 0

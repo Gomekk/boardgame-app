@@ -4623,10 +4623,12 @@ function buildRouletteContent(g) {
 
 function randomSelectGame() {
 
-  const games =
-    data.games.filter(game => game.active);
+  const allGames =
+  data.games.filter(
+    game => game.active
+  );
 
-  if (games.length === 0) {
+if (allGames.length === 0) {
     alert("登録されているゲームがありません。");
     return;
   }
@@ -4648,10 +4650,37 @@ function randomSelectGame() {
     <div class="game-roulette-box">
 
       <div class="game-roulette-title">
-        🎲 今回のゲームは？
-      </div>
+  🎲 今回のゲームは？
+</div>
 
-      <div id="gameRouletteName">
+<div
+  id="gameRouletteMode"
+  style="
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin:12px 0;
+  "
+>
+  <button type="button" data-weight="">
+    🎲 全体
+  </button>
+
+  <button type="button" data-weight="light">
+    🟢 軽量級
+  </button>
+
+  <button type="button" data-weight="medium">
+    🟠 中量級
+  </button>
+
+  <button type="button" data-weight="heavy">
+    🔴 重量級
+  </button>
+</div>
+
+<div id="gameRouletteName">
   <span id="gameRouletteText">START!</span>
       </div>
 
@@ -4706,6 +4735,58 @@ function randomSelectGame() {
 
   const buttonsElement =
     document.getElementById("gameRouletteButtons");
+
+  const modeElement =
+  document.getElementById("gameRouletteMode");
+
+let selectedWeight = "";
+
+let games = [];
+
+function startRoulette() {
+
+  games =
+    selectedWeight
+      ? allGames.filter(
+          game =>
+            getGameWeightClass(game.playTime) ===
+            selectedWeight
+        )
+      : allGames;
+
+  if (games.length === 0) {
+    alert("この級に該当するゲームがありません。");
+    return;
+  }
+
+  modeElement.style.display = "none";
+
+  startRoulette();
+}
+
+const modeButtons =
+  modeElement.querySelectorAll(
+    "button"
+  );
+
+modeButtons.forEach(button => {
+
+  button.onclick = () => {
+
+    selectedWeight =
+      button.dataset.weight;
+
+    modeButtons.forEach(b => {
+      b.classList.remove("selected");
+    });
+
+    button.classList.add("selected");
+
+    startRoulette();
+
+  };
+
+});
 
   const recordButton =
     document.getElementById("gameRouletteRecord");

@@ -7549,6 +7549,12 @@ function getGameChampionNames(game) {
     data.matches.filter(
       match => match.game === game.name
     );
+    
+    alert(
+  "ゲーム名: " + game.name +
+  "\n対戦記録: " + matches.length +
+  "\ndirection: " + game.direction
+);
 
   if (matches.length === 0) {
     return [];

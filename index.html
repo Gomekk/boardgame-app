@@ -3032,8 +3032,14 @@ async function renderGameSelect() {
     '<option value="">ゲームを選択</option>';
 
   games
-    .filter(game => game.active)
-    .forEach(game => {
+  .filter(game => game.active)
+  .sort((a, b) =>
+    (a.reading || a.name || "").localeCompare(
+      b.reading || b.name || "",
+      "ja"
+    )
+  )
+  .forEach(game => {
 
       const option =
         document.createElement("option");

@@ -1422,17 +1422,21 @@ async function saveWeightSettings() {
 
   if (error) {
 
-    console.error(
-      "重さ基準保存エラー:",
-      error
-    );
+  console.error(
+    "重さ基準保存エラー:",
+    error
+  );
 
-    alert(
-      "重さ基準の保存に失敗しました。"
-    );
+  alert(
+    "保存失敗\n\n" +
+    "message: " + error.message +
+    "\ncode: " + error.code +
+    "\ndetails: " + error.details +
+    "\nhint: " + error.hint
+  );
 
-    return;
-  }
+  return;
+}
 
   alert(
     "重さ基準を保存しました。"

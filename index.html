@@ -1835,14 +1835,187 @@ function editGame(gameId) {
    * 更新
    */
 
-  updateButton.onclick = () => {
+  updateButton.onclick = async () => {
+
+  const newName =
+    nameInput.value.trim();
+
+  if (!newName) {
 
     alert(
-      "更新処理は次のステップで追加します。"
+      "ゲーム名を入力してください。"
     );
 
-  };
+    return;
 
+  }
+
+
+  const selectedDirection =
+    form.querySelector(
+      'input[name="editScoreDirection_' +
+      game.id +
+      '"]:checked'
+    );
+
+  if (!selectedDirection) {
+
+    alert(
+      "上位設定を選択してください。"
+    );
+
+    return;
+
+  }
+
+
+  const newDirection =
+    selectedDirection.value;
+
+
+  /*
+   * 写真
+   */
+
+  let newImageUrl =
+    game.image || null;
+
+
+  const newFile =
+    imageInput.files[0];
+
+
+  if (newFile) {
+
+    try {
+
+      const fileExt =
+        newFile.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+
+      const filePath =
+        `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
+
+
+      const {
+        error: uploadError
+      } =
+        await supabaseClient
+          .storage
+          .from("game-images")
+          .upload(
+            filePath,
+            newFile,
+            {
+              upsert: false
+            }
+          );
+
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+
+      const {
+        data: publicUrlData
+      } =
+        supabaseClient
+          .storage
+          .from("game-images")
+          .getPublicUrl(
+            filePath
+          );
+
+
+      newImageUrl =
+        publicUrlData.publicUrl;
+
+
+    } catch (error) {
+
+      console.error(
+        "ゲーム画像アップロードエラー:",
+        error
+      );
+
+      alert(
+        "❌ 写真のアップロードに失敗しました。\n\n" +
+        error.message
+      );
+
+      return;
+
+    }
+
+  } else if (
+    deleteImageCheckbox.checked
+  ) {
+
+    newImageUrl =
+      null;
+
+  }
+
+
+  /*
+   * ゲーム情報を更新
+   */
+
+  try {
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("games")
+        .update({
+          name:
+            newName,
+
+          direction:
+            newDirection,
+
+          image_url:
+            newImageUrl
+        })
+        .eq(
+          "id",
+          game.id
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    await initializeSupabaseData();
+
+
+    alert(
+      "ゲームを更新しました。"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Supabaseゲーム更新エラー:",
+      error
+    );
+
+    alert(
+      "❌ ゲームの更新に失敗しました。\n\n" +
+      error.message
+    );
+
+  }
+
+};
 }
 
 /* =========================

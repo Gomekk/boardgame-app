@@ -8390,6 +8390,42 @@ button.style.gap =
 
 const championNames =
   getGameChampionNames(game);
+  
+      const holderColors =
+      championNames
+        .map(name => {
+          const player =
+            data.players.find(
+              p => p.name === name
+            );
+
+          return player?.color;
+        })
+        .filter(Boolean);
+
+    if (holderColors.length > 0) {
+
+      const color1 =
+        holderColors[0];
+
+      const color2 =
+        holderColors[1] ||
+        holderColors[0];
+
+      button.style.backgroundImage = `
+        radial-gradient(
+          ellipse 70% 80% at 100% 0%,
+          ${color1}55 0%,
+          transparent 70%
+        ),
+        radial-gradient(
+          ellipse 70% 70% at 100% 100%,
+          ${color2}44 0%,
+          transparent 70%
+        )
+      `;
+
+    }
 
 const championText =
   championNames.length > 0

@@ -963,6 +963,24 @@ button.small {
   style="margin-top:8px;"
 >
 
+<input
+  id="gamePlayTime"
+  type="number"
+  min="1"
+  placeholder="プレイ時間（分）"
+  style="margin-top:8px;"
+>
+
+<div
+  style="
+    font-size:12px;
+    color:#777;
+    margin-top:4px;
+  "
+>
+  ※目安：軽量級＝30分以内／中量級＝30分超〜120分以内／重量級＝120分超
+</div>
+
     <div style="margin-top:12px;">
       <label class="section-note">📷 ゲーム写真（任意）</label>
       <input
@@ -1259,9 +1277,17 @@ async function registerGame() {
     document.getElementById("gameName");
 
   const name =
-    input.value.trim();
+  input.value.trim();
 
-  if (!name) {
+const playTimeInput =
+  document.getElementById("gamePlayTime");
+
+const playTime =
+  playTimeInput
+    ? Number(playTimeInput.value)
+    : 0;
+
+if (!name) {
 
     alert(
       "ゲーム名を入力してください"
@@ -1270,6 +1296,16 @@ async function registerGame() {
     return;
 
   }
+  
+  if (!Number.isInteger(playTime) || playTime <= 0) {
+
+  alert(
+    "プレイ時間を1分以上で入力してください"
+  );
+
+  return;
+
+}
 
   const direction =
     document.querySelector(
@@ -1333,11 +1369,12 @@ async function registerGame() {
         await supabaseClient
           .from("games")
           .insert({
-            name: name,
-            direction: direction,
-            active: true,
-            image_url: newImageUrl
-          });
+  name: name,
+  play_time: playTime,
+  direction: direction,
+  active: true,
+  image_url: newImageUrl
+});
 
       if (insertError) {
         throw insertError;
@@ -1346,6 +1383,9 @@ async function registerGame() {
     }
 
     input.value = "";
+    if (playTimeInput) {
+  playTimeInput.value = "";
+}
     
         if (imageInput) {
       imageInput.value = "";
@@ -1595,13 +1635,59 @@ function editGame(gameId) {
     "8px";
 
   form.appendChild(
-    readingInput
-  );
+  readingInput
+);
 
 
-  /*
-   * 現在の写真
-   */
+/*
+ * プレイ時間
+ */
+
+const playTimeInput =
+  document.createElement("input");
+
+playTimeInput.type =
+  "number";
+
+playTimeInput.min =
+  "1";
+
+playTimeInput.value =
+  game.playTime || "";
+
+playTimeInput.placeholder =
+  "プレイ時間（分）";
+
+playTimeInput.style.marginTop =
+  "8px";
+
+form.appendChild(
+  playTimeInput
+);
+
+const playTimeNote =
+  document.createElement("div");
+
+playTimeNote.style.fontSize =
+  "12px";
+
+playTimeNote.style.color =
+  "#777";
+
+playTimeNote.style.marginTop =
+  "4px";
+
+playTimeNote.textContent =
+  "※目安：軽量級＝30分以内／中量級＝30分超〜120分以内／重量級＝120分超";
+
+form.appendChild(
+  playTimeNote
+);
+
+
+/*
+ * 現在の写真
+ */
 
   if (game.image) {
 
@@ -1890,7 +1976,22 @@ function editGame(gameId) {
       return;
 
     }
+    
+    const newPlayTime =
+  Number(playTimeInput.value);
 
+if (
+  !Number.isInteger(newPlayTime) ||
+  newPlayTime <= 0
+) {
+
+  alert(
+    "プレイ時間を1分以上で入力してください。"
+  );
+
+  return;
+
+}
 
     const selectedDirection =
       form.querySelector(
@@ -2040,18 +2141,21 @@ function editGame(gameId) {
         await supabaseClient
           .from("games")
           .update({
-            name:
-              newName,
+  name:
+    newName,
 
-            reading:
-              newReading,
+  reading:
+    newReading,
 
-            direction:
-              newDirection,
+  play_time:
+    newPlayTime,
 
-            image_url:
-              newImageUrl
-          })
+  direction:
+    newDirection,
+
+  image_url:
+    newImageUrl
+})
           .eq(
             "id",
             game.id
@@ -2993,6 +3097,8 @@ async function loadDataFromSupabase() {
       name: game.name,
       reading:
         game.reading || "",
+      playTime:
+        game.play_time || null,
       direction:
         game.direction || "high",
       active:
@@ -3005,6 +3111,52 @@ async function loadDataFromSupabase() {
     convertedMatches
 
 };
+
+}
+
+function getGameWeightClass(playTime) {
+
+  const time =
+    Number(playTime);
+
+  if (
+    !Number.isFinite(time) ||
+    time <= 0
+  ) {
+    return "";
+  }
+
+  if (time <= 30) {
+    return "light";
+  }
+
+  if (time <= 120) {
+    return "medium";
+  }
+
+  return "heavy";
+
+}
+
+
+function getGameWeightLabel(playTime) {
+
+  const weight =
+    getGameWeightClass(playTime);
+
+  if (weight === "light") {
+    return "軽量級";
+  }
+
+  if (weight === "medium") {
+    return "中量級";
+  }
+
+  if (weight === "heavy") {
+    return "重量級";
+  }
+
+  return "級未設定";
 
 }
 

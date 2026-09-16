@@ -8369,9 +8369,117 @@ return (
 
     button.className =
       "secondary";
+      
+    button.style.position =
+  "relative";
+
+button.style.overflow =
+  "hidden";
 
     button.style.width =
       "100%";
+      
+      const holderColors =
+  championNames
+    .map(name => {
+
+      const player =
+        data.players.find(
+          p => p.name === name
+        );
+
+      return player?.color;
+
+    })
+    .filter(Boolean);
+
+if (holderColors.length > 0) {
+
+  const color1 =
+    holderColors[0];
+
+  const color2 =
+    holderColors[1] ||
+    color1;
+
+  const svg =
+    `
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1000 180"
+        preserveAspectRatio="none"
+      >
+
+        <path
+          d="M-50 125
+             C180 35 300 165 500 90
+             S760 20 1050 75"
+          fill="none"
+          stroke="${color1}"
+          stroke-opacity="0.32"
+          stroke-width="7"
+        />
+
+        <path
+          d="M-50 140
+             C180 55 330 175 510 105
+             S800 35 1050 90"
+          fill="none"
+          stroke="${color1}"
+          stroke-opacity="0.18"
+          stroke-width="3"
+        />
+
+        <path
+          d="M-50 155
+             C180 75 340 185 530 115
+             S820 55 1050 105"
+          fill="none"
+          stroke="${color2}"
+          stroke-opacity="0.24"
+          stroke-width="5"
+        />
+
+        <path
+          d="M-50 105
+             C160 15 300 135 490 70
+             S780 5 1050 55"
+          fill="none"
+          stroke="${color2}"
+          stroke-opacity="0.14"
+          stroke-width="2"
+        />
+
+      </svg>
+    `;
+
+  const svgUrl =
+    "url(\"data:image/svg+xml," +
+    encodeURIComponent(svg) +
+    "\")";
+
+  button.style.backgroundImage =
+    `
+      radial-gradient(
+        ellipse 55% 80% at 72% 35%,
+        ${color1}55 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 45% 70% at 88% 75%,
+        ${color2}44 0%,
+        transparent 72%
+      ),
+      ${svgUrl}
+    `;
+
+  button.style.backgroundSize =
+    "100% 100%, 100% 100%, 100% 100%";
+
+  button.style.backgroundPosition =
+    "center, center, center";
+
+}
 
     button.style.textAlign =
       "left";

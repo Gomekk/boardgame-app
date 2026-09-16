@@ -593,6 +593,18 @@ button.small {
       id="homeRankingCarousel"
       class="home-ranking-carousel"
     >
+    
+    <!-- ベストスコア保有数ランキング -->
+<div class="home-ranking-card">
+
+  <div class="home-ranking-title">
+    🏅 ベストスコア保有数ランキング
+  </div>
+
+  <div id="homeBestScoreCountRanking"></div>
+
+</div>
+
 
       <!-- 勝率ランキング -->
       <div class="home-ranking-card">
@@ -2646,6 +2658,147 @@ function renderPlayerList() {
   });
 
 }
+
+function renderBestScoreCountRanking() {
+
+  const container =
+    document.getElementById("homeBestScoreCountRanking");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const holderCounts = {};
+
+  data.games
+    .filter(game => game.active)
+    .forEach(game => {
+
+      const matches =
+        data.matches.filter(
+          match => match.game === game.name
+        );
+
+      if (matches.length === 0) return;
+
+      let bestScore =
+        game.direction === "low"
+          ? Infinity
+          : -Infinity;
+
+      matches.forEach(match => {
+
+        (match.scores || []).forEach(item => {
+
+          const score = Number(item.score);
+
+          if (game.direction === "low") {
+            if (score < bestScore) bestScore = score;
+          } else {
+            if (score > bestScore) bestScore = score;
+          }
+
+        });
+
+      });
+
+      const holders = new Set();
+
+      matches.forEach(match => {
+
+        (match.scores || []).forEach(item => {
+
+          if (Number(item.score) === bestScore) {
+            holders.add(item.player);
+          }
+
+        });
+
+      });
+
+      holders.forEach(playerName => {
+
+        if (!holderCounts[playerName]) {
+          holderCounts[playerName] = 0;
+        }
+
+        holderCounts[playerName]++;
+
+      });
+
+    });
+
+  const ranking =
+    data.players
+      .filter(player => player.active)
+      .map(player => ({
+        name: player.name,
+        count: holderCounts[player.name] || 0
+      }))
+      .filter(player => player.count > 0)
+      .sort((a, b) => b.count - a.count);
+
+  if (ranking.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "まだ対戦記録がありません。";
+
+    container.appendChild(empty);
+
+    return;
+  }
+
+  let previousCount = null;
+  let currentRank = 0;
+
+  ranking.forEach((player, index) => {
+
+    if (player.count !== previousCount) {
+
+      currentRank = index + 1;
+      previousCount = player.count;
+
+    }
+
+    const row =
+      document.createElement("div");
+
+    row.className = "rank-item";
+
+    const rank =
+      document.createElement("span");
+
+    rank.className = "rank-number";
+    rank.textContent = `${currentRank}位`;
+
+    const name =
+      document.createElement("span");
+
+    name.className = "rank-player";
+    name.textContent = player.name;
+
+    const score =
+      document.createElement("span");
+
+    score.className = "rank-score";
+    score.textContent = `${player.count}種目`;
+
+    row.appendChild(rank);
+    row.appendChild(name);
+    row.appendChild(score);
+
+    container.appendChild(row);
+
+  });
+
+}
+
 
 function renderWinRateRanking() {
 
@@ -5410,6 +5563,8 @@ function updateAll() {
   renderGameSelect();
   
   refreshMatchPlayerSelects();
+  
+  renderBestScoreCountRanking();
 
   renderWinRateRanking();
   

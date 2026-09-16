@@ -3304,12 +3304,14 @@ async function loadDataFromSupabase() {
   return {
 
   players:
-    players.map(player => ({
-      id: player.id,
-      name: player.name,
-      active:
-        player.active !== false
-    })),
+  players.map(player => ({
+    id: player.id,
+    name: player.name,
+    color:
+      player.color || null,
+    active:
+      player.active !== false
+  })),
 
   games:
     games.map(game => ({

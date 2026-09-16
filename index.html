@@ -1880,6 +1880,30 @@ function editGame(gameId) {
   let newImageUrl =
     game.image || null;
 
+  let oldImagePath =
+  null;
+
+if (game.image) {
+
+  const marker =
+    "/storage/v1/object/public/game-images/";
+
+  const markerIndex =
+    game.image.indexOf(marker);
+
+  if (markerIndex !== -1) {
+
+    oldImagePath =
+      decodeURIComponent(
+        game.image.substring(
+          markerIndex +
+          marker.length
+        )
+      );
+
+  }
+
+}
 
   const newFile =
     imageInput.files[0];
@@ -1996,9 +2020,47 @@ function editGame(gameId) {
     await initializeSupabaseData();
 
 
-    alert(
-      "ゲームを更新しました。"
+/*
+ * 古い写真をStorageから削除
+ *
+ * 新しい写真に変更した場合、
+ * または写真を削除した場合のみ実行
+ */
+
+if (
+  oldImagePath &&
+  (
+    newFile ||
+    deleteImageCheckbox.checked
+  )
+) {
+
+  const {
+    error: deleteImageError
+  } =
+    await supabaseClient
+      .storage
+      .from("game-images")
+      .remove([
+        oldImagePath
+      ]);
+
+
+  if (deleteImageError) {
+
+    console.error(
+      "古いゲーム画像の削除エラー:",
+      deleteImageError
     );
+
+  }
+
+}
+
+
+alert(
+  "ゲームを更新しました。"
+);
 
 
   } catch (error) {

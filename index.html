@@ -5611,10 +5611,16 @@ function renderPlayerStatsList() {
 
 
     let wins = 0;
-    let totalScore = 0;
+let totalScore = 0;
+
+const weightStats = {
+  light: { matches: 0, wins: 0 },
+  medium: { matches: 0, wins: 0 },
+  heavy: { matches: 0, wins: 0 }
+};
 
 
-    matches.forEach(match => {
+matches.forEach(match => {
 
       const item =
         match.scores.find(
@@ -5631,11 +5637,36 @@ function renderPlayerStatsList() {
         Number(item.score);
 
 
-      if (isWinner(match, player.name)) {
+      const game =
+  data.games.find(
+    g => g.name === match.game
+  );
 
-        wins++;
+const weight =
+  game
+    ? getGameWeightClass(
+        game.playTime
+      )
+    : "";
 
-      }
+if (weightStats[weight]) {
+
+  weightStats[weight].matches++;
+
+}
+
+
+if (isWinner(match, player.name)) {
+
+  wins++;
+
+  if (weightStats[weight]) {
+
+    weightStats[weight].wins++;
+
+  }
+
+}
 
     });
 
@@ -5668,6 +5699,49 @@ name.style.fontWeight =
 
 const info =
   document.createElement("span");
+  
+  const weightInfo =
+  document.createElement("div");
+
+weightInfo.style.fontSize =
+  "12px";
+
+weightInfo.style.marginTop =
+  "4px";
+
+weightInfo.style.color =
+  "#6b7280";
+
+
+const weightLabels = [
+  ["light", "🟢 軽量級"],
+  ["medium", "🟠 中量級"],
+  ["heavy", "🔴 重量級"]
+];
+
+
+weightInfo.textContent =
+  weightLabels
+    .map(([key, label]) => {
+
+      const stat =
+        weightStats[key];
+
+      if (stat.matches === 0) {
+        return `${label} -`;
+      }
+
+      const rate =
+        (
+          stat.wins /
+          stat.matches *
+          100
+        ).toFixed(1);
+
+      return `${label} ${rate}%`;
+
+    })
+    .join(" ／ ");
 
 const winRate =
   matches.length > 0
@@ -5706,6 +5780,7 @@ detailButton.onclick = () =>
 
 row.appendChild(name);
 row.appendChild(info);
+row.appendChild(weightInfo);
 row.appendChild(detailButton);
 
 

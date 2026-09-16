@@ -4231,13 +4231,19 @@ function editPlayer(playerId) {
     "grid";
 
   colorPalette.style.display =
-  "flex";
+  "grid";
 
-colorPalette.style.flexWrap =
-  "wrap";
+colorPalette.style.gridTemplateColumns =
+  "repeat(7, 32px)";
 
 colorPalette.style.gap =
   "8px";
+
+colorPalette.style.marginTop =
+  "8px";
+
+colorPalette.style.marginBottom =
+  "12px";
 
 colorPalette.style.width =
   "100%";
@@ -4350,45 +4356,43 @@ colorButton.style.flexShrink =
 
 
   const disabledMark =
-    document.createElement("span");
+  document.createElement("span");
 
-  disabledMark.textContent =
-    "×";
+disabledMark.textContent =
+  "";
 
-  disabledMark.style.position =
-    "absolute";
+disabledMark.style.position =
+  "absolute";
 
-  disabledMark.style.left =
-    "50%";
+disabledMark.style.left =
+  "0";
 
-  disabledMark.style.top =
-    "50%";
+disabledMark.style.top =
+  "0";
 
-  disabledMark.style.transform =
-    "translate(-50%, -50%)";
+disabledMark.style.width =
+  "100%";
 
-  disabledMark.style.color =
-    "#D32F2F";
+disabledMark.style.height =
+  "100%";
 
-  disabledMark.style.fontSize =
-    "25px";
+disabledMark.style.pointerEvents =
+  "none";
 
-  disabledMark.style.fontWeight =
-    "900";
+disabledMark.style.background =
+  `
+    linear-gradient(
+      to bottom right,
+      transparent 46%,
+      #D32F2F 47%,
+      #D32F2F 53%,
+      transparent 54%
+    )
+  `;
 
-  disabledMark.style.lineHeight =
-    "1";
-
-  disabledMark.style.textShadow =
-    "0 0 2px white, 0 0 2px white";
-
-  disabledMark.style.pointerEvents =
-    "none";
-
-
-  colorButton.appendChild(
-    disabledMark
-  );
+colorButton.appendChild(
+  disabledMark
+);
 
 }
 
@@ -4493,25 +4497,49 @@ colorButton.style.flexShrink =
    * 編集画面に追加
    */
 
-  targetRow.appendChild(
-    input
-  );
+  const editArea =
+  document.createElement("div");
 
-  targetRow.appendChild(
-    colorLabel
-  );
+editArea.style.width =
+  "100%";
 
-  targetRow.appendChild(
-    colorPalette
-  );
+editArea.style.minWidth =
+  "0";
 
-  targetRow.appendChild(
-    updateButton
-  );
 
-  targetRow.appendChild(
-    cancelButton
-  );
+editArea.appendChild(input);
+
+editArea.appendChild(
+  colorLabel
+);
+
+editArea.appendChild(
+  colorPalette
+);
+
+
+const buttonArea =
+  document.createElement("div");
+
+buttonArea.style.marginTop =
+  "4px";
+
+buttonArea.appendChild(
+  updateButton
+);
+
+buttonArea.appendChild(
+  cancelButton
+);
+
+
+editArea.appendChild(
+  buttonArea
+);
+
+targetRow.appendChild(
+  editArea
+);
 
 
   input.focus();

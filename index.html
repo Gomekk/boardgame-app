@@ -572,6 +572,29 @@ button.small {
   font-size: 18px;
 }
 
+.game-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.row > .game-thumb {
+  flex: 0 0 40px;
+}
+
+.game-thumb-large {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -728,6 +751,8 @@ button.small {
     <select id="matchGame">
       <option value="">ゲームを選択</option>
     </select>
+    
+    <img id="matchGamePreview" class="game-thumb-large hidden" style="margin-top:8px;">
     
     <div style="margin-top:12px;">
   <label for="matchDate" class="section-note">
@@ -973,6 +998,12 @@ button.small {
       id="gameName"
       placeholder="ゲーム名"
     >
+    
+        <div style="margin-top:12px;">
+      <label class="section-note">📷 ゲーム写真（任意）</label>
+      <input type="file" id="gameImageInput" accept="image/*">
+      <img id="gameImagePreview" class="game-thumb-large hidden" style="margin-top:8px;">
+    </div>
 
     <p class="section-note">
       このゲームでは、どちらの得点が上位になりますか？
@@ -1205,6 +1236,42 @@ initializeSupabaseData();
    ゲーム登録
 ========================= */
 
+async function uploadGameImage(file, gameName) {
+
+  if (!file) return null;
+
+  const fileExt =
+    file.name.split(".").pop();
+
+  const filePath =
+    `${Date.now()}_${gameName}.${fileExt}`;
+
+  const {
+    error: uploadError
+  } =
+    await supabaseClient
+      .storage
+      .from("game-images")
+      .upload(filePath, file, {
+        upsert: true
+      });
+
+  if (uploadError) {
+    throw uploadError;
+  }
+
+  const {
+    data: publicUrlData
+  } =
+    supabaseClient
+      .storage
+      .from("game-images")
+      .getPublicUrl(filePath);
+
+  return publicUrlData.publicUrl;
+
+}
+
 async function registerGame() {
 
   const input =
@@ -1230,13 +1297,24 @@ async function registerGame() {
 
   try {
 
+    const imageInput =
+      document.getElementById("gameImageInput");
+
+    const imageFile =
+      imageInput && imageInput.files[0]
+        ? imageInput.files[0]
+        : null;
+
+    const newImageUrl =
+      await uploadGameImage(imageFile, name);
+
     const {
       data: existingGame,
       error: findError
     } =
       await supabaseClient
         .from("games")
-        .select("id")
+        .select("id, image_url")
         .eq("name", name)
         .maybeSingle();
 
@@ -1253,7 +1331,9 @@ async function registerGame() {
           .from("games")
           .update({
             active: true,
-            direction: direction
+            direction: direction,
+            image_url:
+              newImageUrl || existingGame.image_url
           })
           .eq(
             "id",
@@ -1275,6 +1355,7 @@ async function registerGame() {
             name: name,
             direction: direction,
             active: true
+            image_url: newImageUrl
           });
 
       if (insertError) {
@@ -1284,6 +1365,18 @@ async function registerGame() {
     }
 
     input.value = "";
+    
+        if (imageInput) {
+      imageInput.value = "";
+    }
+
+    const preview =
+      document.getElementById("gameImagePreview");
+
+    if (preview) {
+      preview.src = "";
+      preview.classList.add("hidden");
+    }
 
     await initializeSupabaseData();
 
@@ -2239,7 +2332,9 @@ async function loadDataFromSupabase() {
         direction:
           game.direction || "high",
         active:
-          game.active !== false
+          game.active !== false,
+          image:
+          game.image_url || null
       })),
 
     matches:
@@ -2284,10 +2379,38 @@ async function renderGameSelect() {
 
       option.textContent =
         game.name;
+        
+      option.dataset.image =
+        game.image_url || "";
 
       select.appendChild(option);
 
     });
+
+  select.onchange = () => {
+
+    const preview =
+      document.getElementById("matchGamePreview");
+
+    if (!preview) return;
+
+    const selectedOption =
+      select.options[select.selectedIndex];
+
+    const imageUrl =
+      selectedOption
+        ? selectedOption.dataset.image
+        : "";
+
+    if (imageUrl) {
+      preview.src = imageUrl;
+      preview.classList.remove("hidden");
+    } else {
+      preview.src = "";
+      preview.classList.add("hidden");
+    }
+
+  };
 
 }
 
@@ -2530,6 +2653,19 @@ function renderGameList() {
     row.className =
       "row";
 
+    const thumb =
+      document.createElement("img");
+
+    thumb.className =
+      "game-thumb";
+
+    if (game.image) {
+      thumb.src = game.image;
+    } else {
+      thumb.classList.add("hidden");
+    }
+
+    row.appendChild(thumb);
 
     const info =
       document.createElement("div");
@@ -3261,6 +3397,14 @@ function renderStreakRanking() {
 
 }
 
+function buildRouletteContent(g) {
+
+  return g.image
+    ? `<img src="${escapeHTML(g.image)}" class="game-thumb-large" style="display:block;margin:0 auto 8px;">${escapeHTML(g.name)}`
+    : escapeHTML(g.name);
+
+}
+
 function randomSelectGame() {
 
   const games =
@@ -3391,8 +3535,8 @@ function spinRoulette() {
 
   void nameElement.offsetWidth;
 
-  nameElement.textContent =
-    game.name;
+  nameElement.innerHTML =
+    buildRouletteContent(game);
 
   nameElement.classList.add(
     "game-roulette-spinning"
@@ -3413,8 +3557,8 @@ function spinRoulette() {
       "game-roulette-spinning"
     );
 
-    nameElement.textContent =
-      selectedGame.name;
+    nameElement.innerHTML =
+      buildRouletteContent(selectedGame);
 
     subElement.textContent =
       "🎉 このゲームに決定！";
@@ -4568,14 +4712,24 @@ function showPlayerDetail(playerName) {
               ).toFixed(1)
             : "0.0";
 
+        const gameInfo =
+          data.games.find(
+            g => g.name === gameName
+          );
+
+        const thumbHtml =
+          gameInfo && gameInfo.image
+            ? `<img src="${escapeHTML(gameInfo.image)}" class="game-thumb" style="margin-right:8px;">`
+            : "";
 
         html += `
 
           <div class="stat-box">
 
             <strong>
-              ${escapeHTML(gameName)}
+              ${thumbHtml}${escapeHTML(gameName)}
             </strong>
+
 
             <div style="margin-top:6px;">
               ${stats.matches}戦
@@ -5692,8 +5846,22 @@ function renderGameRankingGameList() {
     button.style.marginBottom =
       "8px";
 
-    button.textContent =
-      `🎲 ${game.name}`;
+        button.style.marginBottom =
+      "8px";
+
+    button.style.display =
+      "flex";
+
+    button.style.alignItems =
+      "center";
+
+    button.style.gap =
+      "10px";
+
+    button.innerHTML =
+      game.image
+        ? `<img src="${escapeHTML(game.image)}" class="game-thumb">🎲 ${escapeHTML(game.name)}`
+        : `🎲 ${escapeHTML(game.name)}`;
 
     button.onclick = () => {
 
@@ -5762,8 +5930,10 @@ function renderGameSpecificRanking(gameName) {
         new Date(b.date)
       );
 
-  title.textContent =
-    `🎲 ${gameName}`;
+  title.innerHTML =
+    game.image
+      ? `<img src="${escapeHTML(game.image)}" class="game-thumb-large" style="margin-right:12px;">${escapeHTML(gameName)}`
+      : `🎲 ${escapeHTML(gameName)}`;
 
   container.classList.remove("hidden");
 
@@ -6203,6 +6373,30 @@ function escapeHTML(str) {
 /* =========================
    初期化
 ========================= */
+
+const gameImageInputEl =
+  document.getElementById("gameImageInput");
+
+if (gameImageInputEl) {
+
+  gameImageInputEl.addEventListener("change", () => {
+
+    const file =
+      gameImageInputEl.files[0];
+
+    const preview =
+      document.getElementById("gameImagePreview");
+
+    if (!file || !preview) return;
+
+    preview.src =
+      URL.createObjectURL(file);
+
+    preview.classList.remove("hidden");
+
+  });
+
+}
 
 updateAll();
 

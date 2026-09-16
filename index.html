@@ -4807,10 +4807,27 @@ const weightLabel =
       ? "🟠 中量級"
       : selectedWeight === "heavy"
         ? "🔴 重量級"
-        : "🎲 全てのゲーム";
+        : "🎲 全体";
 
-subElement.textContent =
-  `${weightLabel}のゲームをルーレット中……`;
+const weightStyle =
+  selectedWeight === "light"
+    ? "background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;"
+    : selectedWeight === "medium"
+      ? "background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;"
+      : selectedWeight === "heavy"
+        ? "background:#FDECEC;color:#C62828;border:1px solid #EF9A9A;"
+        : "background:#F1F5F9;color:#1E293B;border:1px solid #CBD5E1;";
+
+subElement.innerHTML =
+  `<span style="
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+    ${weightStyle}
+  ">${weightLabel}</span>
+  <span style="margin-left:6px;">のゲームをルーレット中……</span>`;
 
 spinRoulette();
 }

@@ -2650,7 +2650,7 @@ function renderPlayerList() {
 function renderWinRateRanking() {
 
   const container =
-    document.getElementById("winRateRanking");
+    document.getElementById("homeWinRateRanking");
 
   if (!container) return;
 
@@ -2809,7 +2809,7 @@ function renderWinRateRanking() {
 function renderWinCountRanking() {
 
   const container =
-    document.getElementById("winCountRanking");
+    document.getElementById("homeWinCountRanking");
 
   if (!container) return;
 
@@ -2962,7 +2962,7 @@ function renderWinCountRanking() {
 function renderStreakRanking() {
 
   const container =
-    document.getElementById("streakRanking");
+    document.getElementById("homeStreakRanking");
 
   if (!container) return;
 
@@ -3135,7 +3135,7 @@ function randomSelectGame() {
     <div class="game-roulette-box">
 
       <div class="game-roulette-title">
-        🎲 今回のゲームは？
+        🎲 今日のゲームは？
       </div>
 
       <div id="gameRouletteName">
@@ -3540,7 +3540,7 @@ function renderHeadToHeadRanking() {
 function renderAverageRankRanking() {
 
   const container =
-    document.getElementById("averageRankRanking");
+    document.getElementById("homeAverageRankRanking");
 
   if (!container) return;
 
@@ -5418,8 +5418,6 @@ function updateAll() {
   renderStreakRanking();
   
   renderAverageRankRanking();
-
-  renderHomeRankings();
   
   renderGameRankingGameList();
   
@@ -5439,65 +5437,6 @@ function updateAll() {
 
   document.getElementById("matchDate").value =
    new Date().toLocaleDateString("en-CA");
-
-}
-
-function renderHomeRankings() {
-
-  const winRate =
-    document.getElementById("homeWinRateRanking");
-
-  const winCount =
-    document.getElementById("homeWinCountRanking");
-
-  const streak =
-    document.getElementById("homeStreakRanking");
-
-  const averageRank =
-    document.getElementById("homeAverageRankRanking");
-
-  if (!winRate || !winCount || !streak || !averageRank) {
-    return;
-  }
-
-  /*
-   * 既存ランキング画面を一時的にコピーして、
-   * ホーム用ランキングとして表示する
-   */
-
-  const rankingSources = [
-    {
-      target: winRate,
-      source: "winRateRanking"
-    },
-    {
-      target: winCount,
-      source: "winCountRanking"
-    },
-    {
-      target: streak,
-      source: "streakRanking"
-    },
-    {
-      target: averageRank,
-      source: "averageRankRanking"
-    }
-  ];
-
-  rankingSources.forEach(item => {
-
-    const source =
-      document.getElementById(item.source);
-
-    if (!source) {
-      return;
-    }
-
-   item.target.innerHTML =
-    source.innerHTML;
-
-  });
-
 
 }
 

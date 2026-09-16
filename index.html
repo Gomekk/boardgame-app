@@ -2979,32 +2979,32 @@ async function loadDataFromSupabase() {
 
   return {
 
-    players:
-      players.map(player => ({
-        id: player.id,
-        name: player.name,
-        active:
-          player.active !== false
-      })),
+  players:
+    players.map(player => ({
+      id: player.id,
+      name: player.name,
+      active:
+        player.active !== false
+    })),
 
-    games:
-      games: games.map(game => ({
-  id: game.id,
-  name: game.name,
-  reading:
-    game.reading || "",
-  direction:
-    game.direction || "high",
-  active:
-    game.active !== false,
-  image:
-    game.image_url || null
-}))
+  games:
+    games.map(game => ({
+      id: game.id,
+      name: game.name,
+      reading:
+        game.reading || "",
+      direction:
+        game.direction || "high",
+      active:
+        game.active !== false,
+      image:
+        game.image_url || null
+    })),
 
-    matches:
-      convertedMatches
+  matches:
+    convertedMatches
 
-  };
+};
 
 }
 

@@ -1214,7 +1214,7 @@ async function uploadGameImage(file, gameName) {
       .storage
       .from("game-images")
       .upload(filePath, file, {
-        upsert: true
+        upsert: false
       });
 
   if (uploadError) {

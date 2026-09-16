@@ -3016,7 +3016,9 @@ function renderGameList() {
     const direction =
       game.direction === "high"
         ? "高得点が上位"
-        : "低得点が上位";
+        : game.direction === "low"
+          ? "低得点が上位"
+          : "順位のみ";
 
 
     const item =
@@ -3025,15 +3027,13 @@ function renderGameList() {
     item.className =
       "game-item";
 
-    item.style.cursor =
-      "pointer";
-
 
     const row =
       document.createElement("div");
 
     row.className =
       "row";
+
 
     const thumb =
       document.createElement("img");
@@ -3048,6 +3048,7 @@ function renderGameList() {
     }
 
     row.appendChild(thumb);
+
 
     const info =
       document.createElement("div");
@@ -3065,6 +3066,27 @@ function renderGameList() {
     `;
 
 
+    const editButton =
+      document.createElement("button");
+
+    editButton.className =
+      "small";
+
+    editButton.textContent =
+      "✏️ 編集";
+
+    editButton.type =
+      "button";
+
+    editButton.onclick = event => {
+
+      event.stopPropagation();
+
+      editGame(game.id);
+
+    };
+
+
     const button =
       document.createElement("button");
 
@@ -3074,6 +3096,8 @@ function renderGameList() {
     button.textContent =
       "登録から外す";
 
+    button.type =
+      "button";
 
     button.onclick = event => {
 
@@ -3085,8 +3109,11 @@ function renderGameList() {
 
 
     row.appendChild(info);
+
     row.appendChild(editButton);
+
     row.appendChild(button);
+
 
     item.appendChild(row);
 

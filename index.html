@@ -4680,9 +4680,12 @@ if (allGames.length === 0) {
   </button>
 </div>
 
-<div id="gameRouletteName">
+<button
+  type="button"
+  id="gameRouletteName"
+>
   <span id="gameRouletteText">START!</span>
-      </div>
+</button>
 
       <div
         id="gameRouletteSub"
@@ -4761,7 +4764,19 @@ function startRoulette() {
 
   modeElement.style.display = "none";
 
-  spinRoulette();
+const weightLabel =
+  selectedWeight === "light"
+    ? "🟢 軽量級"
+    : selectedWeight === "medium"
+      ? "🟠 中量級"
+      : selectedWeight === "heavy"
+        ? "🔴 重量級"
+        : "🎲 全体";
+
+subElement.textContent =
+  `${weightLabel}のゲームをルーレット中……`;
+
+spinRoulette();
 }
 
 const modeButtons =
@@ -4777,16 +4792,34 @@ modeButtons.forEach(button => {
       button.dataset.weight;
 
     modeButtons.forEach(b => {
+
       b.classList.remove("selected");
+
+      b.style.background =
+        "#111827";
+
+      b.style.color =
+        "#ffffff";
+
     });
 
     button.classList.add("selected");
 
-    startRoulette();
+    button.style.background =
+      "#4F46E5";
+
+    button.style.color =
+      "#ffffff";
 
   };
 
 });
+
+nameElement.onclick = () => {
+
+  startRoulette();
+
+};
 
   const recordButton =
     document.getElementById("gameRouletteRecord");

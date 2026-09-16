@@ -3462,6 +3462,10 @@ function renderGameList() {
           ? "低得点が上位"
           : "順位のみ";
 
+    const weightLabel =
+  getGameWeightLabel(
+    game.playTime
+  );
 
     const item =
   document.createElement("div");
@@ -3504,10 +3508,12 @@ item.dataset.gameId =
       </div>
 
       <div class="game-meta">
-        ${direction}
-        ／
-        ${matchCount}回対戦
-      </div>
+  ${weightLabel}
+  ／
+  ${direction}
+  ／
+  ${matchCount}回対戦
+</div>
     `;
 
 

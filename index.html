@@ -3323,6 +3323,15 @@ function randomSelectGame() {
         </button>
 
       </div>
+      
+          <button
+      type="button"
+      id="gameRouletteCancel"
+      class="secondary"
+      style="margin-top:12px;"
+    >
+      ✕ キャンセル
+    </button>
 
     </div>
   `;
@@ -3343,6 +3352,20 @@ function randomSelectGame() {
 
   const againButton =
     document.getElementById("gameRouletteAgain");
+    
+    const cancelButton =
+    document.getElementById("gameRouletteCancel");
+
+  let cancelled = false;
+
+  cancelButton.onclick = () => {
+
+    cancelled = true;
+
+    overlay.remove();
+
+  };
+
 
   let count = 0;
 const totalCount = 32;
@@ -3350,6 +3373,8 @@ const totalCount = 32;
 let selectedGame = null;
 
 function spinRoulette() {
+
+  if (cancelled) return;
 
   const progress =
     count / totalCount;

@@ -3906,6 +3906,58 @@ row.appendChild(
 /* =========================
    プレイヤー一覧
 ========================= */
+const PLAYER_COLOR_PALETTE = [
+  "#E57373",
+  "#EF5350",
+  "#F06292",
+  "#EC407A",
+  "#BA68C8",
+  "#AB47BC",
+  "#9575CD",
+  "#7E57C2",
+  "#7986CB",
+  "#5C6BC0",
+  "#64B5F6",
+  "#42A5F5",
+  "#29B6F6",
+  "#26C6DA",
+  "#26A69A",
+  "#66BB6A",
+  "#81C784",
+  "#9CCC65",
+  "#D4E157",
+  "#FFEE58",
+  "#FFD54F",
+  "#FFCA28",
+  "#FFB74D",
+  "#FFA726",
+  "#FF8A65",
+  "#A1887F",
+  "#8D6E63",
+  "#90A4AE",
+  "#78909C",
+  "#546E7A",
+  "#D32F2F",
+  "#C2185B",
+  "#7B1FA2",
+  "#512DA8",
+  "#303F9F",
+  "#1976D2",
+  "#0288D1",
+  "#0097A7",
+  "#00796B",
+  "#388E3C",
+  "#689F38",
+  "#AFB42B",
+  "#FBC02D",
+  "#F57C00",
+  "#E64A19",
+  "#6D4C41",
+  "#455A64",
+  "#F48FB1",
+  "#80CBC4",
+  "#90CAF9"
+];
 
 function renderPlayerList() {
 
@@ -3948,11 +4000,60 @@ function renderPlayerList() {
       "8px";
 
 
+        const nameArea =
+      document.createElement("div");
+
+    nameArea.style.display =
+      "flex";
+
+    nameArea.style.alignItems =
+      "center";
+
+    nameArea.style.gap =
+      "10px";
+
+    nameArea.style.flex =
+      "1";
+
+    const colorDot =
+      document.createElement("span");
+
+    colorDot.style.width =
+      "18px";
+
+    colorDot.style.height =
+      "18px";
+
+    colorDot.style.borderRadius =
+      "50%";
+
+    colorDot.style.display =
+      "inline-block";
+
+    colorDot.style.flexShrink =
+      "0";
+
+    colorDot.style.background =
+      player.color ||
+      "#BDBDBD";
+
+    colorDot.style.boxShadow =
+      "0 1px 4px rgba(0,0,0,.2)";
+
     const name =
       document.createElement("div");
 
     name.textContent =
       player.name;
+
+    name.style.cursor =
+      "pointer";
+
+    name.onclick = () =>
+      showPlayerDetail(player.name);
+
+    nameArea.appendChild(colorDot);
+    nameArea.appendChild(name);
 
     name.style.cursor =
       "pointer";
@@ -4011,7 +4112,7 @@ function renderPlayerList() {
     };
 
 
-    row.appendChild(name);
+    row.appendChild(nameArea);
 
     row.appendChild(editButton);
 
@@ -4074,6 +4175,10 @@ function editPlayer(playerId) {
   targetRow.innerHTML = "";
 
 
+  /*
+   * プレイヤー名
+   */
+
   const input =
     document.createElement("input");
 
@@ -4086,6 +4191,199 @@ function editPlayer(playerId) {
   input.placeholder =
     "プレイヤー名";
 
+
+  /*
+   * カラーパレット
+   */
+
+  const colorLabel =
+    document.createElement("div");
+
+  colorLabel.textContent =
+    "プレイヤーカラー";
+
+  colorLabel.style.fontSize =
+    "12px";
+
+  colorLabel.style.color =
+    "#777";
+
+  colorLabel.style.marginTop =
+    "10px";
+
+  colorLabel.style.marginBottom =
+    "6px";
+
+
+  const colorPalette =
+    document.createElement("div");
+
+  colorPalette.style.display =
+    "grid";
+
+  colorPalette.style.gridTemplateColumns =
+    "repeat(10, 1fr)";
+
+  colorPalette.style.gap =
+    "6px";
+
+  colorPalette.style.marginBottom =
+    "12px";
+
+
+  /*
+   * 他プレイヤーが使用中の色
+   */
+
+  const usedColors =
+    new Set(
+      data.players
+        .filter(p =>
+          p.active &&
+          p.id !== player.id &&
+          p.color
+        )
+        .map(p =>
+          p.color
+        )
+    );
+
+
+  let selectedColor =
+    player.color ||
+    PLAYER_COLOR_PALETTE.find(
+      color =>
+        !usedColors.has(color)
+    ) ||
+    PLAYER_COLOR_PALETTE[0];
+
+
+  /*
+   * 色ボタン生成
+   */
+
+  PLAYER_COLOR_PALETTE.forEach(color => {
+
+    const colorButton =
+      document.createElement("button");
+
+    colorButton.type =
+      "button";
+
+    colorButton.style.width =
+      "100%";
+
+    colorButton.style.aspectRatio =
+      "1";
+
+    colorButton.style.minHeight =
+      "28px";
+
+    colorButton.style.borderRadius =
+      "8px";
+
+    colorButton.style.border =
+      "2px solid transparent";
+
+    colorButton.style.background =
+      color;
+
+    colorButton.style.cursor =
+      "pointer";
+
+    colorButton.title =
+      usedColors.has(color)
+        ? "使用中"
+        : "この色を選択";
+
+
+    /*
+     * 使用中の色
+     */
+
+    if (
+      usedColors.has(color) &&
+      color !== player.color
+    ) {
+
+      colorButton.disabled =
+        true;
+
+      colorButton.style.opacity =
+        "0.25";
+
+      colorButton.style.cursor =
+        "not-allowed";
+
+    }
+
+
+    /*
+     * 選択中の色
+     */
+
+    if (
+      color === selectedColor
+    ) {
+
+      colorButton.style.border =
+        "3px solid #222";
+
+      colorButton.style.boxShadow =
+        "0 0 0 2px white, 0 0 0 4px #222";
+
+    }
+
+
+    colorButton.onclick = () => {
+
+      if (
+        usedColors.has(color) &&
+        color !== player.color
+      ) {
+        return;
+      }
+
+      selectedColor =
+        color;
+
+
+      /*
+       * 全ボタンの選択状態を更新
+       */
+
+      colorPalette
+        .querySelectorAll("button")
+        .forEach(button => {
+
+          button.style.border =
+            "2px solid transparent";
+
+          button.style.boxShadow =
+            "none";
+
+        });
+
+
+      colorButton.style.border =
+        "3px solid #222";
+
+      colorButton.style.boxShadow =
+        "0 0 0 2px white, 0 0 0 4px #222";
+
+    };
+
+
+    colorPalette.appendChild(
+      colorButton
+    );
+
+  });
+
+
+  /*
+   * ボタン
+   */
 
   const updateButton =
     document.createElement("button");
@@ -4116,11 +4414,29 @@ function editPlayer(playerId) {
     "8px";
 
 
-  targetRow.appendChild(input);
+  /*
+   * 編集画面に追加
+   */
 
-  targetRow.appendChild(updateButton);
+  targetRow.appendChild(
+    input
+  );
 
-  targetRow.appendChild(cancelButton);
+  targetRow.appendChild(
+    colorLabel
+  );
+
+  targetRow.appendChild(
+    colorPalette
+  );
+
+  targetRow.appendChild(
+    updateButton
+  );
+
+  targetRow.appendChild(
+    cancelButton
+  );
 
 
   input.focus();
@@ -4158,17 +4474,6 @@ function editPlayer(playerId) {
     }
 
 
-    if (
-      newName === player.name
-    ) {
-
-      renderPlayerList();
-
-      return;
-
-    }
-
-
     const duplicate =
       data.players.some(
         p =>
@@ -4198,7 +4503,9 @@ function editPlayer(playerId) {
           .from("players")
           .update({
             name:
-              newName
+              newName,
+            color:
+              selectedColor
           })
           .eq(
             "id",
@@ -4215,7 +4522,7 @@ function editPlayer(playerId) {
 
 
       alert(
-        "プレイヤー名を更新しました。"
+        "プレイヤー情報を更新しました。"
       );
 
 
@@ -4227,7 +4534,7 @@ function editPlayer(playerId) {
       );
 
       alert(
-        "❌ プレイヤー名の更新に失敗しました。\n\n" +
+        "❌ プレイヤー情報の更新に失敗しました。\n\n" +
         error.message
       );
 

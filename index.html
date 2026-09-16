@@ -8470,20 +8470,56 @@ const championNames =
       flow.style.opacity =
         "0.45";
 
-      flow.style.background = `
-        repeating-linear-gradient(
-          165deg,
-          transparent 0px,
-          transparent 22px,
-          ${color1}22 23px,
-          ${color1}22 25px,
-          transparent 26px,
-          transparent 42px
-        )
-      `;
+            const svg =
+        `
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 600 120"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M-50 35
+               C80 5, 150 65, 270 35
+               S460 5, 650 45"
+            fill="none"
+            stroke="${color1}"
+            stroke-width="7"
+            stroke-linecap="round"
+            opacity="0.28"
+          />
 
-      flow.style.transform =
-        "skewX(-12deg)";
+          <path
+            d="M-80 75
+               C70 35, 160 105, 300 70
+               S500 35, 680 80"
+            fill="none"
+            stroke="${color2}"
+            stroke-width="5"
+            stroke-linecap="round"
+            opacity="0.24"
+          />
+
+          <path
+            d="M-60 105
+               C90 70, 180 125, 320 95
+               S510 65, 670 105"
+            fill="none"
+            stroke="${color1}"
+            stroke-width="3"
+            stroke-linecap="round"
+            opacity="0.20"
+          />
+        </svg>
+        `;
+
+      flow.style.backgroundImage =
+        `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+
+      flow.style.backgroundSize =
+        "100% 100%";
+
+      flow.style.backgroundRepeat =
+        "no-repeat";
 
       button.appendChild(flow);
 

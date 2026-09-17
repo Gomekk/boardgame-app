@@ -251,6 +251,21 @@ button.small {
   display: block;
 }
 
+/*
+ * 各画面の「戻る」ボタンをスクロールしても
+ * 常に上部に固定表示する
+ */
+.screenContent > button:first-child {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-left: -16px;
+  margin-right: -16px;
+  width: calc(100% + 32px);
+  border-radius: 0;
+}
+
+
 .stat-box {
   background: #f9fafb;
   border-radius: 10px;

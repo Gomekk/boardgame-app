@@ -3623,6 +3623,7 @@ let weightSettings = {
   lightMax: 30,
   mediumMax: 60
 };
+let specificRouletteSelectedGames = new Set();
 
 
 function getGameWeightClass(playTime) {
@@ -5830,57 +5831,69 @@ if (allGames.length === 0) {
 
 let selectedWeight = "";
 let games = [];
-let specificRouletteSelectedGames = [];
 
 function startRoulette() {
 
   games =
-    selectedWeight
-      ? allGames.filter(
-          game =>
-            getGameWeightClass(game.playTime) ===
-            selectedWeight
+    selectedWeight === "specific"
+      ? allGames.filter(game =>
+          specificRouletteSelectedGames.has(game.name)
         )
-      : allGames;
+      : selectedWeight
+        ? allGames.filter(
+            game =>
+              getGameWeightClass(game.playTime) ===
+              selectedWeight
+          )
+        : allGames;
 
   if (games.length === 0) {
-    alert("この級に該当するゲームがありません。");
+    alert(
+      selectedWeight === "specific"
+        ? "選択したゲームが見つかりません。選び直してください。"
+        : "この級に該当するゲームがありません。"
+    );
     return;
   }
 
   modeElement.style.display = "none";
 
-const weightLabel =
-  selectedWeight === "light"
-    ? "軽量級"
-    : selectedWeight === "medium"
-      ? "中量級"
-      : selectedWeight === "heavy"
-        ? "重量級"
-        : "全てのゲーム";
+  const weightLabel =
+    selectedWeight === "specific"
+      ? "特定のゲーム"
+      : selectedWeight === "light"
+        ? "軽量級"
+        : selectedWeight === "medium"
+          ? "中量級"
+          : selectedWeight === "heavy"
+            ? "重量級"
+            : "全てのゲーム";
 
-const weightStyle =
-  selectedWeight === "light"
-    ? "background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;"
-    : selectedWeight === "medium"
-      ? "background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;"
-      : selectedWeight === "heavy"
-        ? "background:#FDECEC;color:#C62828;border:1px solid #EF9A9A;"
-        : "background:#F1F5F9;color:#1E293B;border:1px solid #CBD5E1;";
+  const weightStyle =
+    selectedWeight === "specific"
+      ? "background:#EDE7F6;color:#4527A0;border:1px solid #B39DDB;"
+      : selectedWeight === "light"
+        ? "background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;"
+        : selectedWeight === "medium"
+          ? "background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;"
+          : selectedWeight === "heavy"
+            ? "background:#FDECEC;color:#C62828;border:1px solid #EF9A9A;"
+            : "background:#F1F5F9;color:#1E293B;border:1px solid #CBD5E1;";
 
-subElement.innerHTML =
-  `<span style="
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:8px;
-    font-size:12px;
-    font-weight:600;
-    ${weightStyle}
-  ">${weightLabel}</span>
-  <span style="margin-left:6px;">の中からルーレット中……</span>`;
+  subElement.innerHTML =
+    `<span style="
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:8px;
+      font-size:12px;
+      font-weight:600;
+      ${weightStyle}
+    ">${weightLabel}</span>
+    <span style="margin-left:6px;">の中からルーレット中……</span>`;
 
-spinRoulette();
+  spinRoulette();
 }
+
 
 const modeButtons =
   modeElement.querySelectorAll(
@@ -5918,6 +5931,9 @@ modeButtons.forEach(button => {
   } else if (b.dataset.weight === "heavy") {
     b.style.background = "#FDECEC";
     b.style.color = "#C62828";
+  } else if (b.dataset.weight === "specific") {
+    b.style.background = "#F1F5F9";
+    b.style.color = "#1E293B";
   }
 
 });
@@ -6086,7 +6102,7 @@ function openSpecificGameSelector() {
   selectorOverlay.style.padding =
     "20px";
 
-  selectorOverlay.innerHTML = `
+    selectorOverlay.innerHTML = `
 
     <div
       style="
@@ -6113,13 +6129,7 @@ function openSpecificGameSelector() {
         "
       >
 
-        <div
-          style="
-            font-size:17px;
-            font-weight:700;
-            color:#333;
-          "
-        >
+        <div style="font-size:17px;font-weight:700;color:#333;">
           ゲームを選択
         </div>
 
@@ -6127,51 +6137,42 @@ function openSpecificGameSelector() {
           type="button"
           id="specificGameSelectorClose"
           style="
-            width:32px;
-            height:32px;
-            min-width:32px;
-            padding:0;
-            border:none;
-            background:#f3f4f6;
-            color:#555;
-            border-radius:50%;
-            font-size:20px;
-            line-height:1;
+            width:32px;height:32px;min-width:32px;padding:0;
+            border:none;background:#f3f4f6;color:#555;
+            border-radius:50%;font-size:20px;line-height:1;
           "
-        >
-          ×
-        </button>
+        >×</button>
 
       </div>
 
-      <div
-        style="
-          padding:14px 16px 8px;
-          overflow:auto;
-        "
-      >
+      <div style="padding:14px 16px 8px;overflow:auto;flex:1;min-height:0;">
 
         <input
           id="specificGameSearch"
           type="text"
           placeholder="ゲーム検索"
-          style="
-  width:100%;
-  box-sizing:border-box;
-  margin-bottom:12px;
-  font-size:16px;
-"
+          style="width:100%;box-sizing:border-box;margin-bottom:10px;font-size:16px;"
         >
 
-        <div
-          id="specificGameList"
-        ></div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button type="button" id="specificSelectAll" class="secondary small" style="flex:1;">全選択</button>
+          <button type="button" id="specificDeselectAll" class="secondary small" style="flex:1;">全解除</button>
+        </div>
 
+        <div id="specificGameList"></div>
+
+      </div>
+
+      <div style="padding:12px 16px;border-top:1px solid #eee;">
+        <button type="button" id="specificGameConfirm" style="margin-bottom:0;">
+          🎲 ルーレットにセットする
+        </button>
       </div>
 
     </div>
 
   `;
+
 
   document.body.appendChild(
     selectorOverlay
@@ -6206,6 +6207,47 @@ function openSpecificGameSelector() {
     selectorOverlay.remove();
 
   };
+  
+    document.getElementById("specificSelectAll").onclick = () => {
+    getVisibleSpecificGames(searchInput.value)
+      .forEach(g => specificRouletteSelectedGames.add(g.name));
+    renderSpecificGameList(searchInput.value);
+  };
+
+  document.getElementById("specificDeselectAll").onclick = () => {
+    getVisibleSpecificGames(searchInput.value)
+      .forEach(g => specificRouletteSelectedGames.delete(g.name));
+    renderSpecificGameList(searchInput.value);
+  };
+
+  document.getElementById("specificGameConfirm").onclick = () => {
+
+    if (specificRouletteSelectedGames.size === 0) {
+      alert("1つ以上のゲームを選択してください。");
+      return;
+    }
+
+    selectedWeight = "specific";
+
+    modeButtons.forEach(b => {
+      b.classList.remove("selected");
+      if (b.dataset.weight === "specific") {
+        b.style.background = "#1E3A5F";
+        b.style.color = "#ffffff";
+      } else if (b.dataset.weight === "") {
+        b.style.background = "#F1F5F9"; b.style.color = "#1E293B";
+      } else if (b.dataset.weight === "light") {
+        b.style.background = "#E8F5E9"; b.style.color = "#2E7D32";
+      } else if (b.dataset.weight === "medium") {
+        b.style.background = "#FFF3E0"; b.style.color = "#E65100";
+      } else if (b.dataset.weight === "heavy") {
+        b.style.background = "#FDECEC"; b.style.color = "#C62828";
+      }
+    });
+
+    selectorOverlay.remove();
+    // ここでは spinRoulette() を呼ばない → STARTボタンを押すまで待つ
+  };
 
 }
 
@@ -6218,6 +6260,31 @@ function openSpecificGameSelector() {
   };
 
 }
+
+function getVisibleSpecificGames(keyword = "") {
+
+  const normalizedKeyword =
+    normalizeGameSearch(keyword);
+
+  return data.games
+    .filter(game => game.active)
+    .filter(game => {
+
+      const name =
+        normalizeGameSearch(game.name);
+
+      const reading =
+        normalizeGameSearch(game.reading || "");
+
+      return (
+        name.includes(normalizedKeyword) ||
+        reading.includes(normalizedKeyword)
+      );
+
+    });
+
+}
+
 
 function renderSpecificGameList(keyword = "") {
 
@@ -6476,6 +6543,16 @@ function renderSpecificGameList(keyword = "") {
     gameLabel.appendChild(
       name
     );
+
+checkbox.checked = specificRouletteSelectedGames.has(game.name);
+
+checkbox.onchange = () => {
+  if (checkbox.checked) {
+    specificRouletteSelectedGames.add(game.name);
+  } else {
+    specificRouletteSelectedGames.delete(game.name);
+  }
+};
 
     gameLabel.appendChild(
       checkbox

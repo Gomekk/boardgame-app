@@ -2441,7 +2441,7 @@ form.appendChild(maxPlayersInput);
    * ボタン
    */
 
-  const buttonArea =
+    const buttonArea =
     document.createElement("div");
 
   buttonArea.style.marginTop =
@@ -2457,6 +2457,9 @@ form.appendChild(maxPlayersInput);
   updateButton.type =
     "button";
 
+  updateButton.style.marginBottom =
+    "8px";
+
 
   const cancelButton =
     document.createElement("button");
@@ -2470,8 +2473,6 @@ form.appendChild(maxPlayersInput);
   cancelButton.type =
     "button";
 
-  cancelButton.style.marginLeft =
-    "8px";
 
 
   buttonArea.appendChild(

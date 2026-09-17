@@ -5526,13 +5526,13 @@ matches.forEach(match => {
       .filter(player => player.matches > 0)
       .sort((a, b) => {
 
-        if (b.currentStreak !== a.currentStreak) {
-          return b.currentStreak - a.currentStreak;
-        }
+  if (b.bestStreak !== a.bestStreak) {
+    return b.bestStreak - a.bestStreak;
+  }
 
-        return b.bestStreak - a.bestStreak;
+  return b.currentStreak - a.currentStreak;
 
-      });
+});
 
   if (ranking.length === 0) {
 
@@ -5603,7 +5603,7 @@ matches.forEach(match => {
       "10px";
 
     detail.textContent =
-      `最高 ${player.bestStreak}連勝`;
+  `現在 ${player.currentStreak}連勝中`;
 
     const score =
       document.createElement("span");

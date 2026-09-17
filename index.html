@@ -392,12 +392,13 @@ button.small {
 
 /*
  * ポップアップ内の「先頭へ戻る」ボタン
+ * （ポップアップ自体は画面いっぱいに広がっているので、
+ *   画面固定でOK）
  */
 .popup-scroll-top-button {
-  position: sticky;
-  position: -webkit-sticky;
-  bottom: 12px;
-  left: 12px;
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
   width: 40px;
   height: 40px;
   padding: 0;
@@ -425,6 +426,7 @@ button.small {
   width: 18px;
   height: 18px;
 }
+
 
 
 

@@ -10699,6 +10699,11 @@ if (target) {
       "高さ：" + target.offsetHeight + "\n" +
       "幅：" + target.offsetWidth + "\n" +
       "親：" + (target.parentElement ? target.parentElement.id : "なし") + "\n" +
+"親の親：" + (
+  target.parentElement && target.parentElement.parentElement
+    ? target.parentElement.parentElement.id
+    : "なし"
+) + "\n" +
       "子要素数：" + target.children.length + "\n" +
       "HTML文字数：" + target.innerHTML.length
     );

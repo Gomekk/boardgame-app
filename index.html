@@ -916,21 +916,21 @@ button.small {
   </div>
 
     <!-- 選択したゲームのランキング（ポップアップ） -->
-  <div
+    <div
     id="selectedGameRankingOverlay"
-    class="hidden"
     style="
       position:fixed;
       inset:0;
       background:rgba(0,0,0,.45);
       z-index:10002;
-      display:flex;
+      display:none;
       align-items:center;
       justify-content:center;
       padding:20px;
     "
-    onclick="if(event.target===this) this.classList.add('hidden')"
+    onclick="if(event.target===this) this.style.display='none'"
   >
+
 
     <div
       id="selectedGameRanking"
@@ -945,9 +945,10 @@ button.small {
       "
     >
 
-      <button
+            <button
         type="button"
-        onclick="document.getElementById('selectedGameRankingOverlay').classList.add('hidden')"
+        onclick="document.getElementById('selectedGameRankingOverlay').style.display='none'"
+
         style="
           position:absolute;
           top:14px;
@@ -9690,7 +9691,8 @@ function renderGameRankingGameList() {
 function renderGameSpecificRanking(gameName) {
 
   const container =
-    document.getElementById("selectedGameRanking");
+      document.getElementById("selectedGameRankingOverlay").style.display = "flex";
+
 
   if (!container) return;
 

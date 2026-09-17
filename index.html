@@ -6174,6 +6174,25 @@ function openSpecificGameSelector() {
   document.body.appendChild(
     selectorOverlay
   );
+  
+    renderSpecificGameList();
+
+  const searchInput =
+    document.getElementById(
+      "specificGameSearch"
+    );
+
+  if (searchInput) {
+
+    searchInput.oninput = () => {
+
+      renderSpecificGameList(
+        searchInput.value
+      );
+
+    };
+
+  }
 
   const closeButton =
     document.getElementById(
@@ -6195,6 +6214,259 @@ function openSpecificGameSelector() {
     randomSelectGame();
 
   };
+
+}
+
+function renderSpecificGameList(keyword = "") {
+
+  const container =
+    document.getElementById(
+      "specificGameList"
+    );
+
+  if (!container) return;
+
+  const normalizedKeyword =
+    normalizeGameSearch(keyword);
+
+  const games =
+    data.games
+      .filter(game => game.active)
+      .filter(game => {
+
+        const name =
+          normalizeGameSearch(
+            game.name
+          );
+
+        const reading =
+          normalizeGameSearch(
+            game.reading || ""
+          );
+
+        return (
+          name.includes(normalizedKeyword) ||
+          reading.includes(normalizedKeyword)
+        );
+
+      })
+      .sort((a, b) =>
+        (a.reading || a.name || "").localeCompare(
+          b.reading || b.name || "",
+          "ja"
+        )
+      );
+
+  container.innerHTML = "";
+
+  if (games.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "該当するゲームがありません。";
+
+    container.appendChild(
+      empty
+    );
+
+    return;
+
+  }
+
+  let previousIndex = "";
+
+  games.forEach(game => {
+
+    const currentIndex =
+      getJapaneseIndex(
+        game.reading || game.name
+      );
+
+    const row =
+      document.createElement("div");
+
+    row.style.display =
+      "flex";
+
+    row.style.alignItems =
+      "flex-start";
+
+    row.style.gap =
+      "6px";
+
+    const indexLabel =
+      document.createElement("div");
+
+    indexLabel.style.width =
+      "20px";
+
+    indexLabel.style.flexShrink =
+      "0";
+
+    indexLabel.style.fontSize =
+      "11px";
+
+    indexLabel.style.color =
+      "#999";
+
+    indexLabel.style.fontWeight =
+      "600";
+
+    indexLabel.style.textAlign =
+      "center";
+
+    indexLabel.style.paddingTop =
+      "10px";
+
+    if (
+      currentIndex !== previousIndex
+    ) {
+
+      indexLabel.textContent =
+        currentIndex;
+
+      indexLabel.style.marginTop =
+        previousIndex
+          ? "14px"
+          : "4px";
+
+    }
+
+    const gameGrid =
+      document.createElement("div");
+
+    gameGrid.style.flex =
+      "1";
+
+    gameGrid.style.display =
+      "grid";
+
+    gameGrid.style.gridTemplateColumns =
+      "repeat(2, minmax(0, 1fr))";
+
+    gameGrid.style.gap =
+      "8px";
+
+    const gameButton =
+      document.createElement("label");
+
+    gameButton.style.display =
+      "flex";
+
+    gameButton.style.alignItems =
+      "center";
+
+    gameButton.style.gap =
+      "7px";
+
+    gameButton.style.padding =
+      "7px";
+
+    gameButton.style.border =
+      "1px solid #e5e7eb";
+
+    gameButton.style.borderRadius =
+      "10px";
+
+    gameButton.style.background =
+      "#fafafa";
+
+    gameButton.style.cursor =
+      "pointer";
+
+    const checkbox =
+      document.createElement("input");
+
+    checkbox.type =
+      "checkbox";
+
+    checkbox.style.width =
+      "18px";
+
+    checkbox.style.height =
+      "18px";
+
+    checkbox.style.flexShrink =
+      "0";
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      game.image || "";
+
+    image.style.width =
+      "38px";
+
+    image.style.height =
+      "38px";
+
+    image.style.objectFit =
+      "cover";
+
+    image.style.borderRadius =
+      "7px";
+
+    image.style.flexShrink =
+      "0";
+
+    if (!game.image) {
+      image.style.display =
+        "none";
+    }
+
+    const name =
+      document.createElement("span");
+
+    name.textContent =
+      game.name;
+
+    name.style.fontSize =
+      "12px";
+
+    name.style.lineHeight =
+      "1.3";
+
+    name.style.minWidth =
+      "0";
+
+    gameButton.appendChild(
+      checkbox
+    );
+
+    gameButton.appendChild(
+      image
+    );
+
+    gameButton.appendChild(
+      name
+    );
+
+    gameGrid.appendChild(
+      gameButton
+    );
+
+    row.appendChild(
+      indexLabel
+    );
+
+    row.appendChild(
+      gameGrid
+    );
+
+    container.appendChild(
+      row
+    );
+
+    previousIndex =
+      currentIndex;
+
+  });
 
 }
 

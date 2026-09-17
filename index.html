@@ -341,7 +341,7 @@ button.small {
   font-size: 30px;
   font-weight: bold;
   word-break: break-word;
-  margin-top: 12px;
+  margin-top: 18px;
 }
 
 .game-roulette-sub {
@@ -4528,8 +4528,17 @@ row.appendChild(
 );
 
 
-    const info =
+        const info =
       document.createElement("div");
+
+    const playerCountText =
+      game.minPlayers && game.maxPlayers
+        ? (
+            game.minPlayers === game.maxPlayers
+              ? `${game.minPlayers}人`
+              : `${game.minPlayers}〜${game.maxPlayers}人`
+          )
+        : null;
 
     info.innerHTML = `
       <div class="game-title">
@@ -4538,10 +4547,12 @@ row.appendChild(
 
       <div class="game-meta">
   ${direction}
+  ${playerCountText ? `／ ${playerCountText}` : ""}
   ／
   ${matchCount}回対戦
 </div>
     `;
+
 
 
     const editButton =

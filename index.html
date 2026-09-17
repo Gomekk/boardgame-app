@@ -5842,7 +5842,7 @@ subElement.innerHTML =
     font-weight:600;
     ${weightStyle}
   ">${weightLabel}</span>
-  <span style="margin-left:6px;">のゲームをルーレット中……</span>`;
+  <span style="margin-left:6px;">の中からルーレット中……</span>`;
 
 spinRoulette();
 }
@@ -5989,19 +5989,29 @@ setTimeout(
 
   recordButton.onclick = () => {
 
+  showScreen("recordScreen");
+
+  setTimeout(() => {
+
     const gameSelect =
       document.getElementById("matchGame");
 
-    showScreen("recordScreen");
-
     if (gameSelect && selectedGame) {
+
       gameSelect.value =
         selectedGame.name;
+
+      gameSelect.dispatchEvent(
+        new Event("change")
+      );
+
     }
 
-    overlay.remove();
+  }, 0);
 
-  };
+  overlay.remove();
+
+};
 
   againButton.onclick = () => {
 

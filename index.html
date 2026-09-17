@@ -915,50 +915,97 @@ button.small {
 
   </div>
 
-  <!-- 選択したゲームのランキング -->
+    <!-- 選択したゲームのランキング（ポップアップ） -->
   <div
-    id="selectedGameRanking"
-    class="card hidden"
+    id="selectedGameRankingOverlay"
+    class="hidden"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:10002;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    "
+    onclick="if(event.target===this) this.classList.add('hidden')"
   >
 
-    <h2 id="selectedGameRankingTitle">
-      ゲームを選択してください
-    </h2>
+    <div
+      id="selectedGameRanking"
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:560px;
+        max-height:85vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
 
-    <div>
-      <div id="gameScoreRankingSection">
-  <h3>🏆 ベストスコア</h3>
-  <div id="gameScoreRanking"></div>
-</div>
+      <button
+        type="button"
+        onclick="document.getElementById('selectedGameRankingOverlay').classList.add('hidden')"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
 
-    <div>
-      <h3>🥇 勝率</h3>
-      <div id="gameWinRateRanking"></div>
-    </div>
+      <h2 id="selectedGameRankingTitle" style="padding-right:40px;">
+        ゲームを選択してください
+      </h2>
 
-    <div>
-      <h3>🏅 最多勝利数</h3>
-      <div id="gameWinCountRanking"></div>
-    </div>
+      <div>
+        <div id="gameScoreRankingSection">
+          <h3>🏆 ベストスコア</h3>
+          <div id="gameScoreRanking"></div>
+        </div>
 
-    <div>
-      <h3>🔥 最大連勝数</h3>
-      <div id="gameStreakRanking"></div>
-    </div>
+        <div>
+          <h3>🥇 勝率</h3>
+          <div id="gameWinRateRanking"></div>
+        </div>
 
-    <div>
-      <h3>📊 平均順位</h3>
-      <div id="gameAverageRankRanking"></div>
-    </div>
-    
+        <div>
+          <h3>🏅 最多勝利数</h3>
+          <div id="gameWinCountRanking"></div>
+        </div>
+
+        <div>
+          <h3>🔥 最大連勝数</h3>
+          <div id="gameStreakRanking"></div>
+        </div>
+
+        <div>
+          <h3>📊 平均順位</h3>
+          <div id="gameAverageRankRanking"></div>
+        </div>
+
         <div style="margin-top:24px;">
-      <h3>📜 対戦履歴</h3>
-      <div id="matchHistory"></div>
+          <h3>📜 対戦履歴</h3>
+          <div id="matchHistory"></div>
+        </div>
+
+      </div>
+
     </div>
 
   </div>
 
-</div>
 
 </div>
 
@@ -9726,7 +9773,8 @@ if (scoreRankingTitle) {
       ? `<img src="${escapeHTML(game.image)}" class="game-thumb-large" style="margin-right:12px;">${escapeHTML(gameName)}`
       : `🎲 ${escapeHTML(gameName)}`;
 
-  container.classList.remove("hidden");
+    document.getElementById("selectedGameRankingOverlay").classList.remove("hidden");
+
 
   scoreRanking.innerHTML = "";
   winRateRanking.innerHTML = "";

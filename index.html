@@ -8,21 +8,45 @@
 <meta name="theme-color" content="#111827">
 <title>ボドゲスコア</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+
 <style>
+:root {
+  --navy: #16233F;
+  --navy-light: #24406B;
+  --navy-soft: rgba(22,35,63,0.08);
+  --gold: #C9A227;
+  --silver: #9AA3AE;
+  --bronze: #B5732A;
+  --bg: #F6F4EF;
+  --surface: #FFFFFF;
+  --text: #1B1F27;
+  --text-muted: #6B7280;
+  --border: rgba(22,35,63,0.08);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-card: 0 8px 24px rgba(22,35,63,0.08), 0 1px 2px rgba(22,35,63,0.04);
+  --shadow-btn: 0 3px 10px rgba(22,35,63,0.18);
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+  font-family: "Zen Kaku Gothic New", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
     "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-  background: #f3f4f6;
-  color: #111827;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
 }
 
 header {
-  background: #111827;
+  background: var(--navy);
   color: white;
   padding: 20px;
 }
@@ -45,60 +69,86 @@ header p {
 }
 
 .card {
-  background: white;
-  border-radius: 14px;
-  padding: 18px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
 }
 
 h2 {
   font-size: 18px;
+  font-weight: 700;
   margin: 0 0 14px;
+  letter-spacing: 0.01em;
 }
 
 h3 {
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 700;
   margin: 20px 0 10px;
+  color: var(--navy);
 }
 
 input,
 select,
 button {
   width: 100%;
-  padding: 11px;
-  border-radius: 9px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
   font-size: 15px;
+  font-family: inherit;
 }
 
 input,
 select {
-  border: 1px solid #d1d5db;
-  background: white;
+  border: 1px solid rgba(22,35,63,0.14);
+  background: var(--surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--navy-light);
+  box-shadow: 0 0 0 3px rgba(36,64,107,0.12);
 }
 
 button {
   border: none;
-  background: #111827;
+  background: var(--navy);
   color: white;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s ease;
+}
+
+button:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 1px 4px rgba(22,35,63,0.18);
 }
 
 button.secondary {
-  background: #e5e7eb;
-  color: #111827;
+  background: #EDEBE4;
+  color: var(--navy);
+  box-shadow: none;
+  border: 1px solid rgba(22,35,63,0.10);
 }
 
 button.danger {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #FBEAEA;
+  color: #9B2C2C;
+  box-shadow: none;
+  border: 1px solid rgba(155,44,44,0.15);
 }
 
 button.small {
   width: auto;
-  padding: 7px 10px;
+  padding: 7px 12px;
   font-size: 12px;
+  border-radius: 999px;
 }
 
 #matchDate {
@@ -133,20 +183,22 @@ button.small {
 }
 
 .game-item {
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
   margin-bottom: 8px;
+  background: var(--surface);
 }
 
 .game-title {
-  font-weight: bold;
+  font-weight: 700;
   font-size: 16px;
+  color: var(--text);
 }
 
 .game-meta {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
@@ -158,14 +210,36 @@ button.small {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(22,35,63,0.06);
 }
 
 .rank-number {
-  width: 42px;
-  font-weight: bold;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  font-weight: 800;
+  font-size: 13px;
   text-align: center;
+  line-height: 30px;
+  border-radius: 50%;
+  background: rgba(22,35,63,0.06);
+  color: var(--navy);
+}
+
+.rank-item:nth-child(1) .rank-number {
+  background: var(--gold);
+  color: white;
+}
+
+.rank-item:nth-child(2) .rank-number {
+  background: var(--silver);
+  color: white;
+}
+
+.rank-item:nth-child(3) .rank-number {
+  background: var(--bronze);
+  color: white;
 }
 
 .rank-player {
@@ -173,18 +247,19 @@ button.small {
 }
 
 .rank-score {
-  font-weight: bold;
+  font-weight: 800;
   font-size: 17px;
+  color: var(--navy);
 }
 
 .history-item {
   padding: 12px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(22,35,63,0.06);
 }
 
 .history-date {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 5px;
 }
 
@@ -211,11 +286,12 @@ button.small {
 
 .radio-option {
   flex: 1;
-  border: 1px solid #d1d5db;
-  border-radius: 9px;
+  border: 1px solid rgba(22,35,63,0.14);
+  border-radius: var(--radius-sm);
   padding: 12px;
   text-align: center;
   cursor: pointer;
+  font-size: 13px;
 }
 
 .radio-option input {
@@ -225,7 +301,7 @@ button.small {
 
 .section-note {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
   margin: -5px 0 12px;
 }
 
@@ -237,6 +313,14 @@ button.small {
   max-width: 700px;
   margin: auto;
   padding: 24px 16px;
+}
+
+.screen h1 {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--navy);
+  margin: 4px 0 20px;
 }
 
 .screen button {
@@ -264,8 +348,11 @@ button.small {
   width: calc(100% + 32px);
   display: flex;
   align-items: stretch;
-  background: #e5e7eb;
-  margin-bottom: 12px;
+  background: rgba(246,244,239,0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
   min-height: 56px;
 }
 
@@ -273,6 +360,7 @@ button.small {
   width: auto;
   padding: 0 20px;
   background: transparent;
+  box-shadow: none;
   border-radius: 0;
   margin-bottom: 0;
   display: flex;
@@ -287,7 +375,7 @@ button.small {
 
 .screen-back-divider {
   width: 1px;
-  background: rgba(17, 24, 39, 0.15);
+  background: rgba(22, 35, 63, 0.15);
   margin: 12px 0;
   flex-shrink: 0;
 }
@@ -296,9 +384,10 @@ button.small {
   flex: 1;
   padding: 0 18px;
   background: transparent;
-  color: #111827;
-  font-size: 16px;
-  font-weight: bold;
+  box-shadow: none;
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 700;
   border-radius: 0;
   margin-bottom: 0;
   display: flex;
@@ -314,31 +403,31 @@ button.small {
 }
 
 
-
-
 .stat-box {
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 12px;
+  background: #FAF9F6;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
   margin-bottom: 8px;
 }
 
 .stat-label {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .stat-value {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 21px;
+  font-weight: 800;
   margin-top: 3px;
+  color: var(--navy);
 }
 
 .player-detail-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(22,35,63,0.06);
 }
 
 .backup-buttons {
@@ -369,11 +458,11 @@ button.small {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 1px solid rgba(17, 24, 39, 0.12);
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(22, 35, 63, 0.12);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(22, 35, 63, 0.16);
   z-index: 9998;
   opacity: 0;
   pointer-events: none;
@@ -392,8 +481,6 @@ button.small {
 
 /*
  * ポップアップ内の「先頭へ戻る」ボタン
- * （ポップアップ自体は画面いっぱいに広がっているので、
- *   画面固定でOK）
  */
 .popup-scroll-top-button {
   position: fixed;
@@ -406,11 +493,11 @@ button.small {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 1px solid rgba(17, 24, 39, 0.12);
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(22, 35, 63, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(22, 35, 63, 0.16);
   z-index: 5;
   opacity: 0;
   pointer-events: none;
@@ -428,12 +515,10 @@ button.small {
 }
 
 
-
-
 #gameRouletteOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(15, 20, 30, 0.78);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -443,17 +528,18 @@ button.small {
 
 .game-roulette-box {
   width: min(420px, 100%);
-  background: white;
-  border-radius: 24px;
+  background: var(--surface);
+  border-radius: 28px;
   padding: 32px 24px 28px;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
 }
 
 .game-roulette-title {
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 21px;
+  font-weight: 800;
   margin-bottom: 24px;
+  color: var(--navy);
 }
 
 #gameRouletteName {
@@ -462,17 +548,18 @@ button.small {
   align-items: center;
   justify-content: center;
   padding: 12px;
-  border: 3px solid #222;
-  border-radius: 18px;
-  font-size: 30px;
-  font-weight: bold;
+  border: 3px solid var(--navy);
+  border-radius: var(--radius-lg);
+  font-size: 28px;
+  font-weight: 800;
   word-break: break-word;
   margin-top: 24px;
+  box-shadow: none;
 }
 
 .game-roulette-sub {
   margin-top: 18px;
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -499,25 +586,10 @@ button.small {
 }
 
 @keyframes rouletteSlot {
-  0% {
-    transform: translateY(-22px);
-    opacity: 0;
-  }
-
-  35% {
-    transform: translateY(-6px);
-    opacity: 0.7;
-  }
-
-  70% {
-    transform: translateY(2px);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  0% { transform: translateY(-22px); opacity: 0; }
+  35% { transform: translateY(-6px); opacity: 0.7; }
+  70% { transform: translateY(2px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
 .game-roulette-result {
@@ -525,20 +597,9 @@ button.small {
 }
 
 @keyframes rouletteResult {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-
-  60% {
-    transform: scale(1.15);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 /* =========================
@@ -546,11 +607,12 @@ button.small {
 ========================= */
 
 .home-ranking-section {
-  margin: 24px 0;
+  margin: 28px 0;
 }
 
 .home-ranking-section h2 {
   margin-bottom: 14px;
+  color: var(--navy);
 }
 
 .home-ranking-carousel {
@@ -570,24 +632,24 @@ button.small {
 .home-ranking-card {
   flex: 0 0 88%;
   scroll-snap-align: center;
-
-  background: #fff;
-  border: 1px solid #e5e5e5;
-  border-radius: 18px;
-  padding: 18px;
-
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
   box-sizing: border-box;
 }
 
 .home-ranking-title {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 17px;
+  font-weight: 800;
   margin-bottom: 14px;
+  color: var(--navy);
 }
 
 .home-ranking-hint {
   text-align: center;
-  color: #888;
+  color: #9CA3AF;
   font-size: 12px;
   margin-top: 8px;
 }
@@ -603,17 +665,19 @@ button.small {
   margin-bottom: 0;
 }
 
-/* ホームのランキング内 */
 .home-ranking-card .rank-item {
   padding: 9px 0;
 }
 
 .home-ranking-card .rank-number {
-  width: 38px;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
 }
 
 .home-ranking-card .rank-score {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 #gameRankingSearch {
@@ -633,7 +697,7 @@ button.small {
 }
 
 #selectedGameRanking h3 {
-  font-size: 17px;
+  font-size: 16px;
   margin-bottom: 8px;
 }
 
@@ -641,35 +705,23 @@ button.small {
   padding: 9px 0;
 }
 
-#selectedGameRanking .rank-number {
-  width: 42px;
-}
-
-#selectedGameRanking .rank-score {
-  font-size: 16px;
-}
-
-/* ゲーム名 */
 #selectedGameRankingTitle {
   margin-bottom: 18px;
 }
-
-/* =========================
-   ゲーム別ランキング強化
-========================= */
 
 #selectedGameRanking {
   margin-top: 16px;
 }
 
 #selectedGameRankingTitle {
-  font-size: 22px;
+  font-size: 21px;
+  font-weight: 800;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #222;
+  border-bottom: 2px solid var(--navy);
+  color: var(--navy);
 }
 
-/* 各ランキング */
 #selectedGameRanking > div {
   margin-top: 20px;
   padding-top: 4px;
@@ -685,22 +737,15 @@ button.small {
 }
 
 #selectedGameRanking > div h3 {
-  font-size: 16px;
+  font-size: 15px;
   margin: 0 0 8px;
   padding-left: 10px;
-  border-left: 4px solid #222;
+  border-left: 3px solid var(--navy);
 }
 
-/* ランキング行 */
 #selectedGameRanking .rank-item {
   min-height: 44px;
   box-sizing: border-box;
-}
-
-#selectedGameRanking .rank-number {
-  width: 42px;
-  flex-shrink: 0;
-  font-size: 14px;
 }
 
 #selectedGameRanking .rank-player {
@@ -717,13 +762,8 @@ button.small {
   font-size: 16px;
 }
 
-/* 1位を少し強調 */
 #selectedGameRanking .rank-item:first-child {
   font-weight: bold;
-}
-
-#selectedGameRanking .rank-item:first-child .rank-number {
-  font-size: 16px;
 }
 
 #selectedGameRanking .rank-item:first-child .rank-score {
@@ -733,9 +773,9 @@ button.small {
 .game-thumb {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  box-shadow: 0 3px 8px rgba(22,35,63,0.18);
   flex-shrink: 0;
   vertical-align: middle;
 }
@@ -747,12 +787,12 @@ button.small {
 .game-thumb-large {
   width: 64px;
   height: 64px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  box-shadow: 0 6px 16px rgba(22,35,63,0.22);
 }
-
 </style>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>

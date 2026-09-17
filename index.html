@@ -5890,6 +5890,14 @@ const modeButtons =
 modeButtons.forEach(button => {
 
   button.onclick = () => {
+    
+    if (button.dataset.weight === "specific") {
+
+  openSpecificGameSelector();
+
+  return;
+
+}
 
     selectedWeight =
       button.dataset.weight;
@@ -6036,6 +6044,149 @@ setTimeout(
   overlay.remove();
 
 };
+
+function openSpecificGameSelector() {
+
+  const existing =
+    document.getElementById(
+      "specificGameSelectorOverlay"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const selectorOverlay =
+    document.createElement("div");
+
+  selectorOverlay.id =
+    "specificGameSelectorOverlay";
+
+  selectorOverlay.style.position =
+    "fixed";
+
+  selectorOverlay.style.inset =
+    "0";
+
+  selectorOverlay.style.background =
+    "rgba(0,0,0,.45)";
+
+  selectorOverlay.style.zIndex =
+    "10001";
+
+  selectorOverlay.style.display =
+    "flex";
+
+  selectorOverlay.style.alignItems =
+    "center";
+
+  selectorOverlay.style.justifyContent =
+    "center";
+
+  selectorOverlay.style.padding =
+    "20px";
+
+  selectorOverlay.innerHTML = `
+
+    <div
+      style="
+        width:100%;
+        max-width:520px;
+        max-height:85vh;
+        background:#ffffff;
+        border-radius:16px;
+        box-shadow:0 10px 40px rgba(0,0,0,.25);
+        overflow:hidden;
+        display:flex;
+        flex-direction:column;
+      "
+    >
+
+      <div
+        style="
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          padding:16px 18px;
+          border-bottom:1px solid #eee;
+        "
+      >
+
+        <div
+          style="
+            font-size:17px;
+            font-weight:700;
+            color:#333;
+          "
+        >
+          ゲームを選択
+        </div>
+
+        <button
+          type="button"
+          id="specificGameSelectorClose"
+          style="
+            width:32px;
+            height:32px;
+            min-width:32px;
+            padding:0;
+            border:none;
+            background:#f3f4f6;
+            color:#555;
+            border-radius:50%;
+            font-size:20px;
+            line-height:1;
+          "
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div
+        style="
+          padding:14px 16px 8px;
+          overflow:auto;
+        "
+      >
+
+        <input
+          id="specificGameSearch"
+          type="text"
+          placeholder="ゲーム検索"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            margin-bottom:12px;
+          "
+        >
+
+        <div
+          id="specificGameList"
+        ></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  document.body.appendChild(
+    selectorOverlay
+  );
+
+  const closeButton =
+    document.getElementById(
+      "specificGameSelectorClose"
+    );
+
+  closeButton.onclick = () => {
+
+    selectorOverlay.remove();
+
+  };
+
+}
 
   againButton.onclick = () => {
 

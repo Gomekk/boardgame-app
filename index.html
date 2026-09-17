@@ -6439,14 +6439,14 @@ function renderSpecificGameList(keyword = "") {
     name.style.minWidth =
       "0";
 
-    name.style.overflow =
-      "hidden";
+    name.style.overflowWrap =
+      "anywhere";
 
-    name.style.textOverflow =
-      "ellipsis";
+    name.style.wordBreak =
+      "break-word";
 
     name.style.whiteSpace =
-      "nowrap";
+      "normal";
 
     const checkbox =
       document.createElement("input");

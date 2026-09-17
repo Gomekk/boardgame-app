@@ -8350,13 +8350,9 @@ async function importData(event) {
 
 function renderPlayerTrendSelect() {
 
-  alert("A");
-
   const select =
     document.getElementById("playerTrendSelect");
 
-  alert("B");
-  
   if (!select) return;
 
   const currentValue =
@@ -10691,11 +10687,6 @@ const target =
 
 if (target) {
   target.classList.add("active");
-
-  // 個人の成績推移画面だけ強制的に表示
-  if (screenName === "playerTrendScreen") {
-    target.style.display = "block";
-  }
 }
 
 
@@ -10760,15 +10751,9 @@ if (screenName === "playerManageScreen") {
 // 個人の成績推移画面
 if (screenName === "playerTrendScreen") {
 
-  alert("①");
-
   renderPlayerTrendSelect();
 
-  alert("②");
-
   renderPlayerTrend();
-
-  alert("③");
 
 }
 

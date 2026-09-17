@@ -8455,13 +8455,6 @@ function renderPlayerTrend() {
 
     if (!player) return;
 
-    const winner =
-      isWinner(match, playerName);
-
-    if (winner) {
-      wins++;
-    }
-
     const game =
       data.games.find(g =>
         g.name === match.game
@@ -8471,20 +8464,41 @@ function renderPlayerTrend() {
       game ? game.direction : "high";
 
     const sortedScores =
-      scores.slice().sort((a, b) => {
+  scores.slice().sort((a, b) => {
 
-        if (direction === "low") {
-          return Number(a.score) - Number(b.score);
-        }
+    // 順位のみ
+    // 数字が小さいほど上位
+    if (direction === "rank") {
+      return (
+        Number(a.score) -
+        Number(b.score)
+      );
+    }
 
-        return Number(b.score) - Number(a.score);
+    // 低い方が上位
+    if (direction === "low") {
+      return (
+        Number(a.score) -
+        Number(b.score)
+      );
+    }
 
-      });
+    // 高い方が上位
+    return (
+      Number(b.score) -
+      Number(a.score)
+    );
+
+  });
 
     const rank =
       sortedScores.findIndex(p =>
         p.player === playerName
       ) + 1;
+      
+      if (rank === 1) {
+  wins++;
+}
 
     totalRank += rank;
 

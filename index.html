@@ -9333,7 +9333,7 @@ function renderGameRankingGameList() {
 
     }
 
-    const championText =
+        const championText =
       championNames.length > 0
         ? `
           <div style="
@@ -9361,6 +9361,46 @@ function renderGameRankingGameList() {
         `
         : "";
 
+    /*
+     * 重さバッジ
+     */
+
+    const weightClass =
+      getGameWeightClass(game.playTime);
+
+    const weightLabel =
+      getGameWeightLabel(game.playTime);
+
+    const weightBadgeStyle =
+      weightClass === "light"
+        ? "background:#E8F5E9;color:#2E7D32;"
+        : weightClass === "medium"
+          ? "background:#FFF3E0;color:#E65100;"
+          : weightClass === "heavy"
+            ? "background:#FDECEC;color:#C62828;"
+            : "background:#F1F1F1;color:#777;";
+
+    const nameArea = `
+      <span style="
+        min-width:0;
+        display:flex;
+        flex-direction:column;
+        gap:4px;
+      ">
+        <span>${escapeHTML(game.name)}</span>
+        <span style="
+          display:inline-block;
+          width:fit-content;
+          font-size:10px;
+          font-weight:600;
+          padding:2px 7px;
+          border-radius:999px;
+          white-space:nowrap;
+          ${weightBadgeStyle}
+        ">${weightLabel}</span>
+      </span>
+    `;
+
     button.innerHTML =
       game.image
         ? `
@@ -9368,17 +9408,14 @@ function renderGameRankingGameList() {
             src="${escapeHTML(game.image)}"
             class="game-thumb"
           >
-          <span style="min-width:0;">
-            ${escapeHTML(game.name)}
-          </span>
+          ${nameArea}
           ${championText}
         `
         : `
-          <span style="min-width:0;">
-            ${escapeHTML(game.name)}
-          </span>
+          ${nameArea}
           ${championText}
         `;
+
 
     button.onclick = () => {
 

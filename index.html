@@ -941,39 +941,14 @@ button.small {
       placeholder="ゲーム名を検索"
     >
     
-        <div class="section-note" style="margin:6px 0 6px;">
+           <div class="section-note" style="margin:6px 0 6px;">
       絞込み&gt;&gt;
     </div>
 
-        <!-- 人数で絞り込み -->
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-
-      <span class="section-note" style="margin:0;white-space:nowrap;">人数 ▶</span>
-
-      <div
-        id="gameRankingPlayerCountFilter"
-        style="display:flex;gap:3px;flex:1;"
-      >
-        <button type="button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
-        <button type="button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
-        <button type="button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
-        <button type="button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
-        <button type="button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
-        <button type="button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
-        <button type="button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
-        <button type="button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
-        <button type="button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
-        <button type="button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
-      </div>
-
-    </div>
-
-
-        <!-- 重さで絞り込み -->
+    <!-- 重さで絞り込み -->
     <div
       id="gameRankingWeightFilter"
-
-      style="display:flex;gap:8px;margin-bottom:16px;"
+      style="display:flex;gap:8px;margin-bottom:8px;"
     >
       <button
         type="button"
@@ -996,6 +971,30 @@ button.small {
         style="flex:1;background:#FDECEC;color:#C62828;"
       >重量級</button>
     </div>
+
+    <!-- 人数で絞り込み -->
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
+
+      <span class="section-note" style="margin:0;white-space:nowrap;">人数 ▶</span>
+
+      <div
+        id="gameRankingPlayerCountFilter"
+        style="display:flex;gap:3px;flex:1;"
+      >
+        <button type="button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
+        <button type="button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
+        <button type="button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
+        <button type="button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
+        <button type="button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
+        <button type="button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
+        <button type="button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
+        <button type="button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
+        <button type="button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
+        <button type="button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
+      </div>
+
+    </div>
+
 
     <!-- ゲーム一覧 -->
     <div id="gameRankingGameList"></div>

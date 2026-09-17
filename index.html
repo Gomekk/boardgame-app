@@ -5925,6 +5925,7 @@ if (allGames.length === 0) {
 
 let selectedWeight = "";
 let games = [];
+let selectedWeights = new Set();
 
 function startRoulette() {
 
@@ -5933,11 +5934,11 @@ function startRoulette() {
       ? allGames.filter(game =>
           specificRouletteSelectedGames.has(game.name)
         )
-      : selectedWeight
-        ? allGames.filter(
-            game =>
-              getGameWeightClass(game.playTime) ===
-              selectedWeight
+      : selectedWeights.size > 0
+        ? allGames.filter(game =>
+            selectedWeights.has(
+              getGameWeightClass(game.playTime)
+            )
           )
         : allGames;
 
@@ -5945,32 +5946,41 @@ function startRoulette() {
     alert(
       selectedWeight === "specific"
         ? "選択したゲームが見つかりません。選び直してください。"
-        : "この級に該当するゲームがありません。"
+        : "この条件に該当するゲームがありません。"
     );
     return;
   }
 
   modeElement.style.display = "none";
 
+  const weightNameMap = {
+    light: "軽量級",
+    medium: "中量級",
+    heavy: "重量級"
+  };
+
   const weightLabel =
     selectedWeight === "specific"
       ? "特定のゲーム"
-      : selectedWeight === "light"
-        ? "軽量級"
-        : selectedWeight === "medium"
-          ? "中量級"
-          : selectedWeight === "heavy"
-            ? "重量級"
-            : "全てのゲーム";
+      : selectedWeights.size > 0
+        ? Array.from(selectedWeights)
+            .map(w => weightNameMap[w])
+            .join(" + ")
+        : "全てのゲーム";
+
+  const singleWeight =
+    selectedWeights.size === 1
+      ? Array.from(selectedWeights)[0]
+      : null;
 
   const weightStyle =
     selectedWeight === "specific"
       ? "background:#EDE7F6;color:#4527A0;border:1px solid #B39DDB;"
-      : selectedWeight === "light"
+      : singleWeight === "light"
         ? "background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;"
-        : selectedWeight === "medium"
+        : singleWeight === "medium"
           ? "background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;"
-          : selectedWeight === "heavy"
+          : singleWeight === "heavy"
             ? "background:#FDECEC;color:#C62828;border:1px solid #EF9A9A;"
             : "background:#F1F5F9;color:#1E293B;border:1px solid #CBD5E1;";
 
@@ -5989,60 +5999,138 @@ function startRoulette() {
 }
 
 
+
 const modeButtons =
   modeElement.querySelectorAll(
     "button"
   );
 
-modeButtons.forEach(button => {
+function updateWeightButtonState(button) {
 
-  button.onclick = () => {
-    
-    if (button.dataset.weight === "specific") {
+  const weight = button.dataset.weight;
 
-  openSpecificGameSelector();
+  const selected = selectedWeights.has(weight);
 
-  return;
+  const colorMap = {
+    light: {
+      bg: "#E8F5E9", color: "#2E7D32",
+      selectedBg: "#2E7D32", selectedColor: "#ffffff"
+    },
+    medium: {
+      bg: "#FFF3E0", color: "#E65100",
+      selectedBg: "#E65100", selectedColor: "#ffffff"
+    },
+    heavy: {
+      bg: "#FDECEC", color: "#C62828",
+      selectedBg: "#C62828", selectedColor: "#ffffff"
+    }
+  };
+
+  const c = colorMap[weight];
+
+  button.style.background =
+    selected ? c.selectedBg : c.bg;
+
+  button.style.color =
+    selected ? c.selectedColor : c.color;
 
 }
 
-    selectedWeight =
-      button.dataset.weight;
+function resetAllModeStyles() {
 
-    modeButtons.forEach(b => {
+  modeButtons.forEach(b => {
 
-  b.classList.remove("selected");
+    const w = b.dataset.weight;
 
-  if (b.dataset.weight === "") {
-    b.style.background = "#F1F5F9";
-    b.style.color = "#1E293B";
-  } else if (b.dataset.weight === "light") {
-    b.style.background = "#E8F5E9";
-    b.style.color = "#2E7D32";
-  } else if (b.dataset.weight === "medium") {
-    b.style.background = "#FFF3E0";
-    b.style.color = "#E65100";
-  } else if (b.dataset.weight === "heavy") {
-    b.style.background = "#FDECEC";
-    b.style.color = "#C62828";
-  } else if (b.dataset.weight === "specific") {
-    b.style.background = "#F1F5F9";
-    b.style.color = "#1E293B";
+    if (
+      w === "light" ||
+      w === "medium" ||
+      w === "heavy"
+    ) {
+
+      updateWeightButtonState(b);
+
+    } else if (w === "") {
+
+      const active =
+        selectedWeight === "" &&
+        selectedWeights.size === 0;
+
+      b.style.background =
+        active ? "#1E3A5F" : "#F1F5F9";
+
+      b.style.color =
+        active ? "#ffffff" : "#1E293B";
+
+    } else if (w === "specific") {
+
+      const active =
+        selectedWeight === "specific";
+
+      b.style.background =
+        active ? "#1E3A5F" : "#F1F5F9";
+
+      b.style.color =
+        active ? "#ffffff" : "#1E293B";
+
+    }
+
+  });
+
+}
+
+modeButtons.forEach(button => {
+
+  const weight = button.dataset.weight;
+
+  if (
+    weight === "light" ||
+    weight === "medium" ||
+    weight === "heavy"
+  ) {
+
+    button.onclick = () => {
+
+      if (selectedWeights.has(weight)) {
+        selectedWeights.delete(weight);
+      } else {
+        selectedWeights.add(weight);
+      }
+
+      selectedWeight = "";
+
+      resetAllModeStyles();
+
+    };
+
+    return;
+
   }
 
-});
+  if (weight === "specific") {
 
-    button.classList.add("selected");
+    button.onclick = () => {
 
-   button.style.background =
-  "#1E3A5F";
+      openSpecificGameSelector();
 
-   button.style.color =
-  "#ffffff";
-  
+    };
+
+    return;
+
+  }
+
+  button.onclick = () => {
+
+    selectedWeight = "";
+
+    selectedWeights.clear();
+
+    resetAllModeStyles();
+
   };
 
 });
+
 
 nameElement.onclick = () => {
 
@@ -6314,7 +6402,7 @@ function openSpecificGameSelector() {
     renderSpecificGameList(searchInput.value);
   };
 
-  document.getElementById("specificGameConfirm").onclick = () => {
+    document.getElementById("specificGameConfirm").onclick = () => {
 
     if (specificRouletteSelectedGames.size === 0) {
       alert("1つ以上のゲームを選択してください。");
@@ -6323,25 +6411,14 @@ function openSpecificGameSelector() {
 
     selectedWeight = "specific";
 
-    modeButtons.forEach(b => {
-      b.classList.remove("selected");
-      if (b.dataset.weight === "specific") {
-        b.style.background = "#1E3A5F";
-        b.style.color = "#ffffff";
-      } else if (b.dataset.weight === "") {
-        b.style.background = "#F1F5F9"; b.style.color = "#1E293B";
-      } else if (b.dataset.weight === "light") {
-        b.style.background = "#E8F5E9"; b.style.color = "#2E7D32";
-      } else if (b.dataset.weight === "medium") {
-        b.style.background = "#FFF3E0"; b.style.color = "#E65100";
-      } else if (b.dataset.weight === "heavy") {
-        b.style.background = "#FDECEC"; b.style.color = "#C62828";
-      }
-    });
+    selectedWeights.clear();
+
+    resetAllModeStyles();
 
     selectorOverlay.remove();
     // ここでは spinRoulette() を呼ばない → STARTボタンを押すまで待つ
   };
+
 
 }
 

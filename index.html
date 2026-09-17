@@ -266,22 +266,29 @@ button.small {
   align-items: stretch;
   background: #e5e7eb;
   margin-bottom: 12px;
+  min-height: 56px;
 }
 
 .screen-back-home {
   width: auto;
-  padding: 0 18px;
+  padding: 0 20px;
   background: transparent;
-  color: #111827;
-  font-size: 20px;
   border-radius: 0;
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen-back-home svg {
+  width: 22px;
+  height: 22px;
 }
 
 .screen-back-divider {
   width: 1px;
   background: rgba(17, 24, 39, 0.15);
-  margin: 10px 0;
+  margin: 12px 0;
   flex-shrink: 0;
 }
 
@@ -290,11 +297,22 @@ button.small {
   padding: 0 18px;
   background: transparent;
   color: #111827;
-  font-size: 20px;
+  font-size: 16px;
+  font-weight: bold;
   border-radius: 0;
-  text-align: center;
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
+
+.screen-back-prev svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 
 
 
@@ -809,11 +827,17 @@ button.small {
 <!-- ゲームを記録画面 -->
 <div id="recordScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
   <!-- 対戦記録 -->
@@ -857,11 +881,17 @@ button.small {
 <!-- ランキング画面 -->
 <div id="rankingScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
 <h2>👤 プレイヤー成績</h2>
@@ -953,11 +983,17 @@ button.small {
 <!-- ゲーム別ランキング画面 -->
 <div id="gameRankingScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
   <div class="card">
@@ -1128,11 +1164,17 @@ button.small {
 
 <div id="settingsScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
   <div class="card">
@@ -1179,11 +1221,17 @@ button.small {
 
 <div id="gameManageScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+  <  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
   <!-- ゲーム登録 -->
@@ -1307,11 +1355,17 @@ button.small {
 
 <div id="weightSettingScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
   <div class="card">
@@ -1386,11 +1440,17 @@ button.small {
 
 <div id="playerManageScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
   <!-- プレイヤー登録 -->
@@ -1453,11 +1513,17 @@ button.small {
   <!-- バックアップ画面 -->
 <div id="backupScreen" class="screenContent">
 
-  <div class="screen-back-bar">
-    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
     <span class="screen-back-divider"></span>
-    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+    <button type="button" class="screen-back-prev" onclick="showScreen('◯◯◯')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
   </div>
+
 
 
 

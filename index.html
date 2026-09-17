@@ -5469,14 +5469,6 @@ function renderWinCountRanking() {
 
 function renderStreakRanking() {
 
-  alert(
-    JSON.stringify(
-      data.matches[0],
-      null,
-      2
-    )
-  );
-
   const container =
     document.getElementById("homeStreakRanking");
   if (!container) return;
@@ -5503,19 +5495,9 @@ function renderStreakRanking() {
     });
 
       let currentStreak = 0;
-let bestStreak = 0;
+      let bestStreak = 0;
 
-alert(
-  player.name +
-  "\n\n" +
-  matches.map(match =>
-    match.date +
-    " / " +
-    match.game +
-    " / " +
-    (isWinner(match, player.name) ? "WIN" : "LOSE")
-  ).join("\n")
-);
+
 
 matches.forEach(match => {
 

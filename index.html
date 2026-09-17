@@ -390,6 +390,43 @@ button.small {
   height: 20px;
 }
 
+/*
+ * ポップアップ内の「先頭へ戻る」ボタン
+ */
+.popup-scroll-top-button {
+  position: sticky;
+  float: right;
+  top: 8px;
+  margin-top: -8px;
+  margin-bottom: 8px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.popup-scroll-top-button.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup-scroll-top-button svg {
+  width: 18px;
+  height: 18px;
+}
+
 
 #gameRouletteOverlay {
   position: fixed;
@@ -1001,9 +1038,21 @@ button.small {
         "
       >×</button>
 
-      <h2 id="detailPlayerName" style="padding-right:40px;"></h2>
+            <h2 id="detailPlayerName" style="padding-right:40px;"></h2>
+
+      <button
+        type="button"
+        class="popup-scroll-top-button"
+        onclick="document.getElementById('playerDetail').scrollTo({top:0, behavior:'smooth'})"
+        aria-label="ポップアップの先頭へ"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 15l6-6 6 6"/>
+        </svg>
+      </button>
 
       <div id="playerDetailStats"></div>
+
 
       <h3 style="margin-top:20px;">📈 成績推移</h3>
 
@@ -1155,12 +1204,24 @@ button.small {
         "
       >×</button>
 
-      <h2 id="selectedGameRankingTitle" style="padding-right:40px;">
+            <h2 id="selectedGameRankingTitle" style="padding-right:40px;">
         ゲームを選択してください
       </h2>
 
+      <button
+        type="button"
+        class="popup-scroll-top-button"
+        onclick="document.getElementById('selectedGameRanking').scrollTo({top:0, behavior:'smooth'})"
+        aria-label="ポップアップの先頭へ"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 15l6-6 6 6"/>
+        </svg>
+      </button>
+
       <div>
         <div id="gameScoreRankingSection">
+
           <h3>🏆 ベストスコア</h3>
           <div id="gameScoreRanking"></div>
         </div>
@@ -11670,6 +11731,37 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("scroll", updateScrollToTopButton);
 
   updateScrollToTopButton();
+
+</script>
+
+<script>
+
+  function setupPopupScrollTopButton(popupId) {
+
+    const popup =
+      document.getElementById(popupId);
+
+    if (!popup) return;
+
+    const button =
+      popup.querySelector(".popup-scroll-top-button");
+
+    if (!button) return;
+
+    popup.addEventListener("scroll", () => {
+
+      if (popup.scrollTop > 150) {
+        button.classList.add("visible");
+      } else {
+        button.classList.remove("visible");
+      }
+
+    });
+
+  }
+
+  setupPopupScrollTopButton("selectedGameRanking");
+  setupPopupScrollTopButton("playerDetail");
 
 </script>
 

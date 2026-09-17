@@ -354,6 +354,43 @@ button.small {
   display: none;
 }
 
+/*
+ * ページトップへ戻るボタン
+ * （スクロールしている時だけ表示）
+ */
+#scrollToTopButton {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+#scrollToTopButton.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#scrollToTopButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+
 #gameRouletteOverlay {
   position: fixed;
   inset: 0;
@@ -11593,6 +11630,18 @@ if (screenName === "playerManageScreen") {
 
 </script>
 
+<!-- ページトップへ戻るボタン -->
+<button
+  type="button"
+  id="scrollToTopButton"
+  onclick="window.scrollTo({top:0, behavior:'smooth'})"
+  aria-label="ページトップへ戻る"
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 15l6-6 6 6"/>
+  </svg>
+</button>
+
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -11602,6 +11651,28 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+
+<script>
+
+  const scrollToTopButton =
+    document.getElementById("scrollToTopButton");
+
+  function updateScrollToTopButton() {
+
+    if (window.scrollY > 200) {
+      scrollToTopButton.classList.add("visible");
+    } else {
+      scrollToTopButton.classList.remove("visible");
+    }
+
+  }
+
+  window.addEventListener("scroll", updateScrollToTopButton);
+
+  updateScrollToTopButton();
+
+</script>
+
 
 </body>
 </html>

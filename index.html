@@ -10643,12 +10643,6 @@ function openRecordScreen() {
 
 function showScreen(screenName) {
 
-   if (screenName === "playerTrendScreen") {
-
-    alert("playerTrendScreenに移動しています");
-
-  }
-
   const home =
     document.getElementById("homeScreen");
 
@@ -10761,15 +10755,15 @@ if (screenName === "playerManageScreen") {
 // 個人の成績推移画面
 if (screenName === "playerTrendScreen") {
 
-  alert("① playerTrendScreenの処理開始");
+  alert("①");
 
   renderPlayerTrendSelect();
 
-  alert("② renderPlayerTrendSelect完了");
+  alert("②");
 
   renderPlayerTrend();
 
-  alert("③ renderPlayerTrend完了");
+  alert("③");
 
 }
 

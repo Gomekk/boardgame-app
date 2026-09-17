@@ -10762,10 +10762,15 @@ if (screenName === "playerTrendScreen") {
 
   renderPlayerTrendSelect();
 
-  renderPlayerTrend();
+  const test =
+    document.getElementById("playerTrendSummary");
+
+  if (test) {
+    test.innerHTML =
+      '<div class="section-note">テスト表示</div>';
+  }
 
 }
-
 
   // 情報登録画面
   if (screenName === "infoScreen") {

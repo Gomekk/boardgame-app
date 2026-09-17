@@ -803,14 +803,7 @@ button.small {
   <button
   type="button"
   class="secondary"
-  onclick="
-    document.querySelectorAll('.screenContent').forEach(screen => {
-      screen.classList.remove('active');
-    });
-
-    document.getElementById('rankingScreen').classList.remove('active');
-    document.getElementById('playerTrendScreen').classList.add('active');
-  "
+  onclick="showScreen('playerTrendScreen')"
 >
   📈 個人の成績推移を見る
 </button>
@@ -10649,6 +10642,12 @@ function openRecordScreen() {
 ========================= */
 
 function showScreen(screenName) {
+
+   if (screenName === "playerTrendScreen") {
+
+    alert("playerTrendScreenに移動しています");
+
+  }
 
   const home =
     document.getElementById("homeScreen");

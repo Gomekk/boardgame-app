@@ -5829,8 +5829,8 @@ if (allGames.length === 0) {
   document.getElementById("gameRouletteMode");
 
 let selectedWeight = "";
-
 let games = [];
+let specificRouletteSelectedGames = [];
 
 function startRoulette() {
 
@@ -6467,6 +6467,19 @@ function renderSpecificGameList(keyword = "") {
 
     checkbox.style.flexShrink =
       "0";
+      
+  checkbox.checked = specificRouletteSelectedGames.includes(game.name);
+
+checkbox.onchange = () => {
+  if (checkbox.checked) {
+    if (!specificRouletteSelectedGames.includes(game.name)) {
+      specificRouletteSelectedGames.push(game.name);
+    }
+  } else {
+    specificRouletteSelectedGames =
+      specificRouletteSelectedGames.filter(name => name !== game.name);
+  }
+};
 
     gameLabel.appendChild(
       image
@@ -6487,6 +6500,8 @@ function renderSpecificGameList(keyword = "") {
   });
 
 }
+
+
 
 function renderHeadToHeadPlayerSelect() {
 

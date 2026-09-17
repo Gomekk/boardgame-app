@@ -945,28 +945,29 @@ button.small {
       絞込み&gt;&gt;
     </div>
 
-    <!-- 人数で絞り込み -->
+        <!-- 人数で絞り込み -->
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
 
       <span class="section-note" style="margin:0;white-space:nowrap;">人数 ▶</span>
 
       <div
         id="gameRankingPlayerCountFilter"
-        style="display:flex;gap:6px;overflow-x:auto;flex:1;padding-bottom:2px;"
+        style="display:flex;gap:3px;flex:1;"
       >
-        <button type="button" class="small" data-count="1" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">1</button>
-        <button type="button" class="small" data-count="2" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">2</button>
-        <button type="button" class="small" data-count="3" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">3</button>
-        <button type="button" class="small" data-count="4" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">4</button>
-        <button type="button" class="small" data-count="5" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">5</button>
-        <button type="button" class="small" data-count="6" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">6</button>
-        <button type="button" class="small" data-count="7" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">7</button>
-        <button type="button" class="small" data-count="8" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">8</button>
-        <button type="button" class="small" data-count="9" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">9</button>
-        <button type="button" class="small" data-count="10" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">10</button>
+        <button type="button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
+        <button type="button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
+        <button type="button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
+        <button type="button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
+        <button type="button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
+        <button type="button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
+        <button type="button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
+        <button type="button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
+        <button type="button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
+        <button type="button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
       </div>
 
     </div>
+
 
         <!-- 重さで絞り込み -->
     <div
@@ -3965,7 +3966,7 @@ function initGameRankingWeightFilterButtons() {
 initGameRankingWeightFilterButtons();
 
 let gameRankingPlayerCountFilter =
-  new Set([1,2,3,4,5,6,7,8,9,10]);
+  new Set();
 
 function updateGameRankingPlayerCountButtonStyle(button) {
 
@@ -6164,21 +6165,22 @@ if (allGames.length === 0) {
 
   <div
     id="gameRoulettePlayerCountFilter"
-    style="display:flex;gap:5px;overflow-x:auto;flex:1;padding-bottom:2px;"
+    style="display:flex;gap:3px;flex:1;"
   >
-    <button type="button" class="small" data-count="1" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">1</button>
-    <button type="button" class="small" data-count="2" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">2</button>
-    <button type="button" class="small" data-count="3" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">3</button>
-    <button type="button" class="small" data-count="4" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">4</button>
-    <button type="button" class="small" data-count="5" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">5</button>
-    <button type="button" class="small" data-count="6" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">6</button>
-    <button type="button" class="small" data-count="7" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">7</button>
-    <button type="button" class="small" data-count="8" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">8</button>
-    <button type="button" class="small" data-count="9" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">9</button>
-    <button type="button" class="small" data-count="10" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">10</button>
+    <button type="button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
+    <button type="button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
+    <button type="button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
+    <button type="button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
+    <button type="button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
+    <button type="button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
+    <button type="button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
+    <button type="button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
+    <button type="button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
+    <button type="button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
   </div>
 
 </div>
+
 
 <button
   type="button"
@@ -9668,7 +9670,12 @@ function renderGameRankingGameList() {
         return gameRankingWeightFilter.has(weight);
 
       })
-      .filter(game => {
+            .filter(game => {
+
+        /*
+         * 何も選択していない時は絞り込みなし
+         */
+        if (gameRankingPlayerCountFilter.size === 0) return true;
 
         /*
          * 人数未設定のゲームは
@@ -9686,6 +9693,7 @@ function renderGameRankingGameList() {
         return false;
 
       })
+
       .sort((a, b) =>
 
         (a.reading || a.name || "").localeCompare(

@@ -252,18 +252,50 @@ button.small {
 }
 
 /*
- * 各画面の「戻る」ボタンをスクロールしても
+ * 各画面の「戻る」バーをスクロールしても
  * 常に上部に固定表示する
  */
-.screenContent > button:first-child {
+.screenContent > .screen-back-bar {
   position: sticky;
   top: 0;
   z-index: 100;
   margin-left: -16px;
   margin-right: -16px;
   width: calc(100% + 32px);
-  border-radius: 0;
+  display: flex;
+  align-items: stretch;
+  background: #e5e7eb;
+  margin-bottom: 12px;
 }
+
+.screen-back-home {
+  width: auto;
+  padding: 0 18px;
+  background: transparent;
+  color: #111827;
+  font-size: 20px;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.screen-back-divider {
+  width: 1px;
+  background: rgba(17, 24, 39, 0.15);
+  margin: 10px 0;
+  flex-shrink: 0;
+}
+
+.screen-back-prev {
+  flex: 1;
+  padding: 0 18px;
+  background: transparent;
+  color: #111827;
+  font-size: 20px;
+  border-radius: 0;
+  text-align: center;
+  margin-bottom: 0;
+}
+
 
 
 .stat-box {
@@ -777,13 +809,12 @@ button.small {
 <!-- ゲームを記録画面 -->
 <div id="recordScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('homeScreen')"
-  >
-    ← ホームに戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
   <!-- 対戦記録 -->
   <div class="card">
@@ -826,13 +857,12 @@ button.small {
 <!-- ランキング画面 -->
 <div id="rankingScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('homeScreen')"
-  >
-    ← ホームに戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
 <h2>👤 プレイヤー成績</h2>
 
@@ -923,13 +953,12 @@ button.small {
 <!-- ゲーム別ランキング画面 -->
 <div id="gameRankingScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('homeScreen')"
-  >
-    ← ホームに戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
   <div class="card">
 
@@ -1099,13 +1128,12 @@ button.small {
 
 <div id="settingsScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('homeScreen')"
-  >
-    ← ホームに戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
   <div class="card">
 
@@ -1151,13 +1179,12 @@ button.small {
 
 <div id="gameManageScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('settingsScreen')"
-  >
-    ← 設定に戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
   <!-- ゲーム登録 -->
   <div class="card">
@@ -1280,13 +1307,12 @@ button.small {
 
 <div id="weightSettingScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('settingsScreen')"
-  >
-    ← 設定に戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
   <div class="card">
 
@@ -1360,13 +1386,12 @@ button.small {
 
 <div id="playerManageScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('settingsScreen')"
-  >
-    ← 設定に戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
   <!-- プレイヤー登録 -->
   <div class="card">
@@ -1428,13 +1453,12 @@ button.small {
   <!-- バックアップ画面 -->
 <div id="backupScreen" class="screenContent">
 
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('settingsScreen')"
-  >
-    ← 設定に戻る
-  </button>
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">🏠</button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">↼</button>
+  </div>
+
 
 
   <div class="card">

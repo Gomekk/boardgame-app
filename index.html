@@ -9672,17 +9672,17 @@ player.totalRank += rank;
         getValue(player);
 
       if (
-        previousValue === null ||
-        value !== previousValue
-      ) {
+  previousValue === null ||
+  Number(value) !== Number(previousValue)
+) {
 
-        currentRank =
-          index + 1;
+  currentRank =
+    index + 1;
 
-        previousValue =
-          value;
+  previousValue =
+    value;
 
-      }
+}
 
       const row =
         document.createElement("div");

@@ -9886,7 +9886,7 @@ player.totalRank += rank;
 
       }));
 
-  function renderRanking(
+    function renderRanking(
   target,
   list,
   valueFormatter,
@@ -9895,27 +9895,49 @@ player.totalRank += rank;
 
   target.innerHTML = "";
 
+  /*
+   * 同順位対応で全員分の順位を先に計算しておく
+   */
+
   let previousValue = null;
   let currentRank = 0;
 
-  list.forEach(
-    (player, index) => {
+  const rankedList =
+    list.map((player, index) => {
 
       const value =
         getValue(player);
 
       if (
-  previousValue === null ||
-  Number(value) !== Number(previousValue)
-) {
+        previousValue === null ||
+        Number(value) !== Number(previousValue)
+      ) {
 
-  currentRank =
-    index + 1;
+        currentRank =
+          index + 1;
 
-  previousValue =
-    value;
+        previousValue =
+          value;
 
-}
+      }
+
+      return {
+        player: player,
+        rank: currentRank
+      };
+
+    });
+
+  const rowsContainer =
+    document.createElement("div");
+
+  target.appendChild(rowsContainer);
+
+  function renderRows(items) {
+
+    rowsContainer.innerHTML = "";
+
+    items.forEach(({ player, rank }) => {
 
       const row =
         document.createElement("div");
@@ -9923,43 +9945,91 @@ player.totalRank += rank;
       row.className =
         "rank-item";
 
-      const rank =
+      const rankEl =
         document.createElement("span");
 
-      rank.className =
+      rankEl.className =
         "rank-number";
 
-      rank.textContent =
-        `${currentRank}位`;
+      rankEl.textContent =
+        `${rank}位`;
 
-      const name =
+      const nameEl =
         document.createElement("span");
 
-      name.className =
+      nameEl.className =
         "rank-player";
 
-      name.textContent =
+      nameEl.textContent =
         player.name;
 
-      const score =
+      const scoreEl =
         document.createElement("span");
 
-      score.className =
+      scoreEl.className =
         "rank-score";
 
-      score.textContent =
+      scoreEl.textContent =
         valueFormatter(player);
 
-      row.appendChild(rank);
-      row.appendChild(name);
-      row.appendChild(score);
+      row.appendChild(rankEl);
+      row.appendChild(nameEl);
+      row.appendChild(scoreEl);
 
-      target.appendChild(row);
+      rowsContainer.appendChild(row);
 
-    }
-  );
+    });
+
+  }
+
+  renderRows(rankedList.slice(0, 3));
+
+  /*
+   * 4人目以降がいる場合だけ「全表示」ボタンを出す
+   */
+
+  if (rankedList.length > 3) {
+
+    const toggleButton =
+      document.createElement("button");
+
+    toggleButton.type =
+      "button";
+
+    toggleButton.className =
+      "secondary small";
+
+    toggleButton.style.marginTop =
+      "8px";
+
+    toggleButton.textContent =
+      "▼ ランキング全表示";
+
+    let expanded = false;
+
+    toggleButton.onclick = () => {
+
+      expanded = !expanded;
+
+      renderRows(
+        expanded
+          ? rankedList
+          : rankedList.slice(0, 3)
+      );
+
+      toggleButton.textContent =
+        expanded
+          ? "▲ 閉じる"
+          : "▼ ランキング全表示";
+
+    };
+
+    target.appendChild(toggleButton);
+
+  }
 
 }
+
 
  const scoreList =
   ranking

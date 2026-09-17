@@ -861,6 +861,33 @@ button.small {
       id="gameRankingSearch"
       placeholder="ゲーム名を検索"
     >
+    
+        <!-- 重さで絞り込み -->
+    <div
+      id="gameRankingWeightFilter"
+      style="display:flex;gap:8px;margin-bottom:16px;"
+    >
+      <button
+        type="button"
+        class="small"
+        data-weight="light"
+        style="flex:1;background:#E8F5E9;color:#2E7D32;"
+      >軽量級</button>
+
+      <button
+        type="button"
+        class="small"
+        data-weight="medium"
+        style="flex:1;background:#FFF3E0;color:#E65100;"
+      >中量級</button>
+
+      <button
+        type="button"
+        class="small"
+        data-weight="heavy"
+        style="flex:1;background:#FDECEC;color:#C62828;"
+      >重量級</button>
+    </div>
 
     <!-- ゲーム一覧 -->
     <div id="gameRankingGameList"></div>
@@ -3625,6 +3652,54 @@ async function loadDataFromSupabase() {
 };
 
 }
+
+
+let gameRankingWeightFilter =
+  new Set(["light", "medium", "heavy"]);
+
+function updateGameRankingWeightButtonStyle(button) {
+
+  const weight = button.dataset.weight;
+
+  const active =
+    gameRankingWeightFilter.has(weight);
+
+  button.style.opacity = active ? "1" : "0.35";
+
+}
+
+function initGameRankingWeightFilterButtons() {
+
+  const buttons =
+    document.querySelectorAll(
+      "#gameRankingWeightFilter button"
+    );
+
+  buttons.forEach(button => {
+
+    updateGameRankingWeightButtonStyle(button);
+
+    button.onclick = () => {
+
+      const weight = button.dataset.weight;
+
+      if (gameRankingWeightFilter.has(weight)) {
+        gameRankingWeightFilter.delete(weight);
+      } else {
+        gameRankingWeightFilter.add(weight);
+      }
+
+      updateGameRankingWeightButtonStyle(button);
+
+      renderGameRankingGameList();
+
+    };
+
+  });
+
+}
+
+initGameRankingWeightFilterButtons();
 
 let weightSettings = {
   lightMax: 30,
@@ -9140,7 +9215,7 @@ function renderGameRankingGameList() {
       ? normalizeGameSearch(searchInput.value)
       : "";
 
-  const games =
+    const games =
     data.games
       .filter(game => game.active)
       .filter(game => {
@@ -9157,6 +9232,20 @@ function renderGameRankingGameList() {
           gameName.includes(keyword) ||
           gameReading.includes(keyword)
         );
+
+      })
+      .filter(game => {
+
+        const weight =
+          getGameWeightClass(game.playTime);
+
+        /*
+         * 級未設定のゲームは
+         * 絞り込みの対象外として常に表示
+         */
+        if (!weight) return true;
+
+        return gameRankingWeightFilter.has(weight);
 
       })
       .sort((a, b) =>
@@ -9176,15 +9265,19 @@ function renderGameRankingGameList() {
     empty.className =
       "section-note";
 
+    const hasAnyActiveGame =
+      data.games.some(game => game.active);
+
     empty.textContent =
-      keyword
-        ? "該当するゲームがありません。"
-        : "登録されているゲームがありません。";
+      !hasAnyActiveGame
+        ? "登録されているゲームがありません。"
+        : "該当するゲームがありません。";
 
     container.appendChild(empty);
 
     return;
   }
+
 
   let previousIndex = "";
 

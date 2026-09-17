@@ -6658,6 +6658,45 @@ function renderHeadToHeadRanking() {
       return;
     }
 
+    // ゲーム情報を取得
+    const game =
+      data.games.find(
+        g => g.name === match.game
+      );
+
+    if (!game) {
+      return;
+    }
+
+    // ゲーム設定に応じて、この対戦の順位を計算
+    const sortedScores =
+      match.scores
+        .slice()
+        .sort((a, b) => {
+
+          if (
+            game.direction === "rank" ||
+            game.direction === "low"
+          ) {
+            return (
+              Number(a.score) -
+              Number(b.score)
+            );
+          }
+
+          return (
+            Number(b.score) -
+            Number(a.score)
+          );
+
+        });
+
+    const playerRank =
+      sortedScores.findIndex(
+        score =>
+          score.player === playerName
+      ) + 1;
+
     match.scores.forEach(item => {
 
       if (
@@ -6680,66 +6719,20 @@ function renderHeadToHeadRanking() {
 
       opponentStats[item.player].matches++;
 
-opponentStats[item.player].matches++;
+      const opponentRank =
+        sortedScores.findIndex(
+          score =>
+            score.player === item.player
+        ) + 1;
 
-const game =
-  data.games.find(
-    g => g.name === match.game
-  );
-
-if (!game) return;
-
-// ゲーム設定に応じて順位を計算
-const sortedScores =
-  match.scores
-    .slice()
-    .sort((a, b) => {
-
-      // 「順位のみ」
-      // 数字が小さい方が上位
-      if (game.direction === "rank") {
-        return (
-          Number(a.score) -
-          Number(b.score)
-        );
+      // 自分の順位が相手より上なら勝ち
+      if (
+        playerRank > 0 &&
+        opponentRank > 0 &&
+        playerRank < opponentRank
+      ) {
+        opponentStats[item.player].wins++;
       }
-
-      // 「低い方が上位」
-      if (game.direction === "low") {
-        return (
-          Number(a.score) -
-          Number(b.score)
-        );
-      }
-
-      // 「高い方が上位」
-      return (
-        Number(b.score) -
-        Number(a.score)
-      );
-
-    });
-
-const playerRank =
-  sortedScores.findIndex(
-    score =>
-      score.player === playerName
-  ) + 1;
-
-const opponentRank =
-  sortedScores.findIndex(
-    score =>
-      score.player === item.player
-  ) + 1;
-
-// 自分の順位が相手より上なら勝ち
-if (
-  playerRank > 0 &&
-  opponentRank > 0 &&
-  playerRank < opponentRank
-) {
-  opponentStats[item.player].wins++;
-}
 
     });
 

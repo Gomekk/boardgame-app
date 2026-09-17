@@ -1220,23 +1220,7 @@ button.small {
 
   </div>
 
-</div>
-
-
-<div
-  id="playerTrendScreen"
-  class="screenContent"
-  style="display:block !important; background:white; min-height:500px;"
->
-<div
-  style="
-    font-size:30px;
-    color:red;
-    padding:30px;
-  "
->
-  個人成績推移テスト
-</div>
+<div id="playerTrendScreen" class="screenContent">>
 
   <button
     class="secondary"
@@ -10772,8 +10756,6 @@ if (screenName === "playerManageScreen") {
   renderHeadToHeadRanking();
   
   renderPlayerTrendSelect();
-  
-  renderPlayerTrend();
 
 }
 
@@ -10782,13 +10764,7 @@ if (screenName === "playerTrendScreen") {
 
   renderPlayerTrendSelect();
 
-  const test =
-    document.getElementById("playerTrendSummary");
-
-  if (test) {
-    test.innerHTML =
-      '<div class="section-note">テスト表示</div>';
-  }
+  renderPlayerTrend();
 
 }
 

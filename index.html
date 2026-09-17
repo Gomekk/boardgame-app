@@ -10698,8 +10698,9 @@ if (target) {
       "表示確認\n" +
       "高さ：" + target.offsetHeight + "\n" +
       "幅：" + target.offsetWidth + "\n" +
-      "display：" + getComputedStyle(target).display + "\n" +
-      "visibility：" + getComputedStyle(target).visibility
+      "親：" + (target.parentElement ? target.parentElement.id : "なし") + "\n" +
+      "子要素数：" + target.children.length + "\n" +
+      "HTML文字数：" + target.innerHTML.length
     );
   }
 }

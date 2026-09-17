@@ -725,6 +725,16 @@ button.small {
   ⚙️ 設定
 </button>
 
+<!-- リンクを共有 -->
+<button
+  type="button"
+  class="secondary"
+  onclick="shareAppLink()"
+>
+  🔗 リンクを共有
+</button>
+
+
 
 
 </div>
@@ -10630,6 +10640,75 @@ function editMatch(matchId) {
   );
 
 }
+
+/* =========================
+   リンクを共有
+========================= */
+
+async function shareAppLink() {
+
+  const shareUrl =
+    window.location.href;
+
+  if (navigator.share) {
+
+    try {
+
+      await navigator.share({
+        title: "ボドゲスコア",
+        text: "ボドゲスコアでスコアを記録しよう！",
+        url: shareUrl
+      });
+
+    } catch (error) {
+
+      /*
+       * ユーザーが共有をキャンセルした場合は
+       * 何もしない
+       */
+
+      if (error.name !== "AbortError") {
+
+        console.error(
+          "共有エラー:",
+          error
+        );
+
+      }
+
+    }
+
+    return;
+
+  }
+
+  /*
+   * Web Share APIが使えない環境
+   * （PC版Safari/Chromeなど）向けのフォールバック
+   */
+
+  try {
+
+    await navigator.clipboard.writeText(
+      shareUrl
+    );
+
+    alert(
+      "リンクをコピーしました！\n\n" +
+      shareUrl
+    );
+
+  } catch (error) {
+
+    prompt(
+      "以下のURLをコピーしてください：",
+      shareUrl
+    );
+
+  }
+
+}
+
 
 function openRecordScreen() {
 

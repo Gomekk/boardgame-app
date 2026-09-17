@@ -8590,60 +8590,60 @@ games.forEach(game => {
 
   if (currentIndex !== previousIndex) {
 
-  currentIndexRow =
-    document.createElement("div");
+    currentIndexRow =
+      document.createElement("div");
 
-  currentIndexRow.style.display =
-    "flex";
+    currentIndexRow.style.display =
+      "flex";
 
-  currentIndexRow.style.alignItems =
-    "center";
+    currentIndexRow.style.alignItems =
+      "center";
 
-  currentIndexRow.style.gap =
-    "6px";
+    currentIndexRow.style.gap =
+      "6px";
 
-  const indexLabel =
-    document.createElement("div");
+    const indexLabel =
+      document.createElement("div");
 
-indexLabel.textContent =
-  currentIndex;
+    indexLabel.textContent =
+      currentIndex;
 
-indexLabel.style.width =
-  "20px";
+    indexLabel.style.width =
+      "20px";
 
-indexLabel.style.flexShrink =
-  "0";
+    indexLabel.style.flexShrink =
+      "0";
 
-indexLabel.style.fontSize =
-  "11px";
+    indexLabel.style.fontSize =
+      "11px";
 
-indexLabel.style.color =
-  "#999";
+    indexLabel.style.color =
+      "#999";
 
-indexLabel.style.fontWeight =
-  "600";
+    indexLabel.style.fontWeight =
+      "600";
 
-indexLabel.style.textAlign =
-  "center";
+    indexLabel.style.textAlign =
+      "center";
 
-indexLabel.style.marginTop =
-  previousIndex
-    ? "14px"
-    : "4px";
+    indexLabel.style.marginTop =
+      previousIndex
+        ? "14px"
+        : "4px";
 
-indexLabel.style.marginBottom =
-  "3px";
+    indexLabel.style.marginBottom =
+      "3px";
 
-currentIndexRow.appendChild(
-  indexLabel
-);
+    currentIndexRow.appendChild(
+      indexLabel
+    );
 
-container.appendChild(
-  currentIndexRow
-);
+    container.appendChild(
+      currentIndexRow
+    );
 
-previousIndex =
-  currentIndex;
+    previousIndex =
+      currentIndex;
 
   }
 

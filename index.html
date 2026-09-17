@@ -10690,12 +10690,17 @@ function showScreen(screenName) {
 
   /* 選択した画面 */
 
-  const target =
-    document.getElementById(screenName);
+const target =
+  document.getElementById(screenName);
 
-  if (target) {
-    target.classList.add("active");
+if (target) {
+  target.classList.add("active");
+
+  // 個人の成績推移画面だけ強制的に表示
+  if (screenName === "playerTrendScreen") {
+    target.style.display = "block";
   }
+}
 
 
   /* =========================

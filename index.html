@@ -835,19 +835,12 @@ button.small {
 
 <h2>👤 プレイヤー成績</h2>
 
-  <!-- プレイヤー一覧・戦績 -->
+    <!-- プレイヤー一覧・戦績 -->
   <div class="card">
-  <h2>👥 プレイヤー戦績</h2>
+  <h2>統計・分析</h2>
   <div id="playerStatsList"></div>
-
- <button
-  type="button"
-  class="secondary"
-  onclick="showScreen('playerTrendScreen')"
->
-  📈 個人の成績推移を見る
-</button>
 </div>
+
 
 <!-- 対戦相性分析 -->
 <div class="card">
@@ -861,15 +854,70 @@ button.small {
 </div>
 
 
-  <!-- プレイヤー詳細 -->
-  <div class="card hidden" id="playerDetail">
+    <!-- プレイヤー詳細（ポップアップ） -->
+  <div
+    id="playerDetailOverlay"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:10002;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    "
+    onclick="if(event.target===this) this.style.display='none'"
+  >
 
-    <h2 id="detailPlayerName"></h2>
+    <div
+      id="playerDetail"
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:560px;
+        max-height:85vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
 
-    <div id="playerDetailStats"></div>
+      <button
+        type="button"
+        onclick="document.getElementById('playerDetailOverlay').style.display='none'"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+      <h2 id="detailPlayerName" style="padding-right:40px;"></h2>
+
+      <div id="playerDetailStats"></div>
+
+      <h3 style="margin-top:20px;">📈 成績推移</h3>
+
+      <div id="playerDetailTrendSummary"></div>
+
+      <div id="playerDetailTrendChart"></div>
+
+    </div>
 
   </div>
 </div>
+
 
 <!-- ゲーム別ランキング画面 -->
 <div id="gameRankingScreen" class="screenContent">
@@ -1330,32 +1378,6 @@ button.small {
 
     <div id="playerList"></div>
 
-  </div>
-
-</div>
-
-<div id="playerTrendScreen" class="screenContent">
-  <button
-    class="secondary"
-    type="button"
-    onclick="showScreen('rankingScreen')"
-  >
-    ← ランキングに戻る
-  </button>
-
-  <div class="card">
-    <h2>📈 個人の成績推移</h2>
-
-    <select
-      id="playerTrendSelect"
-      onchange="renderPlayerTrend()"
-    >
-      <option value="">プレイヤーを選択</option>
-    </select>
-
-    <div id="playerTrendSummary"></div>
-
-    <div id="playerTrendChart"></div>
   </div>
 
 </div>
@@ -7900,8 +7922,8 @@ container.appendChild(row);
 function showPlayerDetail(playerName) {
 
   document.getElementById(
-    "playerDetail"
-  ).classList.remove("hidden");
+    "playerDetailOverlay"
+  ).style.display = "flex";
 
   document.getElementById(
     "detailPlayerName"
@@ -8151,10 +8173,13 @@ function showPlayerDetail(playerName) {
   }
 
 
-  container.innerHTML =
+    container.innerHTML =
     html;
 
+  renderPlayerTrend(playerName);
+
 }
+
 
 
 /* =========================
@@ -8599,75 +8624,19 @@ async function importData(event) {
 
 }
 
-function renderPlayerTrendSelect() {
 
-  const select =
-    document.getElementById("playerTrendSelect");
-
-  if (!select) return;
-
-  const currentValue =
-    select.value;
-
-  select.innerHTML = `
-    <option value="">プレイヤーを選択</option>
-  `;
-
-  data.players
-    .filter(player => player.active)
-    .forEach(player => {
-
-      const option =
-        document.createElement("option");
-
-      option.value =
-        player.name;
-
-      option.textContent =
-        player.name;
-
-      select.appendChild(option);
-
-    });
-
-  if (
-    currentValue &&
-    data.players.some(
-      player =>
-        player.active &&
-        player.name === currentValue
-    )
-  ) {
-    select.value =
-      currentValue;
-  }
-
-}
-
-function renderPlayerTrend() {
-
-  const select =
-    document.getElementById("playerTrendSelect");
+function renderPlayerTrend(playerName) {
 
   const summary =
-    document.getElementById("playerTrendSummary");
+    document.getElementById("playerDetailTrendSummary");
 
   const chart =
-    document.getElementById("playerTrendChart");
+    document.getElementById("playerDetailTrendChart");
 
-  if (!select || !summary || !chart) return;
-
-  const playerName =
-    select.value;
+  if (!summary || !chart || !playerName) return;
 
   summary.innerHTML = "";
   chart.innerHTML = "";
-
-  if (!playerName) {
-    summary.innerHTML =
-      '<div class="section-note">プレイヤーを選択してください。</div>';
-    return;
-  }
 
   const matches =
     getPlayerMatches(playerName)
@@ -9173,8 +9142,6 @@ function updateAll() {
   renderHeadToHeadPlayerSelect();
   
   renderHeadToHeadRanking();
-  
-  renderPlayerTrendSelect();
 
   renderPreviousMembers();
 
@@ -11173,7 +11140,7 @@ if (screenName === "playerManageScreen") {
   renderPlayerList();
 }
 
-  // ランキング画面
+    // ランキング画面
   if (screenName === "rankingScreen") {
 
   renderGameList();
@@ -11183,19 +11150,9 @@ if (screenName === "playerManageScreen") {
   renderHeadToHeadPlayerSelect();
 
   renderHeadToHeadRanking();
-  
-  renderPlayerTrendSelect();
 
 }
 
-// 個人の成績推移画面
-if (screenName === "playerTrendScreen") {
-
-  renderPlayerTrendSelect();
-
-  renderPlayerTrend();
-
-}
 
   // 情報登録画面
   if (screenName === "infoScreen") {

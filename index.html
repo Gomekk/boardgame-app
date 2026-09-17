@@ -6467,6 +6467,8 @@ function renderSpecificGameList(keyword = "") {
 
     checkbox.style.flexShrink =
       "0";
+      
+  checkbox.checked = specificRouletteSelectedGames.includes(game.name);
 
     gameLabel.appendChild(
       image

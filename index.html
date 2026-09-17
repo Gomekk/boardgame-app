@@ -869,9 +869,10 @@ button.small {
     </h2>
 
     <div>
-      <h3>🏆 ベストスコア</h3>
-      <div id="gameScoreRanking"></div>
-    </div>
+      <div id="gameScoreRankingSection">
+  <h3>🏆 ベストスコア</h3>
+  <div id="gameScoreRanking"></div>
+</div>
 
     <div>
       <h3>🥇 勝率</h3>
@@ -9354,6 +9355,9 @@ function renderGameSpecificRanking(gameName) {
   const scoreRanking =
     document.getElementById("gameScoreRanking");
 
+  const scoreRankingSection =
+  document.getElementById("gameScoreRankingSection");
+
   const winRateRanking =
     document.getElementById("gameWinRateRanking");
 
@@ -9385,6 +9389,15 @@ function renderGameSpecificRanking(gameName) {
     );
 
   if (!game) return;
+  
+  if (scoreRankingSection) {
+
+  scoreRankingSection.style.display =
+    game.direction === "rank"
+      ? "none"
+      : "";
+
+}
   
   const scoreRankingTitle =
   scoreRanking

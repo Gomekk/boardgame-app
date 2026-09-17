@@ -941,14 +941,37 @@ button.small {
       placeholder="ゲーム名を検索"
     >
     
-    <div class="section-note" style="margin:6px 0 6px;">
+        <div class="section-note" style="margin:6px 0 6px;">
       絞込み&gt;&gt;
     </div>
 
-    
+    <!-- 人数で絞り込み -->
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+
+      <span class="section-note" style="margin:0;white-space:nowrap;">人数 ▶</span>
+
+      <div
+        id="gameRankingPlayerCountFilter"
+        style="display:flex;gap:6px;overflow-x:auto;flex:1;padding-bottom:2px;"
+      >
+        <button type="button" class="small" data-count="1" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">1</button>
+        <button type="button" class="small" data-count="2" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">2</button>
+        <button type="button" class="small" data-count="3" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">3</button>
+        <button type="button" class="small" data-count="4" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">4</button>
+        <button type="button" class="small" data-count="5" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">5</button>
+        <button type="button" class="small" data-count="6" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">6</button>
+        <button type="button" class="small" data-count="7" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">7</button>
+        <button type="button" class="small" data-count="8" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">8</button>
+        <button type="button" class="small" data-count="9" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">9</button>
+        <button type="button" class="small" data-count="10" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">10</button>
+      </div>
+
+    </div>
+
         <!-- 重さで絞り込み -->
     <div
       id="gameRankingWeightFilter"
+
       style="display:flex;gap:8px;margin-bottom:16px;"
     >
       <button
@@ -1163,6 +1186,25 @@ button.small {
   "
 >
   ※現在の設定：軽量級＝<span id="weightLightNote">30</span>分以内／中量級＝<span id="weightMediumNote">60</span>分以内／重量級＝<span id="weightMediumNoteHeavy">60</span>分超
+</div>
+
+<div style="margin-top:12px;display:flex;align-items:center;gap:8px;">
+  <input
+    id="gameMinPlayers"
+    type="number"
+    min="1"
+    placeholder="最小人数"
+    style="flex:1;"
+  >
+  <span>〜</span>
+  <input
+    id="gameMaxPlayers"
+    type="number"
+    min="1"
+    placeholder="最大人数"
+    style="flex:1;"
+  >
+  <span>人</span>
 </div>
 
     <div style="margin-top:12px;">
@@ -1752,6 +1794,44 @@ if (!name) {
 
 }
 
+const minPlayersInput =
+  document.getElementById("gameMinPlayers");
+
+const maxPlayersInput =
+  document.getElementById("gameMaxPlayers");
+
+const minPlayersRaw =
+  minPlayersInput ? minPlayersInput.value.trim() : "";
+
+const maxPlayersRaw =
+  maxPlayersInput ? maxPlayersInput.value.trim() : "";
+
+let minPlayers = null;
+let maxPlayers = null;
+
+if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
+
+  minPlayers = Number(minPlayersRaw);
+  maxPlayers = Number(maxPlayersRaw);
+
+  if (
+    !Number.isInteger(minPlayers) ||
+    !Number.isInteger(maxPlayers) ||
+    minPlayers <= 0 ||
+    maxPlayers <= 0 ||
+    maxPlayers < minPlayers
+  ) {
+
+    alert(
+      "プレイ人数は最小・最大とも1人以上で、最大は最小以上にしてください。"
+    );
+
+    return;
+
+  }
+
+}
+
   const direction =
     document.querySelector(
       'input[name="scoreDirection"]:checked'
@@ -1786,7 +1866,7 @@ if (!name) {
 
     if (existingGame) {
 
-      const {
+            const {
         error: updateError
       } =
         await supabaseClient
@@ -1794,6 +1874,8 @@ if (!name) {
           .update({
             active: true,
             direction: direction,
+            min_players: minPlayers,
+            max_players: maxPlayers,
             image_url:
               newImageUrl || existingGame.image_url
           })
@@ -1801,6 +1883,7 @@ if (!name) {
             "id",
             existingGame.id
           );
+
 
       if (updateError) {
         throw updateError;
@@ -1811,15 +1894,18 @@ if (!name) {
       const {
         error: insertError
       } =
-        await supabaseClient
+                await supabaseClient
           .from("games")
           .insert({
   name: name,
   play_time: playTime,
   direction: direction,
+  min_players: minPlayers,
+  max_players: maxPlayers,
   active: true,
   image_url: newImageUrl
 });
+
 
       if (insertError) {
         throw insertError;
@@ -1827,10 +1913,13 @@ if (!name) {
 
     }
 
-    input.value = "";
+        input.value = "";
     if (playTimeInput) {
   playTimeInput.value = "";
 }
+    if (minPlayersInput) { minPlayersInput.value = ""; }
+    if (maxPlayersInput) { maxPlayersInput.value = ""; }
+
     
         if (imageInput) {
       imageInput.value = "";
@@ -2129,10 +2218,35 @@ form.appendChild(
   playTimeNote
 );
 
+const minPlayersInput =
+  document.createElement("input");
+
+minPlayersInput.type = "number";
+minPlayersInput.min = "1";
+minPlayersInput.placeholder = "最小人数";
+minPlayersInput.value = game.minPlayers || "";
+minPlayersInput.style.marginTop = "8px";
+minPlayersInput.style.width = "48%";
+
+const maxPlayersInput =
+  document.createElement("input");
+
+maxPlayersInput.type = "number";
+maxPlayersInput.min = "1";
+maxPlayersInput.placeholder = "最大人数";
+maxPlayersInput.value = game.maxPlayers || "";
+maxPlayersInput.style.marginTop = "8px";
+maxPlayersInput.style.marginLeft = "4%";
+maxPlayersInput.style.width = "48%";
+
+form.appendChild(minPlayersInput);
+form.appendChild(maxPlayersInput);
+
 
 /*
  * 現在の写真
  */
+
 
   if (game.image) {
 
@@ -2438,7 +2552,37 @@ if (
 
 }
 
+const minPlayersRaw = minPlayersInput.value.trim();
+const maxPlayersRaw = maxPlayersInput.value.trim();
+
+let newMinPlayers = null;
+let newMaxPlayers = null;
+
+if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
+
+  newMinPlayers = Number(minPlayersRaw);
+  newMaxPlayers = Number(maxPlayersRaw);
+
+  if (
+    !Number.isInteger(newMinPlayers) ||
+    !Number.isInteger(newMaxPlayers) ||
+    newMinPlayers <= 0 ||
+    newMaxPlayers <= 0 ||
+    newMaxPlayers < newMinPlayers
+  ) {
+
+    alert(
+      "プレイ人数は最小・最大とも1人以上で、最大は最小以上にしてください。"
+    );
+
+    return;
+
+  }
+
+}
+
     const selectedDirection =
+
       form.querySelector(
         'input[name="editScoreDirection_' +
         game.id +
@@ -2583,7 +2727,7 @@ if (
       const {
         error
       } =
-        await supabaseClient
+                await supabaseClient
           .from("games")
           .update({
   name:
@@ -2595,12 +2739,19 @@ if (
   play_time:
     newPlayTime,
 
+  min_players:
+    newMinPlayers,
+
+  max_players:
+    newMaxPlayers,
+
   direction:
     newDirection,
 
   image_url:
     newImageUrl
 })
+
           .eq(
             "id",
             game.id
@@ -3737,7 +3888,7 @@ async function loadDataFromSupabase() {
       player.active !== false
   })),
 
-  games:
+    games:
     games.map(game => ({
       id: game.id,
       name: game.name,
@@ -3745,6 +3896,10 @@ async function loadDataFromSupabase() {
         game.reading || "",
       playTime:
         game.play_time || null,
+      minPlayers:
+        game.min_players || null,
+      maxPlayers:
+        game.max_players || null,
       direction:
         game.direction || "high",
       active:
@@ -3752,6 +3907,7 @@ async function loadDataFromSupabase() {
       image:
         game.image_url || null
     })),
+
 
   matches:
     convertedMatches
@@ -3807,6 +3963,56 @@ function initGameRankingWeightFilterButtons() {
 }
 
 initGameRankingWeightFilterButtons();
+
+let gameRankingPlayerCountFilter =
+  new Set([1,2,3,4,5,6,7,8,9,10]);
+
+function updateGameRankingPlayerCountButtonStyle(button) {
+
+  const count = Number(button.dataset.count);
+
+  const active =
+    gameRankingPlayerCountFilter.has(count);
+
+  button.style.background = active ? "#1E3A5F" : "#ffffff";
+  button.style.color = active ? "#ffffff" : "#111827";
+  button.style.borderColor = active ? "#1E3A5F" : "#d1d5db";
+
+}
+
+function initGameRankingPlayerCountFilterButtons() {
+
+  const buttons =
+    document.querySelectorAll(
+      "#gameRankingPlayerCountFilter button"
+    );
+
+  buttons.forEach(button => {
+
+    updateGameRankingPlayerCountButtonStyle(button);
+
+    button.onclick = () => {
+
+      const count = Number(button.dataset.count);
+
+      if (gameRankingPlayerCountFilter.has(count)) {
+        gameRankingPlayerCountFilter.delete(count);
+      } else {
+        gameRankingPlayerCountFilter.add(count);
+      }
+
+      updateGameRankingPlayerCountButtonStyle(button);
+
+      renderGameRankingGameList();
+
+    };
+
+  });
+
+}
+
+initGameRankingPlayerCountFilterButtons();
+
 
 let weightSettings = {
   lightMax: 30,
@@ -5937,7 +6143,7 @@ if (allGames.length === 0) {
     中量級
   </button>
 
-  <button
+    <button
     type="button"
     data-weight="heavy"
     style="
@@ -5952,9 +6158,32 @@ if (allGames.length === 0) {
 
 </div>
 
+<div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px;">
+
+  <span style="font-size:12px;color:#6b7280;white-space:nowrap;">人数</span>
+
+  <div
+    id="gameRoulettePlayerCountFilter"
+    style="display:flex;gap:5px;overflow-x:auto;flex:1;padding-bottom:2px;"
+  >
+    <button type="button" class="small" data-count="1" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">1</button>
+    <button type="button" class="small" data-count="2" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">2</button>
+    <button type="button" class="small" data-count="3" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">3</button>
+    <button type="button" class="small" data-count="4" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">4</button>
+    <button type="button" class="small" data-count="5" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">5</button>
+    <button type="button" class="small" data-count="6" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">6</button>
+    <button type="button" class="small" data-count="7" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">7</button>
+    <button type="button" class="small" data-count="8" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">8</button>
+    <button type="button" class="small" data-count="9" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">9</button>
+    <button type="button" class="small" data-count="10" style="flex:0 0 auto;background:#ffffff;color:#111827;border:1px solid #d1d5db;">10</button>
+  </div>
+
+</div>
+
 <button
   type="button"
   id="gameRouletteName"
+
   style="
     background:#ffffff;
     color:#1E3A5F;
@@ -6021,6 +6250,7 @@ if (allGames.length === 0) {
 let selectedWeight = "";
 let games = [];
 let selectedWeights = new Set();
+let selectedPlayerCounts = new Set();
 
 function startRoulette() {
 
@@ -6037,6 +6267,29 @@ function startRoulette() {
           )
         : allGames;
 
+  if (
+    selectedWeight !== "specific" &&
+    selectedPlayerCounts.size > 0
+  ) {
+
+    games =
+      games.filter(game => {
+
+        if (!game.minPlayers && !game.maxPlayers) return true;
+
+        const min = game.minPlayers || 1;
+        const max = game.maxPlayers || 99;
+
+        for (const count of selectedPlayerCounts) {
+          if (count >= min && count <= max) return true;
+        }
+
+        return false;
+
+      });
+
+  }
+
   if (games.length === 0) {
     alert(
       selectedWeight === "specific"
@@ -6047,6 +6300,7 @@ function startRoulette() {
   }
 
   modeElement.style.display = "none";
+
 
   const weightNameMap = {
     light: "軽量級",
@@ -6226,13 +6480,52 @@ modeButtons.forEach(button => {
 
 });
 
-resetAllModeStyles();
+resetAllModeStyles(); // 開いた瞬間に「全てのゲーム」を選択状態にする
+
+function updateRoulettePlayerCountButtonStyle(button) {
+
+  const count = Number(button.dataset.count);
+
+  const active =
+    selectedPlayerCounts.has(count);
+
+  button.style.background = active ? "#1E3A5F" : "#ffffff";
+  button.style.color = active ? "#ffffff" : "#111827";
+  button.style.borderColor = active ? "#1E3A5F" : "#d1d5db";
+
+}
+
+const playerCountButtons =
+  document.querySelectorAll(
+    "#gameRoulettePlayerCountFilter button"
+  );
+
+playerCountButtons.forEach(button => {
+
+  updateRoulettePlayerCountButtonStyle(button);
+
+  button.onclick = () => {
+
+    const count = Number(button.dataset.count);
+
+    if (selectedPlayerCounts.has(count)) {
+      selectedPlayerCounts.delete(count);
+    } else {
+      selectedPlayerCounts.add(count);
+    }
+
+    updateRoulettePlayerCountButtonStyle(button);
+
+  };
+
+});
 
 nameElement.onclick = () => {
 
   startRoulette();
 
 };
+
 
   const recordButton =
     document.getElementById("gameRouletteRecord");
@@ -9361,7 +9654,7 @@ function renderGameRankingGameList() {
         );
 
       })
-      .filter(game => {
+            .filter(game => {
 
         const weight =
           getGameWeightClass(game.playTime);
@@ -9375,7 +9668,26 @@ function renderGameRankingGameList() {
         return gameRankingWeightFilter.has(weight);
 
       })
+      .filter(game => {
+
+        /*
+         * 人数未設定のゲームは
+         * 絞り込みの対象外として常に表示
+         */
+        if (!game.minPlayers && !game.maxPlayers) return true;
+
+        const min = game.minPlayers || 1;
+        const max = game.maxPlayers || 99;
+
+        for (const count of gameRankingPlayerCountFilter) {
+          if (count >= min && count <= max) return true;
+        }
+
+        return false;
+
+      })
       .sort((a, b) =>
+
         (a.reading || a.name || "").localeCompare(
           b.reading || b.name || "",
           "ja"

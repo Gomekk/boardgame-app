@@ -3714,7 +3714,7 @@ async function renderGameSelect() {
 
     });
 
-  select.onchange = () => {
+    select.onchange = () => {
 
     const preview =
       document.getElementById("matchGamePreview");
@@ -3738,6 +3738,23 @@ async function renderGameSelect() {
     }
 
   };
+
+  /*
+   * ルーレットからゲームが渡されている場合
+   */
+  if (window.rouletteSelectedGame) {
+
+    select.value =
+      window.rouletteSelectedGame;
+
+    select.dispatchEvent(
+      new Event("change")
+    );
+
+    window.rouletteSelectedGame =
+      null;
+
+  }
 
 }
 
@@ -5989,25 +6006,14 @@ setTimeout(
 
   recordButton.onclick = () => {
 
+  if (selectedGame) {
+
+    window.rouletteSelectedGame =
+      selectedGame.name;
+
+  }
+
   showScreen("recordScreen");
-
-  setTimeout(() => {
-
-    const gameSelect =
-      document.getElementById("matchGame");
-
-    if (gameSelect && selectedGame) {
-
-      gameSelect.value =
-        selectedGame.name;
-
-      gameSelect.dispatchEvent(
-        new Event("change")
-      );
-
-    }
-
-  }, 0);
 
   overlay.remove();
 

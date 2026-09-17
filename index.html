@@ -801,12 +801,19 @@ button.small {
   <div id="playerStatsList"></div>
 
   <button
-    type="button"
-    class="secondary"
-    onclick="showScreen('playerTrendScreen')"
-  >
-    📈 個人の成績推移を見る
-  </button>
+  type="button"
+  class="secondary"
+  onclick="
+    document.querySelectorAll('.screenContent').forEach(screen => {
+      screen.classList.remove('active');
+    });
+
+    document.getElementById('rankingScreen').classList.remove('active');
+    document.getElementById('playerTrendScreen').classList.add('active');
+  "
+>
+  📈 個人の成績推移を見る
+</button>
 </div>
 
 <!-- 対戦相性分析 -->

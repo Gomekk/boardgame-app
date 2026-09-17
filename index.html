@@ -9812,46 +9812,37 @@ if (scoreRankingTitle) {
 
 }
 
-      let rank;
+            let rank;
 
 if (game.direction === "rank") {
 
   rank =
     Number(item.score);
 
+} else if (game.direction === "low") {
+
+  /*
+   * 自分より得点が低い(＝上位)人数+1
+   */
+  rank =
+    scores.filter(
+      s => Number(s.score) < Number(item.score)
+    ).length + 1;
+
 } else {
 
-  const sorted =
-    scores
-      .slice()
-      .sort((a, b) => {
-
-        if (game.direction === "low") {
-
-          return (
-            Number(a.score) -
-            Number(b.score)
-          );
-
-        }
-
-        return (
-          Number(b.score) -
-          Number(a.score)
-        );
-
-      });
-
+  /*
+   * 自分より得点が高い(＝上位)人数+1
+   */
   rank =
-    sorted.findIndex(
-      p =>
-        p.player ===
-        item.player
-    ) + 1;
+    scores.filter(
+      s => Number(s.score) > Number(item.score)
+    ).length + 1;
 
 }
 
 player.totalRank += rank;
+
 
     });
 

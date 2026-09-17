@@ -6468,21 +6468,6 @@ function renderSpecificGameList(keyword = "") {
     checkbox.style.flexShrink =
       "0";
       
-  checkbox.checked = specificRouletteSelectedGames.includes(game.name);
-
-  checkbox.addEventListener("change", () => {
-  if (checkbox.checked) {
-    if (!specificRouletteSelectedGames.includes(game.name)) {
-      specificRouletteSelectedGames.push(game.name);
-    }
-  } else {
-    const index = specificRouletteSelectedGames.indexOf(game.name);
-
-    if (index !== -1) {
-      specificRouletteSelectedGames.splice(index, 1);
-    }
-  }
-});
 
     gameLabel.appendChild(
       image

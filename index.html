@@ -8579,6 +8579,7 @@ return (
   }
 
   let previousIndex = "";
+let currentIndexRow = null;
 
 games.forEach(game => {
 
@@ -8589,20 +8590,20 @@ games.forEach(game => {
 
   if (currentIndex !== previousIndex) {
 
-const indexRow =
-  document.createElement("div");
+  currentIndexRow =
+    document.createElement("div");
 
-indexRow.style.display =
-  "flex";
+  currentIndexRow.style.display =
+    "flex";
 
-indexRow.style.alignItems =
-  "center";
+  currentIndexRow.style.alignItems =
+    "center";
 
-indexRow.style.gap =
-  "6px";
+  currentIndexRow.style.gap =
+    "6px";
 
-    const indexLabel =
-  document.createElement("div");
+  const indexLabel =
+    document.createElement("div");
 
 indexLabel.textContent =
   currentIndex;
@@ -8633,12 +8634,12 @@ indexLabel.style.marginTop =
 indexLabel.style.marginBottom =
   "3px";
 
-indexRow.appendChild(
+currentIndexRow.appendChild(
   indexLabel
 );
 
 container.appendChild(
-  indexRow
+  currentIndexRow
 );
 
 previousIndex =

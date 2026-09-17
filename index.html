@@ -10687,6 +10687,16 @@ const target =
 
 if (target) {
   target.classList.add("active");
+
+  if (screenName === "playerTrendScreen") {
+    alert(
+      "表示確認\n" +
+      "高さ：" + target.offsetHeight + "\n" +
+      "幅：" + target.offsetWidth + "\n" +
+      "display：" + getComputedStyle(target).display + "\n" +
+      "visibility：" + getComputedStyle(target).visibility
+    );
+  }
 }
 
 

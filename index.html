@@ -5689,16 +5689,17 @@ if (allGames.length === 0) {
   id="gameRouletteMode"
   style="
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:repeat(6, 1fr);
     gap:6px;
     margin:12px 0;
   "
 >
+
   <button
     type="button"
     data-weight=""
     style="
-      grid-column:1 / -1;
+      grid-column:span 3;
       background:#F1F5F9;
       color:#1E293B;
       border:1px solid #CBD5E1;
@@ -5709,8 +5710,22 @@ if (allGames.length === 0) {
 
   <button
     type="button"
+    data-weight="specific"
+    style="
+      grid-column:span 3;
+      background:#F1F5F9;
+      color:#1E293B;
+      border:1px solid #CBD5E1;
+    "
+  >
+    特定のゲーム
+  </button>
+
+  <button
+    type="button"
     data-weight="light"
     style="
+      grid-column:span 2;
       background:#E8F5E9;
       color:#2E7D32;
       border:1px solid #A5D6A7;
@@ -5723,6 +5738,7 @@ if (allGames.length === 0) {
     type="button"
     data-weight="medium"
     style="
+      grid-column:span 2;
       background:#FFF3E0;
       color:#E65100;
       border:1px solid #FFCC80;
@@ -5735,6 +5751,7 @@ if (allGames.length === 0) {
     type="button"
     data-weight="heavy"
     style="
+      grid-column:span 2;
       background:#FDECEC;
       color:#C62828;
       border:1px solid #EF9A9A;
@@ -5742,6 +5759,7 @@ if (allGames.length === 0) {
   >
     重量級
   </button>
+
 </div>
 
 <button

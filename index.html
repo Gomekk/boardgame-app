@@ -594,12 +594,6 @@ button.small {
   box-shadow: 0 4px 12px rgba(0,0,0,.2);
 }
 
-#playerTrendScreen {
-  min-height: 500px !important;
-  width: 100% !important;
-  display: block !important;
-}
-
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -10696,22 +10690,6 @@ const target =
 
 if (target) {
   target.classList.add("active");
-
-  if (screenName === "playerTrendScreen") {
-    alert(
-      "表示確認\n" +
-      "高さ：" + target.offsetHeight + "\n" +
-      "幅：" + target.offsetWidth + "\n" +
-      "親：" + (target.parentElement ? target.parentElement.id : "なし") + "\n" +
-"親の親：" + (
-  target.parentElement && target.parentElement.parentElement
-    ? target.parentElement.parentElement.id
-    : "なし"
-) + "\n" +
-      "子要素数：" + target.children.length + "\n" +
-      "HTML文字数：" + target.innerHTML.length
-    );
-  }
 }
 
 

@@ -8538,25 +8538,25 @@ function renderGameRankingGameList() {
       .filter(game => {
 
         const gameName =
-  normalizeGameSearch(game.name);
+          normalizeGameSearch(game.name);
 
-const gameReading =
-  normalizeGameSearch(
-    game.reading || ""
-  );
+        const gameReading =
+          normalizeGameSearch(
+            game.reading || ""
+          );
 
-return (
-  gameName.includes(keyword) ||
-  gameReading.includes(keyword)
-);
+        return (
+          gameName.includes(keyword) ||
+          gameReading.includes(keyword)
+        );
 
       })
       .sort((a, b) =>
-  (a.reading || a.name || "").localeCompare(
-    b.reading || b.name || "",
-    "ja"
-  )
-);
+        (a.reading || a.name || "").localeCompare(
+          b.reading || b.name || "",
+          "ja"
+        )
+      );
 
   container.innerHTML = "";
 
@@ -8579,34 +8579,34 @@ return (
   }
 
   let previousIndex = "";
-let currentIndexRow = null;
 
-games.forEach(game => {
+  games.forEach(game => {
 
-  const currentIndex =
-    getJapaneseIndex(
-      game.reading || game.name
-    );
+    const currentIndex =
+      getJapaneseIndex(
+        game.reading || game.name
+      );
 
-  if (currentIndex !== previousIndex) {
-
-    currentIndexRow =
+    /*
+     * 行グループを作成
+     */
+    const row =
       document.createElement("div");
 
-    currentIndexRow.style.display =
+    row.style.display =
       "flex";
 
-    currentIndexRow.style.alignItems =
-      "center";
+    row.style.alignItems =
+      "flex-start";
 
-    currentIndexRow.style.gap =
+    row.style.gap =
       "6px";
 
+    /*
+     * 索引
+     */
     const indexLabel =
       document.createElement("div");
-
-    indexLabel.textContent =
-      currentIndex;
 
     indexLabel.style.width =
       "20px";
@@ -8626,57 +8626,71 @@ games.forEach(game => {
     indexLabel.style.textAlign =
       "center";
 
-    indexLabel.style.marginTop =
-      previousIndex
-        ? "14px"
-        : "4px";
+    indexLabel.style.paddingTop =
+      "12px";
 
-    indexLabel.style.marginBottom =
-      "3px";
+    if (
+      currentIndex !== previousIndex
+    ) {
 
-    currentIndexRow.appendChild(
-      indexLabel
-    );
+      indexLabel.textContent =
+        currentIndex;
 
-    container.appendChild(
-      currentIndexRow
-    );
+      indexLabel.style.marginTop =
+        previousIndex
+          ? "14px"
+          : "4px";
 
-    previousIndex =
-      currentIndex;
+    } else {
 
-  }
+      /*
+       * 同じ行なら索引は空欄
+       */
+      indexLabel.textContent =
+        "";
 
+    }
+
+    /*
+     * ゲームボタン
+     */
     const button =
       document.createElement("button");
 
-    button.type = "button";
+    button.type =
+      "button";
 
     button.className =
-  "secondary";
+      "secondary";
 
-button.style.width =
-  "100%";
+    button.style.width =
+      "100%";
 
-button.style.textAlign =
-  "left";
+    button.style.flex =
+      "1";
 
-button.style.marginBottom =
-  "8px";
+    button.style.minWidth =
+      "0";
 
-button.style.display =
-  "flex";
+    button.style.textAlign =
+      "left";
 
-button.style.alignItems =
-  "center";
+    button.style.marginBottom =
+      "8px";
 
-button.style.gap =
-  "10px";
+    button.style.display =
+      "flex";
 
-const championNames =
-  getGameChampionNames(game);
-  
-          const holderColors =
+    button.style.alignItems =
+      "center";
+
+    button.style.gap =
+      "10px";
+
+    const championNames =
+      getGameChampionNames(game);
+
+    const holderColors =
       championNames
         .map(name => {
 
@@ -8690,66 +8704,62 @@ const championNames =
         })
         .filter(Boolean);
 
-                         if (holderColors.length > 0) {
+    if (
+      holderColors.length > 0
+    ) {
 
       const color1 =
         holderColors[0];
 
-      /*
-       * グレーのベースはそのまま
-       */
       button.style.backgroundImage =
         "none";
 
       button.style.backgroundColor =
         "#e5e7eb";
 
-      /*
-       * 右端にプレイヤーカラーを縦に入れる
-       */
       button.style.borderRight =
         `12px solid ${color1}`;
 
-      /*
-       * 右端の角をきれいに見せる
-       */
       button.style.overflow =
         "hidden";
 
     }
-    
-       
 
-const championText =
-  championNames.length > 0
-    ? `
-      <div style="
-        margin-left:auto;
-        text-align:right;
-        line-height:1.2;
-        flex-shrink:0;
-      ">
-        <div style="
-          font-size:10px;
-          color:#aaa;
-          margin-bottom:2px;
-        ">
-          Title Holder
-        </div>
-        <div style="
-          font-size:13px;
-          color:#555;
-        ">
-          ${championNames.map(name => escapeHTML(name)).join(" / ")}
-        </div>
-      </div>
-    `
-    : "";
+    const championText =
+      championNames.length > 0
+        ? `
+          <div style="
+            margin-left:auto;
+            text-align:right;
+            line-height:1.2;
+            flex-shrink:0;
+          ">
+            <div style="
+              font-size:10px;
+              color:#aaa;
+              margin-bottom:2px;
+            ">
+              Title Holder
+            </div>
+            <div style="
+              font-size:13px;
+              color:#555;
+            ">
+              ${championNames.map(
+                name => escapeHTML(name)
+              ).join(" / ")}
+            </div>
+          </div>
+        `
+        : "";
 
     button.innerHTML =
       game.image
         ? `
-          <img src="${escapeHTML(game.image)}" class="game-thumb">
+          <img
+            src="${escapeHTML(game.image)}"
+            class="game-thumb"
+          >
           <span style="min-width:0;">
             ${escapeHTML(game.name)}
           </span>
@@ -8770,8 +8780,23 @@ const championText =
 
     };
 
-    indexRow.appendChild(button);
-container.appendChild(indexRow);
+    /*
+     * 索引＋ゲームを1行にする
+     */
+    row.appendChild(
+      indexLabel
+    );
+
+    row.appendChild(
+      button
+    );
+
+    container.appendChild(
+      row
+    );
+
+    previousIndex =
+      currentIndex;
 
   });
 

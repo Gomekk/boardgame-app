@@ -6280,6 +6280,8 @@ function renderSpecificGameList(keyword = "") {
 
   let previousIndex = "";
 
+  let currentSection = null;
+
   games.forEach(game => {
 
     const currentIndex =
@@ -6287,111 +6289,108 @@ function renderSpecificGameList(keyword = "") {
         game.reading || game.name
       );
 
-    const row =
-      document.createElement("div");
-
-    row.style.display =
-      "flex";
-
-    row.style.alignItems =
-      "flex-start";
-
-    row.style.gap =
-      "6px";
-
-    const indexLabel =
-      document.createElement("div");
-
-    indexLabel.style.width =
-      "20px";
-
-    indexLabel.style.flexShrink =
-      "0";
-
-    indexLabel.style.fontSize =
-      "11px";
-
-    indexLabel.style.color =
-      "#999";
-
-    indexLabel.style.fontWeight =
-      "600";
-
-    indexLabel.style.textAlign =
-      "center";
-
-    indexLabel.style.paddingTop =
-      "10px";
-
     if (
       currentIndex !== previousIndex
     ) {
 
-      indexLabel.textContent =
-        currentIndex;
+      const section =
+        document.createElement("div");
 
-      indexLabel.style.marginTop =
+      section.style.display =
+        "grid";
+
+      section.style.gridTemplateColumns =
+        "20px minmax(0, 1fr)";
+
+      section.style.gap =
+        "6px";
+
+      section.style.marginTop =
         previousIndex
           ? "14px"
           : "4px";
 
+      const indexLabel =
+        document.createElement("div");
+
+      indexLabel.textContent =
+        currentIndex;
+
+      indexLabel.style.fontSize =
+        "11px";
+
+      indexLabel.style.color =
+        "#999";
+
+      indexLabel.style.fontWeight =
+        "600";
+
+      indexLabel.style.textAlign =
+        "center";
+
+      indexLabel.style.paddingTop =
+        "10px";
+
+      const gameGrid =
+        document.createElement("div");
+
+      gameGrid.style.display =
+        "grid";
+
+      gameGrid.style.gridTemplateColumns =
+        "repeat(2, minmax(0, 1fr))";
+
+      gameGrid.style.gap =
+        "8px";
+
+      section.appendChild(
+        indexLabel
+      );
+
+      section.appendChild(
+        gameGrid
+      );
+
+      container.appendChild(
+        section
+      );
+
+      currentSection =
+        gameGrid;
+
+      previousIndex =
+        currentIndex;
+
     }
 
-    const gameGrid =
-      document.createElement("div");
-
-    gameGrid.style.flex =
-      "1";
-
-    gameGrid.style.display =
-      "grid";
-
-    gameGrid.style.gridTemplateColumns =
-      "repeat(2, minmax(0, 1fr))";
-
-    gameGrid.style.gap =
-      "8px";
-
-    const gameButton =
+    const gameLabel =
       document.createElement("label");
 
-    gameButton.style.display =
+    gameLabel.style.display =
       "flex";
 
-    gameButton.style.alignItems =
+    gameLabel.style.alignItems =
       "center";
 
-    gameButton.style.gap =
+    gameLabel.style.gap =
+      "6px";
+
+    gameLabel.style.padding =
       "7px";
 
-    gameButton.style.padding =
-      "7px";
-
-    gameButton.style.border =
+    gameLabel.style.border =
       "1px solid #e5e7eb";
 
-    gameButton.style.borderRadius =
+    gameLabel.style.borderRadius =
       "10px";
 
-    gameButton.style.background =
+    gameLabel.style.background =
       "#fafafa";
 
-    gameButton.style.cursor =
+    gameLabel.style.cursor =
       "pointer";
 
-    const checkbox =
-      document.createElement("input");
-
-    checkbox.type =
-      "checkbox";
-
-    checkbox.style.width =
-      "18px";
-
-    checkbox.style.height =
-      "18px";
-
-    checkbox.style.flexShrink =
+    gameLabel.style.minWidth =
       "0";
 
     const image =
@@ -6401,10 +6400,10 @@ function renderSpecificGameList(keyword = "") {
       game.image || "";
 
     image.style.width =
-      "38px";
+      "36px";
 
     image.style.height =
-      "38px";
+      "36px";
 
     image.style.objectFit =
       "cover";
@@ -6416,8 +6415,10 @@ function renderSpecificGameList(keyword = "") {
       "0";
 
     if (!game.image) {
+
       image.style.display =
         "none";
+
     }
 
     const name =
@@ -6432,39 +6433,54 @@ function renderSpecificGameList(keyword = "") {
     name.style.lineHeight =
       "1.3";
 
+    name.style.flex =
+      "1";
+
     name.style.minWidth =
       "0";
 
-    gameButton.appendChild(
-      checkbox
-    );
+    name.style.overflow =
+      "hidden";
 
-    gameButton.appendChild(
+    name.style.textOverflow =
+      "ellipsis";
+
+    name.style.whiteSpace =
+      "nowrap";
+
+    const checkbox =
+      document.createElement("input");
+
+    checkbox.type =
+      "checkbox";
+
+    checkbox.style.width =
+      "18px";
+
+    checkbox.style.height =
+      "18px";
+
+    checkbox.style.marginLeft =
+      "auto";
+
+    checkbox.style.flexShrink =
+      "0";
+
+    gameLabel.appendChild(
       image
     );
 
-    gameButton.appendChild(
+    gameLabel.appendChild(
       name
     );
 
-    gameGrid.appendChild(
-      gameButton
+    gameLabel.appendChild(
+      checkbox
     );
 
-    row.appendChild(
-      indexLabel
+    currentSection.appendChild(
+      gameLabel
     );
-
-    row.appendChild(
-      gameGrid
-    );
-
-    container.appendChild(
-      row
-    );
-
-    previousIndex =
-      currentIndex;
 
   });
 

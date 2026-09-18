@@ -5874,7 +5874,7 @@ function renderBestScoreCountRanking() {
   let previousCount = null;
   let currentRank = 0;
 
-  ranking.slice(0, 3).forEach((player, index) => {
+  ranking.slice(0, 5).forEach((player, index) => {
 
     if (
       player.count !== previousCount
@@ -6114,7 +6114,7 @@ function renderWinRateRanking() {
   let currentRank = 0;
 
 
-  ranking.slice(0, 3).forEach((player, index) => {
+  ranking.slice(0, 5).forEach((player, index) => {
 
     if (
       player.winRate !== previousRate
@@ -6270,7 +6270,7 @@ function renderWinCountRanking() {
   let currentRank = 0;
 
 
-  ranking.slice(0, 3).forEach((player, index) => {
+  ranking.slice(0, 5).forEach((player, index) => {
 
     if (
       player.wins !== previousWins
@@ -6439,7 +6439,7 @@ matches.forEach(match => {
   let previousStreak = null;
   let currentRank = 0;
 
-  ranking.slice(0, 3).forEach((player, index) => {
+  ranking.slice(0, 5).forEach((player, index) => {
 
     if (player.currentStreak !== previousStreak) {
 
@@ -8006,7 +8006,7 @@ function renderAverageRankRanking() {
   let currentRank = 0;
 
 
-  ranking.slice(0, 3).forEach((player, index) => {
+  ranking.slice(0, 5).forEach((player, index) => {
 
     if (
       player.averageRank !== previousRank

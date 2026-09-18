@@ -332,37 +332,64 @@ button.small {
   box-shadow: inset 0 0 0 1px rgba(22,35,63,0.06);
 }
 
+/*
+ * 1〜3位バッジを月桂冠（ローレルリース）風のイラストに
+ * data-rank属性の数字をそのまま冠の中央に表示する
+ */
 .rank-number[data-rank="1"],
 .rank-number[data-rank="2"],
 .rank-number[data-rank="3"] {
-  color: #fff;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+  position: relative;
+  width: 40px;
+  height: 46px;
+  min-width: 40px;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: transparent;
+  font-size: 0;
+  line-height: normal;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 13px;
+  box-sizing: border-box;
 }
 
-.rank-number[data-rank="1"] {
-  background: linear-gradient(155deg, #F4D879 0%, #C9A227 55%, #8F6E12 100%);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.5),
-    inset 0 -2px 3px rgba(0,0,0,0.2),
-    0 0 0 3px rgba(203,161,53,0.18),
-    0 4px 14px rgba(201,162,39,0.5);
+.rank-number[data-rank="1"]::before,
+.rank-number[data-rank="2"]::before,
+.rank-number[data-rank="3"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
-.rank-number[data-rank="2"] {
-  background: linear-gradient(155deg, #E7EBEF 0%, #9AA3AE 55%, #6B7480 100%);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.5),
-    inset 0 -2px 3px rgba(0,0,0,0.2),
-    0 4px 12px rgba(154,163,174,0.4);
+.rank-number[data-rank="1"]::after,
+.rank-number[data-rank="2"]::after,
+.rank-number[data-rank="3"]::after {
+  content: attr(data-rank);
+  position: relative;
+  z-index: 1;
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--navy);
 }
 
-.rank-number[data-rank="3"] {
-  background: linear-gradient(155deg, #D89B5D 0%, #B5732A 55%, #7A4A17 100%);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.5),
-    inset 0 -2px 3px rgba(0,0,0,0.2),
-    0 4px 12px rgba(181,115,42,0.4);
+.rank-number[data-rank="1"]::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cg fill='%23CBA135'%3E%3Cellipse cx='18' cy='88' rx='10' ry='4.5' transform='rotate(-70 18 88)'/%3E%3Cellipse cx='14' cy='74' rx='10' ry='4.5' transform='rotate(-50 14 74)'/%3E%3Cellipse cx='13' cy='58' rx='10' ry='4.5' transform='rotate(-25 13 58)'/%3E%3Cellipse cx='16' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='22' cy='28' rx='10' ry='4.5' transform='rotate(25 22 28)'/%3E%3Cellipse cx='32' cy='17' rx='10' ry='4.5' transform='rotate(50 32 17)'/%3E%3Cellipse cx='82' cy='88' rx='10' ry='4.5' transform='rotate(70 82 88)'/%3E%3Cellipse cx='86' cy='74' rx='10' ry='4.5' transform='rotate(50 86 74)'/%3E%3Cellipse cx='87' cy='58' rx='10' ry='4.5' transform='rotate(25 87 58)'/%3E%3Cellipse cx='84' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='78' cy='28' rx='10' ry='4.5' transform='rotate(-25 78 28)'/%3E%3Cellipse cx='68' cy='17' rx='10' ry='4.5' transform='rotate(-50 68 17)'/%3E%3C/g%3E%3Cg fill='%238F6E12'%3E%3Cpolygon points='40,92 50,86 44,104'/%3E%3Cpolygon points='60,92 50,86 56,104'/%3E%3Crect x='46' y='83' width='8' height='9' rx='2'/%3E%3C/g%3E%3C/svg%3E");
 }
+
+.rank-number[data-rank="2"]::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cg fill='%239AA3AE'%3E%3Cellipse cx='18' cy='88' rx='10' ry='4.5' transform='rotate(-70 18 88)'/%3E%3Cellipse cx='14' cy='74' rx='10' ry='4.5' transform='rotate(-50 14 74)'/%3E%3Cellipse cx='13' cy='58' rx='10' ry='4.5' transform='rotate(-25 13 58)'/%3E%3Cellipse cx='16' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='22' cy='28' rx='10' ry='4.5' transform='rotate(25 22 28)'/%3E%3Cellipse cx='32' cy='17' rx='10' ry='4.5' transform='rotate(50 32 17)'/%3E%3Cellipse cx='82' cy='88' rx='10' ry='4.5' transform='rotate(70 82 88)'/%3E%3Cellipse cx='86' cy='74' rx='10' ry='4.5' transform='rotate(50 86 74)'/%3E%3Cellipse cx='87' cy='58' rx='10' ry='4.5' transform='rotate(25 87 58)'/%3E%3Cellipse cx='84' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='78' cy='28' rx='10' ry='4.5' transform='rotate(-25 78 28)'/%3E%3Cellipse cx='68' cy='17' rx='10' ry='4.5' transform='rotate(-50 68 17)'/%3E%3C/g%3E%3Cg fill='%236B7480'%3E%3Cpolygon points='40,92 50,86 44,104'/%3E%3Cpolygon points='60,92 50,86 56,104'/%3E%3Crect x='46' y='83' width='8' height='9' rx='2'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.rank-number[data-rank="3"]::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cg fill='%23B5732A'%3E%3Cellipse cx='18' cy='88' rx='10' ry='4.5' transform='rotate(-70 18 88)'/%3E%3Cellipse cx='14' cy='74' rx='10' ry='4.5' transform='rotate(-50 14 74)'/%3E%3Cellipse cx='13' cy='58' rx='10' ry='4.5' transform='rotate(-25 13 58)'/%3E%3Cellipse cx='16' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='22' cy='28' rx='10' ry='4.5' transform='rotate(25 22 28)'/%3E%3Cellipse cx='32' cy='17' rx='10' ry='4.5' transform='rotate(50 32 17)'/%3E%3Cellipse cx='82' cy='88' rx='10' ry='4.5' transform='rotate(70 82 88)'/%3E%3Cellipse cx='86' cy='74' rx='10' ry='4.5' transform='rotate(50 86 74)'/%3E%3Cellipse cx='87' cy='58' rx='10' ry='4.5' transform='rotate(25 87 58)'/%3E%3Cellipse cx='84' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='78' cy='28' rx='10' ry='4.5' transform='rotate(-25 78 28)'/%3E%3Cellipse cx='68' cy='17' rx='10' ry='4.5' transform='rotate(-50 68 17)'/%3E%3C/g%3E%3Cg fill='%237A4A17'%3E%3Cpolygon points='40,92 50,86 44,104'/%3E%3Cpolygon points='60,92 50,86 56,104'/%3E%3Crect x='46' y='83' width='8' height='9' rx='2'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 
 
 
@@ -876,6 +903,20 @@ button.small {
 }
 
 
+.home-ranking-card .rank-number[data-rank="1"],
+.home-ranking-card .rank-number[data-rank="2"],
+.home-ranking-card .rank-number[data-rank="3"] {
+  width: 30px;
+  height: 34px;
+  min-width: 30px;
+  padding-top: 9px;
+}
+
+.home-ranking-card .rank-number[data-rank="1"]::after,
+.home-ranking-card .rank-number[data-rank="2"]::after,
+.home-ranking-card .rank-number[data-rank="3"]::after {
+  font-size: 12px;
+}
 
 
 .home-ranking-card .rank-player {
@@ -985,6 +1026,21 @@ button.small {
   text-align: right;
   font-size: 16px;
 }
+
+#selectedGameRanking .rank-number[data-rank="1"],
+#selectedGameRanking .rank-number[data-rank="2"],
+#selectedGameRanking .rank-number[data-rank="3"] {
+  font-size: 0;
+  width: 40px;
+  height: 46px;
+}
+
+#selectedGameRanking .rank-number[data-rank="1"]::after,
+#selectedGameRanking .rank-number[data-rank="2"]::after,
+#selectedGameRanking .rank-number[data-rank="3"]::after {
+  font-size: 15px;
+}
+
 
 #selectedGameRanking .rank-item:first-child {
   font-weight: bold;

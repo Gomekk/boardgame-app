@@ -860,19 +860,45 @@ button.small {
 }
 
 .home-ranking-card .rank-item {
-  padding: 9px 0;
+  padding: 5px 0;
 }
 
 .home-ranking-card .rank-number {
-  width: 26px;
-  height: 26px;
-  line-height: 26px;
-  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  font-size: 11px;
 }
 
 .home-ranking-card .rank-score {
-  font-size: 15px;
+  font-size: 14px;
 }
+
+.home-ranking-card .rank-player {
+  font-size: 14px;
+}
+
+/* 4位・5位はさらに一回り小さく */
+.home-ranking-card .rank-item:nth-child(n+4) {
+  padding: 4px 0;
+}
+
+.home-ranking-card .rank-item:nth-child(n+4) .rank-number {
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 9px;
+}
+
+.home-ranking-card .rank-item:nth-child(n+4) .rank-player {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.home-ranking-card .rank-item:nth-child(n+4) .rank-score {
+  font-size: 12px;
+}
+
 
 #gameRankingSearch {
   margin-bottom: 8px;
@@ -5956,10 +5982,11 @@ function renderBestScoreCountRanking() {
         game.name;
 
       image.style.width =
-        "28px";
+        "20px";
 
       image.style.height =
-        "28px";
+        "20px";
+
 
       image.style.objectFit =
         "cover";

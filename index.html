@@ -831,13 +831,14 @@ button.small {
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  margin: 0 -20px 16px;
-  padding: 10px 20px;
+  margin: 0 -20px 8px;
+  padding: 8px 20px;
   color: var(--navy);
   background: rgba(19,27,46,0.06);
   border-top: 1px solid rgba(19,27,46,0.08);
   border-bottom: 1px solid rgba(19,27,46,0.08);
 }
+
 
 
 
@@ -874,15 +875,7 @@ button.small {
   font-size: 14px;
 }
 
-/*
- * ランキング中身の箱を固定の高さにして、
- * 行数が増えてもカードの高さが変わらないようにする
- */
-.home-ranking-list {
-  height: 210px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
+
 
 
 .home-ranking-card .rank-player {
@@ -1054,7 +1047,7 @@ button.small {
     🏅 タイトル保有数
   </div>
 
-  <div id="homeBestScoreCountRanking" class="home-ranking-list"></div>
+   <div id="homeBestScoreCountRanking"></div>
 
 </div>
 
@@ -1066,7 +1059,7 @@ button.small {
            勝率
         </div>
 
-      <div id="homeWinRateRanking" class="home-ranking-list"></div>
+            <div id="homeWinRateRanking"></div>
 
 
       </div>
@@ -1078,7 +1071,7 @@ button.small {
           👑 最多勝利数
         </div>
 
-      <div id="homeWinCountRanking" class="home-ranking-list"></div>
+              <div id="homeWinCountRanking"></div>
 
 
       </div>
@@ -1090,8 +1083,7 @@ button.small {
           🔥 最大連勝数
         </div>
 
-      <div id="homeStreakRanking" class="home-ranking-list"></div>
-
+              <div id="homeStreakRanking"></div>
 
       </div>
 
@@ -1102,7 +1094,7 @@ button.small {
           📊 平均順位
         </div>
 
-     <div id="homeAverageRankRanking" class="home-ranking-list"></div>
+           <div id="homeAverageRankRanking"></div>
 
       </div>
 
@@ -5914,72 +5906,60 @@ function renderBestScoreCountRanking() {
   let previousCount = null;
   let currentRank = 0;
 
-  ranking.slice(0, 5).forEach((player, index) => {
+  const rankedList =
+    ranking.slice(0, 5).map((player, index) => {
 
-    if (
-      player.count !== previousCount
-    ) {
+      if (
+        player.count !== previousCount
+      ) {
 
-      currentRank =
-        index + 1;
+        currentRank =
+          index + 1;
 
-      previousCount =
-        player.count;
+        previousCount =
+          player.count;
 
-    }
+      }
 
-    const row =
+      return {
+        player: player,
+        rank: currentRank
+      };
+
+    });
+
+  /*
+   * 保有ゲームのサムネイル一覧を作る共通処理
+   * maxBeforeScroll個を超えたら横スクロールにする
+   */
+  function buildGameIconRow(games, maxBeforeScroll) {
+
+    const iconRow =
       document.createElement("div");
 
-    row.className =
-      "rank-item";
-
-    /*
-     * プレイヤー情報
-     */
-    const playerArea =
-      document.createElement("div");
-
-    playerArea.style.flex =
-      "1";
-
-    playerArea.style.minWidth =
-      "0";
-
-    /*
-     * プレイヤー名
-     */
-    const name =
-      document.createElement("div");
-
-    name.className =
-      "rank-player";
-
-    name.textContent =
-      player.name;
-
-    /*
-     * 保有ゲームのアイコン
-     */
-    const gameIcons =
-      document.createElement("div");
-
-    gameIcons.style.display =
+    iconRow.style.display =
       "flex";
 
-    gameIcons.style.alignItems =
+    iconRow.style.alignItems =
       "center";
 
-    gameIcons.style.gap =
-      "5px";
+    iconRow.style.gap =
+      "4px";
 
-    gameIcons.style.marginTop =
-      "5px";
+    iconRow.style.marginTop =
+      "4px";
 
-    gameIcons.style.flexWrap =
-      "wrap";
+    iconRow.style.overflowX =
+      games.length > maxBeforeScroll
+        ? "auto"
+        : "visible";
 
-    player.games.forEach(game => {
+    iconRow.style.flexWrap =
+      games.length > maxBeforeScroll
+        ? "nowrap"
+        : "wrap";
+
+    games.forEach(game => {
 
       if (!game.image) return;
 
@@ -6001,6 +5981,8 @@ function renderBestScoreCountRanking() {
       image.style.height =
         "20px";
 
+      image.style.flexShrink =
+        "0";
 
       image.style.objectFit =
         "cover";
@@ -6014,66 +5996,210 @@ function renderBestScoreCountRanking() {
       image.style.boxShadow =
         "0 1px 4px rgba(0,0,0,.15)";
 
-      gameIcons.appendChild(
-        image
-      );
+      iconRow.appendChild(image);
 
     });
 
-    playerArea.appendChild(
-      name
-    );
+    return iconRow;
 
-    playerArea.appendChild(
-      gameIcons
-    );
+  }
 
-    /*
-     * 順位
-     */
-    const rank =
+  /*
+   * 1位〜3位：縦に1行ずつ、下にゲーム一覧
+   */
+  const topThree =
+    rankedList.slice(0, 3);
+
+  topThree.forEach(({ player, rank }) => {
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.style.padding =
+      "8px 0";
+
+    wrapper.style.borderBottom =
+      "1px solid rgba(22,35,63,0.06)";
+
+    const row =
+      document.createElement("div");
+
+    row.style.display =
+      "flex";
+
+    row.style.alignItems =
+      "center";
+
+    row.style.gap =
+      "10px";
+
+    const rankEl =
       document.createElement("span");
 
-    rank.className =
+    rankEl.className =
       "rank-number";
 
-    rank.textContent =
-      `${currentRank}位`;
-      
-    rank.dataset.rank =
-      currentRank;
+    rankEl.textContent =
+      `${rank}位`;
 
-    /*
-     * タイトル保有数
-     */
-    const score =
+    rankEl.dataset.rank =
+      rank;
+
+    const nameEl =
       document.createElement("span");
 
-    score.className =
+    nameEl.className =
+      "rank-player";
+
+    nameEl.textContent =
+      player.name;
+
+    const scoreEl =
+      document.createElement("span");
+
+    scoreEl.className =
       "rank-score";
 
-    score.textContent =
+    scoreEl.textContent =
       `${player.count} 冠`;
 
-    row.appendChild(
-      rank
+    row.appendChild(rankEl);
+    row.appendChild(nameEl);
+    row.appendChild(scoreEl);
+
+    wrapper.appendChild(row);
+
+    wrapper.appendChild(
+      buildGameIconRow(player.games, 8)
     );
 
-    row.appendChild(
-      playerArea
-    );
-
-    row.appendChild(
-      score
-    );
-
-    container.appendChild(
-      row
-    );
+    container.appendChild(wrapper);
 
   });
 
+  /*
+   * 4位・5位：2カラムで並べる
+   */
+  const fourthAndFifth =
+    rankedList.slice(3, 5);
+
+  if (fourthAndFifth.length > 0) {
+
+    const bottomRow =
+      document.createElement("div");
+
+    bottomRow.style.display =
+      "flex";
+
+    bottomRow.style.gap =
+      "10px";
+
+    bottomRow.style.marginTop =
+      "4px";
+
+    fourthAndFifth.forEach(({ player, rank }) => {
+
+      const cell =
+        document.createElement("div");
+
+      cell.style.flex =
+        "1";
+
+      cell.style.minWidth =
+        "0";
+
+      cell.style.padding =
+        "6px 0";
+
+      const row =
+        document.createElement("div");
+
+      row.style.display =
+        "flex";
+
+      row.style.alignItems =
+        "center";
+
+      row.style.gap =
+        "6px";
+
+      const rankEl =
+        document.createElement("span");
+
+      rankEl.className =
+        "rank-number";
+
+      rankEl.style.width =
+        "22px";
+
+      rankEl.style.height =
+        "22px";
+
+      rankEl.style.lineHeight =
+        "22px";
+
+      rankEl.style.fontSize =
+        "11px";
+
+      rankEl.textContent =
+        `${rank}位`;
+
+      rankEl.dataset.rank =
+        rank;
+
+      const nameEl =
+        document.createElement("span");
+
+      nameEl.className =
+        "rank-player";
+
+      nameEl.style.fontSize =
+        "13px";
+
+      nameEl.style.overflow =
+        "hidden";
+
+      nameEl.style.textOverflow =
+        "ellipsis";
+
+      nameEl.style.whiteSpace =
+        "nowrap";
+
+      nameEl.textContent =
+        player.name;
+
+      const scoreEl =
+        document.createElement("span");
+
+      scoreEl.className =
+        "rank-score";
+
+      scoreEl.style.fontSize =
+        "13px";
+
+      scoreEl.textContent =
+        `${player.count}冠`;
+
+      row.appendChild(rankEl);
+      row.appendChild(nameEl);
+      row.appendChild(scoreEl);
+
+      cell.appendChild(row);
+
+      cell.appendChild(
+        buildGameIconRow(player.games, 3)
+      );
+
+      bottomRow.appendChild(cell);
+
+    });
+
+    container.appendChild(bottomRow);
+
+  }
+
 }
+
 
 function renderWinRateRanking() {
 

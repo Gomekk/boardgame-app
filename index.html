@@ -10329,7 +10329,7 @@ function renderGameRankingGameList() {
         })
         .filter(Boolean);
 
-    if (
+        if (
       holderColors.length > 0
     ) {
 
@@ -10339,8 +10339,8 @@ function renderGameRankingGameList() {
       button.style.backgroundImage =
         "none";
 
-      button.style.backgroundColor =
-        "#e5e7eb";
+      button.style.border =
+        `1.5px solid ${color1}`;
 
       button.style.borderRight =
         `12px solid ${color1}`;
@@ -10349,6 +10349,7 @@ function renderGameRankingGameList() {
         "hidden";
 
     }
+
 
         const championText =
       championNames.length > 0

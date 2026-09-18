@@ -339,20 +339,21 @@ button.small {
 .rank-number[data-rank="1"],
 .rank-number[data-rank="2"],
 .rank-number[data-rank="3"] {
+  --badge-w: 40px;
+  --badge-h: 46px;
+  --badge-num-size: 17px;
+  --badge-num-top: 44%;
+
   position: relative;
-  width: 40px;
-  height: 46px;
-  min-width: 40px;
+  width: var(--badge-w);
+  height: var(--badge-h);
+  min-width: var(--badge-w);
   border-radius: 0;
   background: none;
   box-shadow: none;
   color: transparent;
   font-size: 0;
   line-height: normal;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 13px;
   box-sizing: border-box;
 }
 
@@ -371,12 +372,16 @@ button.small {
 .rank-number[data-rank="2"]::after,
 .rank-number[data-rank="3"]::after {
   content: attr(data-rank);
-  position: relative;
-  z-index: 1;
-  font-size: 16px;
+  position: absolute;
+  top: var(--badge-num-top);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--badge-num-size);
   font-weight: 900;
   color: var(--navy);
+  white-space: nowrap;
 }
+
 
 .rank-number[data-rank="1"]::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cg fill='%23CBA135'%3E%3Cellipse cx='18' cy='88' rx='10' ry='4.5' transform='rotate(-70 18 88)'/%3E%3Cellipse cx='14' cy='74' rx='10' ry='4.5' transform='rotate(-50 14 74)'/%3E%3Cellipse cx='13' cy='58' rx='10' ry='4.5' transform='rotate(-25 13 58)'/%3E%3Cellipse cx='16' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='22' cy='28' rx='10' ry='4.5' transform='rotate(25 22 28)'/%3E%3Cellipse cx='32' cy='17' rx='10' ry='4.5' transform='rotate(50 32 17)'/%3E%3Cellipse cx='82' cy='88' rx='10' ry='4.5' transform='rotate(70 82 88)'/%3E%3Cellipse cx='86' cy='74' rx='10' ry='4.5' transform='rotate(50 86 74)'/%3E%3Cellipse cx='87' cy='58' rx='10' ry='4.5' transform='rotate(25 87 58)'/%3E%3Cellipse cx='84' cy='42' rx='10' ry='4.5'/%3E%3Cellipse cx='78' cy='28' rx='10' ry='4.5' transform='rotate(-25 78 28)'/%3E%3Cellipse cx='68' cy='17' rx='10' ry='4.5' transform='rotate(-50 68 17)'/%3E%3C/g%3E%3Cg fill='%238F6E12'%3E%3Cpolygon points='40,92 50,86 44,104'/%3E%3Cpolygon points='60,92 50,86 56,104'/%3E%3Crect x='46' y='83' width='8' height='9' rx='2'/%3E%3C/g%3E%3C/svg%3E");
@@ -906,17 +911,11 @@ button.small {
 .home-ranking-card .rank-number[data-rank="1"],
 .home-ranking-card .rank-number[data-rank="2"],
 .home-ranking-card .rank-number[data-rank="3"] {
-  width: 30px;
-  height: 34px;
-  min-width: 30px;
-  padding-top: 9px;
+  --badge-w: 34px;
+  --badge-h: 39px;
+  --badge-num-size: 14px;
 }
 
-.home-ranking-card .rank-number[data-rank="1"]::after,
-.home-ranking-card .rank-number[data-rank="2"]::after,
-.home-ranking-card .rank-number[data-rank="3"]::after {
-  font-size: 12px;
-}
 
 
 .home-ranking-card .rank-player {
@@ -1030,16 +1029,11 @@ button.small {
 #selectedGameRanking .rank-number[data-rank="1"],
 #selectedGameRanking .rank-number[data-rank="2"],
 #selectedGameRanking .rank-number[data-rank="3"] {
-  font-size: 0;
-  width: 40px;
-  height: 46px;
+  --badge-w: 40px;
+  --badge-h: 46px;
+  --badge-num-size: 16px;
 }
 
-#selectedGameRanking .rank-number[data-rank="1"]::after,
-#selectedGameRanking .rank-number[data-rank="2"]::after,
-#selectedGameRanking .rank-number[data-rank="3"]::after {
-  font-size: 15px;
-}
 
 
 #selectedGameRanking .rank-item:first-child {

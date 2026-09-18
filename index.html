@@ -33,8 +33,13 @@
   --accent-gradient: linear-gradient(90deg, var(--gold), var(--navy-light));
   --shadow-card: 0 1px 2px rgba(19,27,46,0.06), 0 12px 28px rgba(19,27,46,0.10);
   --shadow-card-lift: 0 4px 10px rgba(19,27,46,0.10), 0 20px 40px rgba(19,27,46,0.14);
-  --shadow-btn: 0 3px 10px rgba(19,27,46,0.22);
+    --shadow-btn: 0 3px 10px rgba(19,27,46,0.22);
+  --brown: #6B4A32;
+  --brown-light: #8B6347;
+  --brown-deep: #4A3220;
+  --shadow-brown: 0 3px 10px rgba(74,50,32,0.28);
 }
+
 
 
 * {
@@ -158,6 +163,54 @@ button::before {
   pointer-events: none;
 }
 
+/*
+ * ホーム画面の主要4ボタン（ブラウン系）
+ */
+.btn-brown {
+  background: linear-gradient(155deg, var(--brown-light) 0%, var(--brown) 55%, var(--brown-deep) 100%);
+  box-shadow: var(--shadow-brown);
+}
+
+/*
+ * アイコンだけの丸ボタン（設定・共有用）
+ */
+.icon-circle-button {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(107,114,128,0.10);
+  color: #6b7280;
+  box-shadow: none;
+  border: 1px solid rgba(107,114,128,0.20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 0;
+}
+
+.icon-circle-button::before {
+  content: none;
+}
+
+.icon-circle-button:active {
+  transform: translateY(1px) scale(0.95);
+  box-shadow: none;
+}
+
+.icon-circle-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.home-utility-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
 
 
 button:active {
@@ -984,9 +1037,10 @@ button.small {
   </div>
 
 
-  <!-- ゲーム別ランキング -->
+    <!-- ゲーム別ランキング -->
   <button
     type="button"
+    class="btn-brown"
     onclick="showScreen('gameRankingScreen')"
   >
     🎲 ゲーム別ランキング
@@ -998,6 +1052,7 @@ button.small {
 
     <button
       type="button"
+      class="btn-brown"
       onclick="openRecordScreen()"
     >
       🎮 ゲームを記録
@@ -1005,37 +1060,50 @@ button.small {
 
     <button
       type="button"
+      class="btn-brown"
       onclick="randomSelectGame()"
     >
       🎰 ランダム pick
     </button>
     
     <button
-  type="button"
-  onclick="showScreen('rankingScreen')"
-  >
-    👤 プレイヤー成績
+      type="button"
+      class="btn-brown"
+      onclick="showScreen('rankingScreen')"
+    >
+      👤 プレイヤー成績
     </button>
 
   </div>
 
 
-  <!-- 情報登録 -->
-  <button
-  type="button"
-  onclick="showScreen('settingsScreen')"
->
-  ⚙️ 設定
-</button>
+  <!-- 設定・共有 -->
+  <div class="home-utility-row">
 
-<!-- リンクを共有 -->
-<button
-  type="button"
-  class="secondary"
-  onclick="shareAppLink()"
->
-  🔗 リンクを共有
-</button>
+    <button
+      type="button"
+      class="icon-circle-button"
+      onclick="shareAppLink()"
+      aria-label="リンクを共有"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"/>
+        <path d="M8 7l4-4 4 4"/>
+        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="icon-circle-button"
+      onclick="showScreen('settingsScreen')"
+      aria-label="設定"
+    >
+      ⚙️
+    </button>
+
+  </div>
+
 
 
 

@@ -212,6 +212,22 @@ button::before {
   margin-top: 6px;
 }
 
+/*
+ * ゲーム別ランキングの絞込みボタン（軽量級/中量級/重量級・人数）
+ * 影・光沢なしのフラットな見た目にする
+ */
+.filter-chip-button {
+  box-shadow: none;
+}
+
+.filter-chip-button::before {
+  content: none;
+}
+
+.filter-chip-button:active {
+  box-shadow: none;
+}
+
 
 button:active {
   transform: translateY(1px) scale(0.99);
@@ -1339,52 +1355,54 @@ button.small {
     </div>
 
     <!-- 重さで絞り込み -->
-    <div
+        <div
       id="gameRankingWeightFilter"
       style="display:flex;gap:8px;margin-bottom:8px;"
     >
       <button
         type="button"
-        class="small"
+        class="small filter-chip-button"
         data-weight="light"
         style="flex:1;background:#E8F5E9;color:#2E7D32;"
       >軽量級</button>
 
       <button
         type="button"
-        class="small"
+        class="small filter-chip-button"
         data-weight="medium"
         style="flex:1;background:#FFF3E0;color:#E65100;"
       >中量級</button>
 
       <button
         type="button"
-        class="small"
+        class="small filter-chip-button"
         data-weight="heavy"
         style="flex:1;background:#FDECEC;color:#C62828;"
       >重量級</button>
     </div>
+
 
     <!-- 人数で絞り込み -->
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
 
       <span class="section-note" style="margin:0;white-space:nowrap;">人数 ▶</span>
 
-      <div
+            <div
         id="gameRankingPlayerCountFilter"
         style="display:flex;gap:3px;flex:1;"
       >
-        <button type="button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
-        <button type="button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
-        <button type="button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
-        <button type="button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
-        <button type="button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
-        <button type="button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
-        <button type="button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
-        <button type="button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
-        <button type="button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
-        <button type="button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
+        <button type="button" class="filter-chip-button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
+        <button type="button" class="filter-chip-button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
+        <button type="button" class="filter-chip-button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
+        <button type="button" class="filter-chip-button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
+        <button type="button" class="filter-chip-button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
+        <button type="button" class="filter-chip-button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
+        <button type="button" class="filter-chip-button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
+        <button type="button" class="filter-chip-button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
+        <button type="button" class="filter-chip-button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
+        <button type="button" class="filter-chip-button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
       </div>
+
 
     </div>
 

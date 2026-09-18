@@ -5903,7 +5903,7 @@ function renderBestScoreCountRanking() {
     return;
   }
 
-  let previousCount = null;
+    let previousCount = null;
   let currentRank = 0;
 
   const rankedList =
@@ -5947,7 +5947,7 @@ function renderBestScoreCountRanking() {
       "4px";
 
     iconRow.style.marginTop =
-      "4px";
+      "5px";
 
     iconRow.style.overflowX =
       games.length > maxBeforeScroll
@@ -6005,33 +6005,15 @@ function renderBestScoreCountRanking() {
   }
 
   /*
-   * 1位〜3位：縦に1行ずつ、下にゲーム一覧
+   * 1つの行（順位バッジ＋名前・スコア／その下にゲーム一覧）を作る共通処理
    */
-  const topThree =
-    rankedList.slice(0, 3);
-
-  topThree.forEach(({ player, rank }) => {
-
-    const wrapper =
-      document.createElement("div");
-
-    wrapper.style.padding =
-      "8px 0";
-
-    wrapper.style.borderBottom =
-      "1px solid rgba(22,35,63,0.06)";
+  function buildPlayerRow(player, rank, maxBeforeScroll) {
 
     const row =
       document.createElement("div");
 
-    row.style.display =
-      "flex";
-
-    row.style.alignItems =
-      "center";
-
-    row.style.gap =
-      "10px";
+    row.className =
+      "rank-item";
 
     const rankEl =
       document.createElement("span");
@@ -6045,14 +6027,29 @@ function renderBestScoreCountRanking() {
     rankEl.dataset.rank =
       rank;
 
+    const playerArea =
+      document.createElement("div");
+
+    playerArea.style.flex =
+      "1";
+
+    playerArea.style.minWidth =
+      "0";
+
     const nameEl =
-      document.createElement("span");
+      document.createElement("div");
 
     nameEl.className =
       "rank-player";
 
     nameEl.textContent =
       player.name;
+
+    playerArea.appendChild(nameEl);
+
+    playerArea.appendChild(
+      buildGameIconRow(player.games, maxBeforeScroll)
+    );
 
     const scoreEl =
       document.createElement("span");
@@ -6064,16 +6061,24 @@ function renderBestScoreCountRanking() {
       `${player.count} 冠`;
 
     row.appendChild(rankEl);
-    row.appendChild(nameEl);
+    row.appendChild(playerArea);
     row.appendChild(scoreEl);
 
-    wrapper.appendChild(row);
+    return row;
 
-    wrapper.appendChild(
-      buildGameIconRow(player.games, 8)
+  }
+
+  /*
+   * 1位〜3位：縦に1行ずつ
+   */
+  const topThree =
+    rankedList.slice(0, 3);
+
+  topThree.forEach(({ player, rank }) => {
+
+    container.appendChild(
+      buildPlayerRow(player, rank, 8)
     );
-
-    container.appendChild(wrapper);
 
   });
 
@@ -6108,87 +6113,40 @@ function renderBestScoreCountRanking() {
       cell.style.minWidth =
         "0";
 
-      cell.style.padding =
+      const row =
+        buildPlayerRow(player, rank, 3);
+
+      row.style.padding =
         "6px 0";
 
-      const row =
-        document.createElement("div");
-
-      row.style.display =
-        "flex";
-
-      row.style.alignItems =
-        "center";
-
-      row.style.gap =
-        "6px";
-
-      const rankEl =
-        document.createElement("span");
-
-      rankEl.className =
-        "rank-number";
-
-      rankEl.style.width =
+      row.querySelector(".rank-number").style.width =
         "22px";
 
-      rankEl.style.height =
+      row.querySelector(".rank-number").style.height =
         "22px";
 
-      rankEl.style.lineHeight =
+      row.querySelector(".rank-number").style.lineHeight =
         "22px";
 
-      rankEl.style.fontSize =
+      row.querySelector(".rank-number").style.fontSize =
         "11px";
 
-      rankEl.textContent =
-        `${rank}位`;
-
-      rankEl.dataset.rank =
-        rank;
-
-      const nameEl =
-        document.createElement("span");
-
-      nameEl.className =
-        "rank-player";
-
-      nameEl.style.fontSize =
+      row.querySelector(".rank-player").style.fontSize =
         "13px";
 
-      nameEl.style.overflow =
+      row.querySelector(".rank-player").style.overflow =
         "hidden";
 
-      nameEl.style.textOverflow =
+      row.querySelector(".rank-player").style.textOverflow =
         "ellipsis";
 
-      nameEl.style.whiteSpace =
+      row.querySelector(".rank-player").style.whiteSpace =
         "nowrap";
 
-      nameEl.textContent =
-        player.name;
-
-      const scoreEl =
-        document.createElement("span");
-
-      scoreEl.className =
-        "rank-score";
-
-      scoreEl.style.fontSize =
+      row.querySelector(".rank-score").style.fontSize =
         "13px";
 
-      scoreEl.textContent =
-        `${player.count}冠`;
-
-      row.appendChild(rankEl);
-      row.appendChild(nameEl);
-      row.appendChild(scoreEl);
-
       cell.appendChild(row);
-
-      cell.appendChild(
-        buildGameIconRow(player.games, 3)
-      );
 
       bottomRow.appendChild(cell);
 
@@ -6199,6 +6157,7 @@ function renderBestScoreCountRanking() {
   }
 
 }
+
 
 
 function renderWinRateRanking() {

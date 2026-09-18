@@ -316,14 +316,14 @@ button.small {
   box-shadow: inset 0 0 0 1px rgba(22,35,63,0.06);
 }
 
-.rank-number[data-rank="1"],
-.rank-number[data-rank="2"],
-.rank-number[data-rank="3"] {
+.rank-item:nth-child(1) .rank-number,
+.rank-item:nth-child(2) .rank-number,
+.rank-item:nth-child(3) .rank-number {
   color: #fff;
   text-shadow: 0 1px 1px rgba(0,0,0,0.25);
 }
 
-.rank-number[data-rank="1"] {
+.rank-item:nth-child(1) .rank-number {
   background: linear-gradient(155deg, #F4D879 0%, #C9A227 55%, #8F6E12 100%);
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,0.5),
@@ -332,7 +332,8 @@ button.small {
     0 4px 14px rgba(201,162,39,0.5);
 }
 
-.rank-number[data-rank="2"] {
+
+.rank-item:nth-child(2) .rank-number {
   background: linear-gradient(155deg, #E7EBEF 0%, #9AA3AE 55%, #6B7480 100%);
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,0.5),
@@ -340,14 +341,13 @@ button.small {
     0 4px 12px rgba(154,163,174,0.4);
 }
 
-.rank-number[data-rank="3"] {
+.rank-item:nth-child(3) .rank-number {
   background: linear-gradient(155deg, #D89B5D 0%, #B5732A 55%, #7A4A17 100%);
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,0.5),
     inset 0 -2px 3px rgba(0,0,0,0.2),
     0 4px 12px rgba(181,115,42,0.4);
 }
-
 
 
 .rank-player {
@@ -5955,9 +5955,6 @@ function renderBestScoreCountRanking() {
     rank.textContent =
       `${currentRank}位`;
 
-    rank.dataset.rank =
-      currentRank;
-
     /*
      * タイトル保有数
      */
@@ -6100,9 +6097,6 @@ function renderWinRateRanking() {
 
     rank.textContent =
       `${currentRank}位`;
-      
-    rank.dataset.rank =
-      currentRank;
 
 
     const name =
@@ -6256,9 +6250,6 @@ function renderWinCountRanking() {
 
     rank.textContent =
       `${currentRank}位`;
-      
-    rank.dataset.rank =
-      currentRank;
 
 
     const name =
@@ -6421,9 +6412,6 @@ matches.forEach(match => {
 
     rank.textContent =
       `${currentRank}位`;
-      
-    rank.dataset.rank =
-      currentRank;
 
     const name =
       document.createElement("span");
@@ -7803,9 +7791,6 @@ function renderHeadToHeadRanking() {
 
     rank.textContent =
       `${currentRank}位`;
-      
-    rank.dataset.rank =
-      currentRank;
 
 
     const name =
@@ -7992,10 +7977,6 @@ function renderAverageRankRanking() {
 
     rank.textContent =
       `${currentRank}位`;
-      
-    rank.dataset.rank =
-      currentRank;
-
 
 
     const name =
@@ -10729,7 +10710,7 @@ player.totalRank += rank;
       row.className =
         "rank-item";
 
-      const rankEl =
+            const rankEl =
         document.createElement("span");
 
       rankEl.className =
@@ -10737,6 +10718,10 @@ player.totalRank += rank;
 
       rankEl.textContent =
         `${rank}位`;
+
+      rankEl.dataset.rank =
+        rank;
+
 
       const nameEl =
         document.createElement("span");

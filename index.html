@@ -9474,7 +9474,7 @@ function renderPlayerStatsList() {
   container.innerHTML = "";
 
 
-  players.forEach(player => {
+    players.forEach(player => {
 
     const matches =
       getPlayerMatches(
@@ -9543,13 +9543,14 @@ if (isWinner(match, player.name)) {
     });
 
 
-    const average =
-      matches.length > 0
-        ? (
-            totalScore /
-            matches.length
-          ).toFixed(1)
-        : "-";
+    const winRate =
+  matches.length > 0
+    ? (
+        wins /
+        matches.length *
+        100
+      ).toFixed(1)
+    : "0.0";
 
 
     const row =
@@ -9558,34 +9559,152 @@ if (isWinner(match, player.name)) {
     row.className =
   "player-detail-item";
 
+    row.style.flexDirection =
+      "column";
 
-const name =
-  document.createElement("span");
+    row.style.alignItems =
+      "stretch";
 
-name.textContent =
-  player.name;
-
-name.style.fontWeight =
-  "bold";
+    row.style.gap =
+      "6px";
 
 
-const info =
-  document.createElement("span");
-  
-  const weightInfo =
-  document.createElement("div");
+    /*
+     * 1段目：名前（左）＋詳細ボタン（右）
+     */
 
-weightInfo.style.display =
-  "flex";
+    const topRow =
+      document.createElement("div");
 
-weightInfo.style.flexWrap =
-  "wrap";
+    topRow.style.display =
+      "flex";
 
-weightInfo.style.gap =
-  "6px";
+    topRow.style.alignItems =
+      "center";
 
-weightInfo.style.marginTop =
-  "6px";
+    topRow.style.justifyContent =
+      "space-between";
+
+    topRow.style.gap =
+      "8px";
+
+    const nameArea =
+      document.createElement("div");
+
+    nameArea.style.display =
+      "flex";
+
+    nameArea.style.alignItems =
+      "center";
+
+    nameArea.style.gap =
+      "8px";
+
+    nameArea.style.minWidth =
+      "0";
+
+    const colorDot =
+      document.createElement("span");
+
+    colorDot.style.width =
+      "14px";
+
+    colorDot.style.height =
+      "14px";
+
+    colorDot.style.borderRadius =
+      "50%";
+
+    colorDot.style.flexShrink =
+      "0";
+
+    colorDot.style.backgroundColor =
+      player.color || "#BDBDBD";
+
+    colorDot.style.boxShadow =
+      "0 1px 3px rgba(0,0,0,.2)";
+
+    const name =
+      document.createElement("span");
+
+    name.textContent =
+      player.name;
+
+    name.style.fontWeight =
+      "bold";
+
+    name.style.overflow =
+      "hidden";
+
+    name.style.textOverflow =
+      "ellipsis";
+
+    name.style.whiteSpace =
+      "nowrap";
+
+    nameArea.appendChild(colorDot);
+
+    nameArea.appendChild(name);
+
+
+    const detailButton =
+      document.createElement("button");
+
+    detailButton.className =
+      "list-item-action-button";
+
+    detailButton.type =
+      "button";
+
+    detailButton.textContent =
+      "詳細";
+
+    detailButton.style.flexShrink =
+      "0";
+
+    detailButton.onclick = () =>
+      showPlayerDetail(player.name);
+
+    topRow.appendChild(nameArea);
+
+    topRow.appendChild(detailButton);
+
+
+    /*
+     * 2段目：〇戦〇勝（〇%）＋重さ別勝率バッジ
+     */
+
+    const bottomRow =
+      document.createElement("div");
+
+    bottomRow.style.display =
+      "flex";
+
+    bottomRow.style.alignItems =
+      "center";
+
+    bottomRow.style.flexWrap =
+      "wrap";
+
+    bottomRow.style.gap =
+      "6px";
+
+    const info =
+      document.createElement("span");
+
+    info.textContent =
+      `${matches.length}戦${wins}勝（${winRate}%）`;
+
+    info.style.color =
+      "#6b7280";
+
+    info.style.fontSize =
+      "13px";
+
+    info.style.flexShrink =
+      "0";
+
+    bottomRow.appendChild(info);
 
 
 const weightLabels = [
@@ -9674,57 +9793,23 @@ weightLabels.forEach(
 
     }
 
-    weightInfo.appendChild(
+    bottomRow.appendChild(
       badge
     );
 
   }
 );
 
-const winRate =
-  matches.length > 0
-    ? (
-        wins /
-        matches.length *
-        100
-      ).toFixed(1)
-    : "0.0";
 
-info.textContent =
-  `${matches.length}戦 ${wins}勝 ／ 勝率 ${winRate}%`;
+row.appendChild(topRow);
 
-info.style.color =
-  "#6b7280";
-
-
-const detailButton =
-  document.createElement("button");
-
-detailButton.className =
-  "small secondary";
-
-detailButton.type =
-  "button";
-
-detailButton.textContent =
-  "詳細 →";
-
-detailButton.style.width =
-  "auto";
-
-detailButton.onclick = () =>
-  showPlayerDetail(player.name);
-
-
-row.appendChild(name);
-row.appendChild(info);
-row.appendChild(weightInfo);
-row.appendChild(detailButton);
+row.appendChild(bottomRow);
 
 
 container.appendChild(row);
 
   });
+
 
 }
 

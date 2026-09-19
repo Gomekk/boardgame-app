@@ -12137,7 +12137,7 @@ if (scoreRankingTitle) {
         new Date(b.date)
       );
 
-                const titleFontSize =
+       const titleFontSize =
       gameName.length > 14
         ? "16px"
         : "21px";
@@ -12145,10 +12145,18 @@ if (scoreRankingTitle) {
     title.style.fontSize =
       titleFontSize;
 
+    title.style.display =
+      "flex";
+
+    title.style.alignItems =
+      "flex-end";
+
     title.innerHTML =
     game.image
-      ? `<img src="${escapeHTML(game.image)}" class="game-thumb-large" style="margin-right:12px;">${escapeHTML(gameName)}`
+      ? `<img src="${escapeHTML(game.image)}" class="game-thumb-large" style="margin-right:12px;flex-shrink:0;">
+         <span style="flex:1;min-width:0;">${escapeHTML(gameName)}</span>`
       : `🎲 ${escapeHTML(gameName)}`;
+
 
 
     window.selectedGameRankingCurrentGame =

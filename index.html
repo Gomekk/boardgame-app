@@ -5056,38 +5056,41 @@ function renderMatchGamePickerList(keyword = "") {
         })
         .filter(Boolean);
 
-        if (holderColors.length === 1) {
+            if (holderColors.length > 0) {
 
-      row.style.borderRight =
-        `4px solid ${holderColors[0]}`;
-
-    } else if (holderColors.length > 1) {
+      const stripeWidthPercent =
+        (12 / 260 * 100).toFixed(2);
+      // ボタン幅の目安に対する12px分の割合（角丸を保つため背景グラデーションで表現）
 
       const segmentSize =
-        100 / holderColors.length;
+        stripeWidthPercent / holderColors.length;
 
       const gradientStops =
         holderColors
           .map((color, index) => {
 
             const start =
-              (segmentSize * index).toFixed(2);
+              (100 - stripeWidthPercent + segmentSize * index).toFixed(2);
 
             const end =
-              (segmentSize * (index + 1)).toFixed(2);
+              (100 - stripeWidthPercent + segmentSize * (index + 1)).toFixed(2);
 
             return `${color} ${start}%, ${color} ${end}%`;
 
           })
           .join(", ");
 
-      row.style.borderRight =
-        "4px solid transparent";
+      button.style.backgroundColor =
+        "#e5e7eb";
 
-      row.style.borderImage =
-        `linear-gradient(to bottom, ${gradientStops}) 1`;
+      button.style.backgroundImage =
+        `linear-gradient(to right, transparent 0%, transparent ${(100 - stripeWidthPercent).toFixed(2)}%, ${gradientStops})`;
+
+      button.style.overflow =
+        "hidden";
 
     }
+
 
 
     const image =

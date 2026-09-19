@@ -1860,7 +1860,7 @@ button.small {
         低得点が上位
       </label>
 
-      <label class="radio-option">
+           <label class="radio-option">
         <input
           type="radio"
           name="scoreDirection"
@@ -1869,7 +1869,17 @@ button.small {
         順位のみ
       </label>
 
+      <label class="radio-option">
+        <input
+          type="radio"
+          name="scoreDirection"
+          value="win_lose"
+        >
+        勝ちor負け
+      </label>
+
     </div>
+
 
      <button
       style="margin-top:25px;"
@@ -3241,11 +3251,13 @@ form.appendChild(maxPlayersInput);
     "radio-group";
 
 
-  [
+   [
     ["high", "高得点が上位"],
     ["low", "低得点が上位"],
-    ["rank", "順位のみ"]
+    ["rank", "順位のみ"],
+    ["win_lose", "勝ちor負け"]
   ].forEach(
+
     ([value, labelText]) => {
 
       const label =
@@ -4230,7 +4242,7 @@ function addScorePlayer(
       : null;
 
 
-  /*
+    /*
    * 順位のみのゲーム
    */
   if (
@@ -4278,9 +4290,53 @@ function addScorePlayer(
   }
 
   /*
+   * 勝ちor負けのゲーム
+   */
+  else if (
+    selectedGame &&
+    selectedGame.direction === "win_lose"
+  ) {
+
+    const winLoseSelect =
+      document.createElement("select");
+
+    winLoseSelect.className =
+      "match-score";
+
+    [
+      ["1", "勝ち"],
+      ["0", "負け"]
+    ].forEach(([value, label]) => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        value;
+
+      option.textContent =
+        label;
+
+      if (String(score) === value) {
+        option.selected = true;
+      }
+
+      winLoseSelect.appendChild(
+        option
+      );
+
+    });
+
+    div.appendChild(select);
+    div.appendChild(winLoseSelect);
+
+  }
+
+  /*
    * 通常の得点ゲーム
    */
   else {
+
 
     const input =
       document.createElement("input");
@@ -4541,8 +4597,19 @@ async function recordMatch() {
        勝者判定
     ========================= */
 
-    const direction =
+        const direction =
       dbGame.direction || "high";
+
+    if (direction === "win_lose") {
+
+      scores.forEach(item => {
+
+        item.winner =
+          Number(item.score) === 1;
+
+      });
+
+    } else {
 
     let bestScore =
       direction === "high"
@@ -4585,6 +4652,9 @@ async function recordMatch() {
         item.score === bestScore;
 
     });
+
+    }
+
 
     /* =========================
        画面上のデータも更新
@@ -9868,7 +9938,7 @@ editButton.onclick = () => {
       （古い記録にも対応）
     */
 
-    let bestScore =
+        let bestScore =
       direction === "high"
         ? -Infinity
         : Infinity;
@@ -9880,7 +9950,11 @@ editButton.onclick = () => {
         Number(item.score);
 
 
-      if (direction === "high") {
+      if (direction === "win_lose") {
+
+        // 何もしない（後段で score===1 を勝者とする）
+
+      } else if (direction === "high") {
 
         if (score > bestScore)
           bestScore = score;
@@ -9896,12 +9970,16 @@ editButton.onclick = () => {
 
 
     const sortedScores =
-      [...match.scores].sort(
-        (a, b) =>
-          direction === "high"
-            ? b.score - a.score
-            : a.score - b.score
-      );
+      direction === "win_lose"
+        ? [...match.scores].sort(
+            (a, b) => b.score - a.score
+          )
+        : [...match.scores].sort(
+            (a, b) =>
+              direction === "high"
+                ? b.score - a.score
+                : a.score - b.score
+          );
 
 
     sortedScores.forEach(item => {
@@ -9913,10 +9991,12 @@ editButton.onclick = () => {
         "history-score";
 
 
-      if (
-        Number(item.score) ===
-        bestScore
-      ) {
+      const isWinnerRow =
+        direction === "win_lose"
+          ? Number(item.score) === 1
+          : Number(item.score) === bestScore;
+
+      if (isWinnerRow) {
 
         row.classList.add(
           "history-winner"
@@ -9929,7 +10009,7 @@ editButton.onclick = () => {
         document.createElement("span");
 
       name.textContent =
-        Number(item.score) === bestScore
+        isWinnerRow
           ? `🥇 ${item.player}`
           : item.player;
 
@@ -9940,7 +10020,10 @@ editButton.onclick = () => {
      score.textContent =
   direction === "rank"
     ? `${item.score}位`
-    : `${item.score}点`;
+    : direction === "win_lose"
+      ? (Number(item.score) === 1 ? "勝ち" : "負け")
+      : `${item.score}点`;
+
 
 
       row.appendChild(name);
@@ -10513,19 +10596,22 @@ function showPlayerDetail(playerName) {
         : "high";
 
 
-    const best =
+        const best =
       gameStats[match.game].best;
 
 
     if (
-      best === null ||
+      direction !== "win_lose" &&
       (
-        direction === "high" &&
-        item.score > best
-      ) ||
-      (
-        direction === "low" &&
-        item.score < best
+        best === null ||
+        (
+          direction === "high" &&
+          item.score > best
+        ) ||
+        (
+          direction === "low" &&
+          item.score < best
+        )
       )
     ) {
 
@@ -10533,6 +10619,7 @@ function showPlayerDetail(playerName) {
         Number(item.score);
 
     }
+
 
   });
 
@@ -10642,7 +10729,7 @@ function showPlayerDetail(playerName) {
             ? `<img src="${escapeHTML(gameInfo.image)}" class="game-thumb" style="margin-right:8px;">`
             : "";
 
-        html += `
+                html += `
 
           <div class="stat-box">
 
@@ -10659,12 +10746,18 @@ function showPlayerDetail(playerName) {
               勝率 ${rate}%
             </div>
 
-            <div style="margin-top:4px;">
-              ベスト：
-              <strong>
-                ${stats.best}点
-              </strong>
-            </div>
+            ${
+              stats.best !== null
+                ? `
+                  <div style="margin-top:4px;">
+                    ベスト：
+                    <strong>
+                      ${stats.best}点
+                    </strong>
+                  </div>
+                `
+                : ""
+            }
 
           </div>
 
@@ -10738,6 +10831,12 @@ function isWinner(
       s => Number(s.score)
     );
 
+    if (direction === "win_lose") {
+
+    return Number(item.score) === 1;
+
+  }
+
   let best;
 
   if (direction === "high") {
@@ -10756,6 +10855,7 @@ function isWinner(
   }
 
   return Number(item.score) === best;
+
 
 }
 
@@ -11697,14 +11797,18 @@ function getGameChampionNames(game) {
       const score =
         Number(item.score);
 
-      // 順位型
-      if (game.direction === "rank") {
+    // 順位型・勝ちor負け型
+      if (
+        game.direction === "rank" ||
+        game.direction === "win_lose"
+      ) {
 
         if (score === 1) {
           player.wins++;
         }
 
       }
+
       // スコア型
       else if (Number.isFinite(score)) {
 
@@ -12341,14 +12445,18 @@ function renderGameSpecificRanking(gameName) {
 
   if (!game) return;
   
-  if (scoreRankingSection) {
+    if (scoreRankingSection) {
 
   scoreRankingSection.style.display =
-    game.direction === "rank"
+    (
+      game.direction === "rank" ||
+      game.direction === "win_lose"
+    )
       ? "none"
       : "";
 
 }
+
   
   const scoreRankingTitle =
   scoreRanking
@@ -12496,14 +12604,20 @@ if (scoreRankingTitle) {
 
 }
 
-            let rank;
+                       let rank;
 
-if (game.direction === "rank") {
+if (game.direction === "win_lose") {
+
+  rank =
+    Number(item.score) === 1 ? 1 : 2;
+
+} else if (game.direction === "rank") {
 
   rank =
     Number(item.score);
 
 } else if (game.direction === "low") {
+
 
   /*
    * 自分より得点が低い(＝上位)人数+1
@@ -13075,8 +13189,12 @@ function editMatch(matchId) {
       ? game.direction
       : "high";
 
-  const isRankGame =
+    const isRankGame =
     direction === "rank";
+
+  const isWinLoseGame =
+    direction === "win_lose";
+
 
   wrapper.innerHTML = "";
 
@@ -13187,7 +13305,7 @@ function editMatch(matchId) {
       });
 
 
-    let scoreInput;
+        let scoreInput;
 
     if (isRankGame) {
 
@@ -13230,7 +13348,40 @@ function editMatch(matchId) {
 
       }
 
+    } else if (isWinLoseGame) {
+
+      scoreInput =
+        document.createElement("select");
+
+      scoreInput.className =
+        "match-score";
+
+      [
+        ["1", "勝ち"],
+        ["0", "負け"]
+      ].forEach(([value, label]) => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          value;
+
+        option.textContent =
+          label;
+
+        if (String(score) === value) {
+          option.selected = true;
+        }
+
+        scoreInput.appendChild(
+          option
+        );
+
+      });
+
     } else {
+
 
       scoreInput =
         document.createElement("input");
@@ -13483,6 +13634,17 @@ function editMatch(matchId) {
        勝者判定
     ========================= */
 
+        if (direction === "win_lose") {
+
+      scores.forEach(item => {
+
+        item.winner =
+          Number(item.score) === 1;
+
+      });
+
+    } else {
+
     let bestScore =
       direction === "high"
         ? -Infinity
@@ -13527,6 +13689,9 @@ function editMatch(matchId) {
         item.score === bestScore;
 
     });
+
+    }
+
 
 
     try {

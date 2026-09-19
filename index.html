@@ -7737,9 +7737,12 @@ function fitRouletteText() {
     getComputedStyle(box);
 
   const availableWidth =
-    box.clientWidth -
-    parseFloat(boxStyle.paddingLeft || 0) -
-    parseFloat(boxStyle.paddingRight || 0);
+    (
+      box.clientWidth -
+      parseFloat(boxStyle.paddingLeft || 0) -
+      parseFloat(boxStyle.paddingRight || 0)
+    ) * 0.9;
+    // 少し余裕を持たせる（フォント読み込みタイミングのズレ対策）
 
   let size = 28;
 
@@ -7758,7 +7761,44 @@ function fitRouletteText() {
 
   }
 
+  /*
+   * Webフォントが遅れて読み込まれた場合、
+   * 読み込み完了後にもう一度サイズを測り直す
+   */
+  if (document.fonts && document.fonts.ready) {
+
+    document.fonts.ready.then(() => {
+
+      if (
+        !document.body.contains(el)
+      ) {
+        return;
+      }
+
+      let currentSize =
+        parseInt(el.style.fontSize, 10) || size;
+
+      el.style.fontSize =
+        `${currentSize}px`;
+
+      while (
+        currentSize > 10 &&
+        el.scrollWidth > availableWidth
+      ) {
+
+        currentSize -= 1;
+
+        el.style.fontSize =
+          `${currentSize}px`;
+
+      }
+
+    });
+
+  }
+
 }
+
 
 
 function randomSelectGame() {

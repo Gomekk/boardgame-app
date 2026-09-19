@@ -11914,6 +11914,11 @@ function renderGameRankingGameList() {
             ? "background:#FDECEC;color:#C62828;"
             : "background:#F1F1F1;color:#777;";
 
+    const nameArea    const nameFontSize =
+      game.name.length > 14
+        ? "12px"
+        : "15px";
+
     const nameArea = `
       <span style="
         min-width:0;
@@ -11921,7 +11926,13 @@ function renderGameRankingGameList() {
         flex-direction:column;
         gap:4px;
       ">
-        <span>${escapeHTML(game.name)}</span>
+        <span style="
+          font-size:${nameFontSize};
+          overflow:hidden;
+          display:-webkit-box;
+          -webkit-line-clamp:2;
+          -webkit-box-orient:vertical;
+        ">${escapeHTML(game.name)}</span>
         <span style="
           display:inline-block;
           width:fit-content;
@@ -11934,6 +11945,7 @@ function renderGameRankingGameList() {
         ">${weightLabel}</span>
       </span>
     `;
+
 
         button.innerHTML =
       game.image
@@ -12124,10 +12136,19 @@ if (scoreRankingTitle) {
         new Date(b.date)
       );
 
-        title.innerHTML =
+                const titleFontSize =
+      gameName.length > 14
+        ? "16px"
+        : "21px";
+
+    title.style.fontSize =
+      titleFontSize;
+
+    title.innerHTML =
     game.image
       ? `<img src="${escapeHTML(game.image)}" class="game-thumb-large" style="margin-right:12px;">${escapeHTML(gameName)}`
       : `🎲 ${escapeHTML(gameName)}`;
+
 
     window.selectedGameRankingCurrentGame =
       gameName;

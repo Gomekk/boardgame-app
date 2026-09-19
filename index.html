@@ -1684,11 +1684,58 @@ button.small {
 
 
 
-  <!-- ゲーム登録 -->
-  <div class="card">
-    <h2>🎲 ゲームを登録</h2>
+     <!-- ゲーム登録（ポップアップ） -->
+  <div
+    id="gameRegisterOverlay"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:10002;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    "
+    onclick="if(event.target===this) this.style.display='none'"
+  >
+
+    <div
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:480px;
+        max-height:85vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
+
+      <button
+        type="button"
+        onclick="document.getElementById('gameRegisterOverlay').style.display='none'"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+    <h2 style="padding-right:40px;">🎲 ゲームを登録</h2>
 
     <input id="gameName" placeholder="ゲーム名">
+
 
 <input
   id="gameReading"
@@ -1784,25 +1831,40 @@ button.small {
 
     </div>
 
-    <button
+    <    <button
       style="margin-top:25px;"
       onclick="registerGame()"
     >
       ゲームを登録
     </button>
 
+    </div>
+
   </div>
 
-    <!-- ゲーム一覧 -->
+    <!-- 登録ゲーム一覧 -->
   <div class="card">
 
-    <h2>🎲 登録ゲーム一覧 <span id="gameListCount" class="section-note" style="margin:0;"></span></h2>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
 
-    <div id="gameList"></div>
+      <h2 style="margin:0;">🎲 登録ゲーム一覧 <span id="gameListCount" class="section-note" style="margin:0;"></span></h2>
+
+      <button
+        type="button"
+        onclick="document.getElementById('gameRegisterOverlay').style.display='flex'"
+        style="width:auto;padding:8px 14px;flex-shrink:0;"
+      >
+        ＋ 新規登録
+      </button>
+
+    </div>
+
+    <div id="gameList" style="margin-top:14px;"></div>
 
   </div>
 
 </div>
+
 
 <div id="weightSettingScreen" class="screenContent">
 

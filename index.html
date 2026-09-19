@@ -5332,8 +5332,32 @@ function renderMatchGamePickerList(keyword = "") {
     name.style.flex =
       "1";
 
+    name.style.minWidth =
+      "0";
+
     name.style.fontWeight =
       "700";
+
+    name.style.fontSize =
+      getVisualTextWidth(game.name) > 16
+        ? "13px"
+        : "15px";
+
+    name.style.overflow =
+      "hidden";
+
+    name.style.display =
+      "-webkit-box";
+
+    name.style.webkitLineClamp =
+      "2";
+
+    name.style.webkitBoxOrient =
+      "vertical";
+
+    name.style.wordBreak =
+      "break-word";
+
 
 
     row.appendChild(image);

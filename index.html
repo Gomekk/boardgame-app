@@ -7709,8 +7709,7 @@ function buildRouletteContent(g) {
       style="
         display:block;
         overflow:hidden;
-        max-height:76px;
-        line-height:1.15;
+        white-space:nowrap;
       "
     >${escapeHTML(g.name)}</span>`;
 
@@ -7735,11 +7734,8 @@ function fitRouletteText() {
     `${size}px`;
 
   while (
-    size > 12 &&
-    (
-      el.scrollWidth > el.clientWidth + 2 ||
-      el.scrollHeight > 76
-    )
+    size > 10 &&
+    el.scrollWidth > el.clientWidth + 2
   ) {
 
     size -= 1;
@@ -7750,6 +7746,7 @@ function fitRouletteText() {
   }
 
 }
+
 
 
 

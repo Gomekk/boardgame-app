@@ -1923,8 +1923,14 @@ button.small {
         ＋ 新規
       </button>
 
-
     </div>
+    
+    <input
+      type="text"
+      id="gameListSearch"
+      placeholder="ゲーム名を検索"
+      style="margin-top:12px;"
+    >
 
     <div id="gameList" style="margin-top:14px;"></div>
 
@@ -5773,11 +5779,37 @@ function renderGameList() {
     );
 
 
-  const activeGames =
-  data.games
-    .filter(
+    const searchInput =
+    document.getElementById("gameListSearch");
+
+  const keyword =
+    searchInput
+      ? normalizeGameSearch(searchInput.value)
+      : "";
+
+  const allActiveGames =
+    data.games.filter(
       g => g.active
-    )
+    );
+
+  const activeGames =
+  allActiveGames
+    .filter(game => {
+
+      const gameName =
+        normalizeGameSearch(game.name);
+
+      const gameReading =
+        normalizeGameSearch(
+          game.reading || ""
+        );
+
+      return (
+        gameName.includes(keyword) ||
+        gameReading.includes(keyword)
+      );
+
+    })
     .sort(
       (a, b) =>
         (a.reading || a.name || "").localeCompare(
@@ -5793,9 +5825,10 @@ function renderGameList() {
   if (countLabel) {
 
     countLabel.textContent =
-      `（全${activeGames.length}件）`;
+      `（全${allActiveGames.length}件中${activeGames.length}件）`;
 
   }
+
 
   if (activeGames.length === 0) {
 
@@ -13138,8 +13171,19 @@ document.addEventListener(
 
     }
 
+    if (
+      event.target &&
+      event.target.id ===
+        "gameListSearch"
+    ) {
+
+      renderGameList();
+
+    }
+
   }
 );
+
 
 /*
  * 文字列のおおよその表示幅を計算する

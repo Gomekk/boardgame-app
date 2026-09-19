@@ -5060,15 +5060,72 @@ function renderMatchGamePickerList(keyword = "") {
         })
         .filter(Boolean);
 
-                    if (
+                       if (
       holderColors.length > 0
     ) {
 
-      row.style.borderRight =
-        `4px solid ${holderColors[0]}`;
+      row.style.backgroundColor =
+        "#e5e7eb";
+
+      row.style.position =
+        "relative";
+
+      row.style.overflow =
+        "hidden";
+
+      row.style.border =
+        holderColors.length === 1
+          ? `1px solid ${holderColors[0]}`
+          : "1px solid #6B7280";
+
+      const colorStripe =
+        document.createElement("div");
+
+      colorStripe.style.position =
+        "absolute";
+
+      colorStripe.style.top =
+        "-1px";
+
+      colorStripe.style.right =
+        "-1px";
+
+      colorStripe.style.bottom =
+        "-1px";
+
+      colorStripe.style.width =
+        "5px";
+
+      colorStripe.style.borderRadius =
+        "0 10px 10px 0";
+
+      colorStripe.style.overflow =
+        "hidden";
+
+      colorStripe.style.display =
+        "flex";
+
+      colorStripe.style.flexDirection =
+        "column";
+
+      holderColors.forEach(color => {
+
+        const segment =
+          document.createElement("div");
+
+        segment.style.flex =
+          "1";
+
+        segment.style.background =
+          color;
+
+        colorStripe.appendChild(segment);
+
+      });
+
+      row.appendChild(colorStripe);
 
     }
-
 
 
     const image =

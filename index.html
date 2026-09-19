@@ -5437,13 +5437,31 @@ function renderPlayerList() {
     };
 
 
+        const buttonGroup =
+      document.createElement("div");
+
+    buttonGroup.style.display =
+      "flex";
+
+    buttonGroup.style.gap =
+      "6px";
+
+    buttonGroup.style.marginLeft =
+      "auto";
+
+    buttonGroup.style.flexShrink =
+      "0";
+
+    buttonGroup.appendChild(editButton);
+
+    buttonGroup.appendChild(button);
+
     row.appendChild(nameArea);
 
-    row.appendChild(editButton);
-
-    row.appendChild(button);
+    row.appendChild(buttonGroup);
 
     container.appendChild(row);
+
 
 
   });

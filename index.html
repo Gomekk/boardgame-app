@@ -499,22 +499,37 @@ button.small {
   position: relative;
   font-size: 26px;
   font-weight: 900;
-  letter-spacing: 0.02em;
-  color: var(--navy);
-  margin: 4px 0 22px;
-  padding-bottom: 14px;
+  letter-spacing: 0.06em;
+  color: #fff;
+  margin: 4px 0 26px;
+  padding: 16px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy) 55%, var(--navy-deep) 100%);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-btn);
+  overflow: hidden;
+}
+
+.screen h1::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent-gradient);
 }
 
 .screen h1::after {
   content: "";
   position: absolute;
-  left: 0;
   bottom: 0;
-  width: 46px;
+  left: 0;
+  right: 0;
   height: 3px;
-  border-radius: 2px;
   background: var(--accent-gradient);
 }
+
 
 
 

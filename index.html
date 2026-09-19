@@ -8819,7 +8819,9 @@ function renderSpecificGameList(keyword = "") {
       game.name;
 
     name.style.fontSize =
-      "12px";
+      game.name.length > 14
+        ? "10px"
+        : "12px";
 
     name.style.lineHeight =
       "1.3";
@@ -8838,6 +8840,19 @@ function renderSpecificGameList(keyword = "") {
 
     name.style.whiteSpace =
       "normal";
+
+    name.style.overflow =
+      "hidden";
+
+    name.style.display =
+      "-webkit-box";
+
+    name.style.webkitLineClamp =
+      "2";
+
+    name.style.webkitBoxOrient =
+      "vertical";
+
 
     const checkbox =
       document.createElement("input");

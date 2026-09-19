@@ -5056,38 +5056,12 @@ function renderMatchGamePickerList(keyword = "") {
         })
         .filter(Boolean);
 
-            if (holderColors.length > 0) {
+                    if (
+      holderColors.length > 0
+    ) {
 
-      const stripeWidthPercent =
-        (12 / 260 * 100).toFixed(2);
-      // ボタン幅の目安に対する12px分の割合（角丸を保つため背景グラデーションで表現）
-
-      const segmentSize =
-        stripeWidthPercent / holderColors.length;
-
-      const gradientStops =
-        holderColors
-          .map((color, index) => {
-
-            const start =
-              (100 - stripeWidthPercent + segmentSize * index).toFixed(2);
-
-            const end =
-              (100 - stripeWidthPercent + segmentSize * (index + 1)).toFixed(2);
-
-            return `${color} ${start}%, ${color} ${end}%`;
-
-          })
-          .join(", ");
-
-      button.style.backgroundColor =
-        "#e5e7eb";
-
-      button.style.backgroundImage =
-        `linear-gradient(to right, transparent 0%, transparent ${(100 - stripeWidthPercent).toFixed(2)}%, ${gradientStops})`;
-
-      button.style.overflow =
-        "hidden";
+      row.style.borderRight =
+        `4px solid ${holderColors[0]}`;
 
     }
 
@@ -11300,40 +11274,56 @@ function renderGameRankingGameList() {
         })
         .filter(Boolean);
 
-            if (holderColors.length > 0) {
+        if (holderColors.length === 1) {
 
-      const stripeWidthPercent =
-        (12 / 260 * 100).toFixed(2);
+      button.style.backgroundImage =
+        "none";
+
+      button.style.backgroundColor =
+        "#e5e7eb";
+
+      button.style.borderRight =
+        `12px solid ${holderColors[0]}`;
+
+      button.style.overflow =
+        "hidden";
+
+    } else if (holderColors.length > 1) {
 
       const segmentSize =
-        stripeWidthPercent / holderColors.length;
+        100 / holderColors.length;
 
       const gradientStops =
         holderColors
           .map((color, index) => {
 
             const start =
-              (100 - stripeWidthPercent + segmentSize * index).toFixed(2);
+              (segmentSize * index).toFixed(2);
 
             const end =
-              (100 - stripeWidthPercent + segmentSize * (index + 1)).toFixed(2);
+              (segmentSize * (index + 1)).toFixed(2);
 
             return `${color} ${start}%, ${color} ${end}%`;
 
           })
           .join(", ");
 
+      button.style.backgroundImage =
+        "none";
+
       button.style.backgroundColor =
         "#e5e7eb";
 
-      button.style.backgroundImage =
-        `linear-gradient(to right, transparent 0%, transparent ${(100 - stripeWidthPercent).toFixed(2)}%, ${gradientStops})`;
+      button.style.borderRight =
+        "12px solid transparent";
+
+      button.style.borderImage =
+        `linear-gradient(to bottom, ${gradientStops}) 1`;
 
       button.style.overflow =
         "hidden";
 
     }
-
 
 
 

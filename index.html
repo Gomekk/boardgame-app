@@ -8403,12 +8403,6 @@ resetAllModeStyles(); // 開いた瞬間に「全てのゲーム」を選択状�
 
 updateEligibleCountDisplay();
 
-if (autoStart) {
-
-  startRoulette();
-
-}
-
 
 function updateRoulettePlayerCountButtonStyle(button) {
 
@@ -8775,6 +8769,11 @@ function openSpecificGameSelector() {
 
   };
 
+   if (autoStart) {
+
+    startRoulette();
+
+  }
 
 }
 

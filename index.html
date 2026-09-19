@@ -1879,19 +1879,17 @@ button.small {
       </label>
 
 
-       <label
+      <label
         class="radio-option"
-        style="display:flex;flex-direction:column;justify-content:center;line-height:1.15;font-size:10px;"
+        style="display:flex;flex-direction:column;justify-content:center;"
       >
         <input
           type="radio"
           name="scoreDirection"
           value="win_lose"
         >
-        勝ち<br>or<br>負け
+        勝ち/負け
       </label>
-
-
 
 
     </div>
@@ -3315,50 +3313,19 @@ form.appendChild(maxPlayersInput);
         label.style.justifyContent =
           "center";
 
-        label.style.lineHeight =
-          "1.15";
-
-        label.style.fontSize =
-          "10px";
-
       }
-
 
       label.appendChild(
         radio
       );
 
-      if (value === "win_lose") {
-
-        label.appendChild(
-          document.createTextNode("勝ち")
-        );
-
-        label.appendChild(
-          document.createElement("br")
-        );
-
-        label.appendChild(
-          document.createTextNode("or")
-        );
-
-        label.appendChild(
-          document.createElement("br")
-        );
-
-        label.appendChild(
-          document.createTextNode("負け")
-        );
-
-      } else {
-
       label.appendChild(
         document.createTextNode(
-          ` ${labelText}`
+          value === "win_lose"
+            ? "勝ち/負け"
+            : ` ${labelText}`
         )
       );
-
-      }
 
 
       radioGroup.appendChild(

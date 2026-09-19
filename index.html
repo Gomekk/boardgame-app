@@ -1636,7 +1636,7 @@ button.small {
   onclick="showScreen('gameManageScreen')"
   style="margin-bottom: 8px;"
     >
-      🎲 ゲーム管理
+      🎮 ゲーム管理
     </button>
 
   <button
@@ -1847,7 +1847,7 @@ button.small {
 
     <div style="display:flex;align-items:center;justify-content:space-between;">
 
-      <h2 style="margin:0;">🎲 登録ゲーム一覧 <span id="gameListCount" class="section-note" style="margin:0;"></span></h2>
+      <h2 style="margin:0;">🎮 登録ゲーム一覧 <span id="gameListCount" class="section-note" style="margin:0;"></span></h2>
 
             <button
         type="button"
@@ -1967,10 +1967,55 @@ button.small {
 
 
 
-  <!-- プレイヤー登録 -->
-  <div class="card">
+      <!-- プレイヤー登録（ポップアップ） -->
+  <div
+    id="playerRegisterOverlay"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:10002;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    "
+    onclick="if(event.target===this) this.style.display='none'"
+  >
 
-    <h2>👤 プレイヤーを登録</h2>
+    <div
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:480px;
+        max-height:85vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
+
+      <button
+        type="button"
+        onclick="document.getElementById('playerRegisterOverlay').style.display='none'"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+    <h2 style="padding-right:40px;">👤 プレイヤーを登録</h2>
 
     <div>
 
@@ -1978,6 +2023,7 @@ button.small {
         id="playerName"
         placeholder="プレイヤー名"
       >
+
 
       <div
         style="
@@ -2003,7 +2049,7 @@ button.small {
         "
       ></div>
 
-      <button
+           <button
         onclick="registerPlayer()"
       >
         追加
@@ -2011,19 +2057,34 @@ button.small {
 
     </div>
 
+    </div>
+
   </div>
 
-        <!-- プレイヤーリスト -->
+        <!-- 登録プレイヤーリスト -->
   <div class="card">
 
-    <h2>👥 登録プレイヤーリスト <span id="playerListCount" class="section-note" style="margin:0;"></span></h2>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
 
-    <div id="playerList"></div>
+      <h2 style="margin:0;">👥 登録プレイヤーリスト <span id="playerListCount" class="section-note" style="margin:0;"></span></h2>
+
+      <button
+        type="button"
+        onclick="document.getElementById('playerRegisterOverlay').style.display='flex'; renderPlayerColorPalette();"
+        style="width:auto;padding:8px 14px;flex-shrink:0;font-size:12px;"
+      >
+        ＋ 新規登録
+      </button>
+
+    </div>
+
+    <div id="playerList" style="margin-top:14px;"></div>
 
   </div>
 
 
 </div>
+
 
   <!-- バックアップ画面 -->
 <div id="backupScreen" class="screenContent">

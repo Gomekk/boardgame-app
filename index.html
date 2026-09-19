@@ -6174,16 +6174,13 @@ function renderBestScoreCountRanking() {
   /*
    * 1つの行（順位バッジ＋名前・スコア／その下にゲーム一覧）を作る共通処理
    */
-      function buildPlayerRow(player, rank, maxBeforeScroll) {
+        function buildPlayerRow(player, rank, maxBeforeScroll, showListLink) {
 
     const row =
       document.createElement("div");
 
     row.className =
       "rank-item";
-
-    row.style.flexWrap =
-      "wrap";
 
     const rankEl =
       document.createElement("span");
@@ -6206,6 +6203,18 @@ function renderBestScoreCountRanking() {
     playerArea.style.minWidth =
       "0";
 
+    const nameRow =
+      document.createElement("div");
+
+    nameRow.style.display =
+      "flex";
+
+    nameRow.style.alignItems =
+      "baseline";
+
+    nameRow.style.gap =
+      "8px";
+
     const nameEl =
       document.createElement("div");
 
@@ -6215,29 +6224,23 @@ function renderBestScoreCountRanking() {
     nameEl.textContent =
       player.name;
 
-    playerArea.appendChild(nameEl);
+    nameEl.style.flex =
+      "1";
 
-    const iconRowArea =
-      document.createElement("div");
+    nameEl.style.minWidth =
+      "0";
 
-    iconRowArea.style.position =
-      "relative";
+    nameRow.appendChild(nameEl);
 
-    if (player.games.length > 0) {
+    if (showListLink && player.games.length > 0) {
 
       const listLink =
         document.createElement("span");
 
       listLink.textContent =
-        "一覧表示";
+        "一覧";
 
-            listLink.style.position =
-        "absolute";
-
-      listLink.style.top =
-        "-24px";
-
-      listLink.style.right =
+      listLink.style.flexShrink =
         "0";
 
       listLink.style.fontSize =
@@ -6252,7 +6255,6 @@ function renderBestScoreCountRanking() {
       listLink.style.cursor =
         "pointer";
 
-
       listLink.onclick = () => {
 
         showTitleGameList(
@@ -6262,15 +6264,15 @@ function renderBestScoreCountRanking() {
 
       };
 
-      iconRowArea.appendChild(listLink);
+      nameRow.appendChild(listLink);
 
     }
 
-    iconRowArea.appendChild(
+    playerArea.appendChild(nameRow);
+
+    playerArea.appendChild(
       buildGameIconRow(player.games, maxBeforeScroll)
     );
-
-    playerArea.appendChild(iconRowArea);
 
     const scoreEl =
       document.createElement("span");
@@ -6291,19 +6293,21 @@ function renderBestScoreCountRanking() {
 
 
 
+
   /*
    * 1位〜3位：縦に1行ずつ
    */
   const topThree =
     rankedList.slice(0, 3);
 
-  topThree.forEach(({ player, rank }) => {
+    topThree.forEach(({ player, rank }) => {
 
     container.appendChild(
-      buildPlayerRow(player, rank, 8)
+      buildPlayerRow(player, rank, 8, true)
     );
 
   });
+
 
   /*
    * 4位・5位：2カラムで並べる
@@ -6337,7 +6341,8 @@ function renderBestScoreCountRanking() {
         "0";
 
       const row =
-        buildPlayerRow(player, rank, 3);
+        buildPlayerRow(player, rank, 3, false);
+
 
       row.style.padding =
         "6px 0";

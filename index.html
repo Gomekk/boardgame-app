@@ -11303,7 +11303,7 @@ function renderGameRankingGameList() {
           })
           .join(", ");
 
-      button.style.backgroundColor =
+            button.style.backgroundColor =
         "#e5e7eb";
 
       button.style.backgroundImage =
@@ -11316,10 +11316,11 @@ function renderGameRankingGameList() {
         "right center";
 
       button.style.backgroundSize =
-        `${stripeWidth}px 100%`;
+        `${stripeWidth}px calc(100% - 16px)`;
 
       button.style.overflow =
         "hidden";
+
 
     }
 

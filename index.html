@@ -721,12 +721,17 @@ button.small {
   position: relative;
   overflow: hidden;
   width: min(420px, 100%);
-  min-height: 560px;
+  min-height: 480px;
   background: var(--surface);
   border-radius: 28px;
   padding: 32px 24px 28px;
   text-align: center;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+  transition: min-height 0.15s ease;
+}
+
+.game-roulette-box.spinning-size {
+  min-height: 560px;
 }
 
 
@@ -751,7 +756,7 @@ button.small {
 }
 
 #gameRouletteName {
-  height: 170px;
+  height: 90px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -765,8 +770,12 @@ button.small {
   margin-top: 24px;
   box-shadow: none;
   overflow: hidden;
+  transition: height 0.15s ease;
 }
 
+#gameRouletteName.spinning-size {
+  height: 170px;
+}
 
 
 .game-roulette-sub {
@@ -8076,7 +8085,12 @@ function startRoulette() {
     return;
   }
 
-  modeElement.style.display = "none";
+    modeElement.style.display = "none";
+
+  document.getElementById("gameRouletteName").classList.add("spinning-size");
+
+  overlay.querySelector(".game-roulette-box").classList.add("spinning-size");
+
 
 
   const weightNameMap = {

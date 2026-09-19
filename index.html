@@ -2443,8 +2443,19 @@ const reading =
     ? readingInput.value.trim()
     : "";
 
+if (!reading) {
+
+  alert(
+    "読み仮名を入力してください"
+  );
+
+  return;
+
+}
+
 const playTimeInput =
   document.getElementById("gamePlayTime");
+
 
 
 const playTime =

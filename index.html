@@ -9670,24 +9670,86 @@ if (isWinner(match, player.name)) {
     topRow.appendChild(detailButton);
 
 
-    /*
-     * 2段目：〇戦〇勝（〇%）＋重さ別勝率バッジ
+        /*
+     * タイトル保有数（ベストスコアを持っているゲームの数）を計算
      */
 
-    const bottomRow =
+    let titleCount = 0;
+
+    data.games
+      .filter(g => g.active)
+      .forEach(g => {
+
+        const gameMatches =
+          data.matches.filter(
+            m => m.game === g.name
+          );
+
+        if (gameMatches.length === 0) return;
+
+        let bestScore =
+          g.direction === "low"
+            ? Infinity
+            : -Infinity;
+
+        gameMatches.forEach(m => {
+
+          (m.scores || []).forEach(s => {
+
+            const score =
+              Number(s.score);
+
+            if (g.direction === "low") {
+
+              if (score < bestScore) {
+                bestScore = score;
+              }
+
+            } else {
+
+              if (score > bestScore) {
+                bestScore = score;
+              }
+
+            }
+
+          });
+
+        });
+
+        const isHolder =
+          gameMatches.some(m =>
+            (m.scores || []).some(s =>
+              s.player === player.name &&
+              Number(s.score) === bestScore
+            )
+          );
+
+        if (isHolder) {
+          titleCount++;
+        }
+
+      });
+
+
+    /*
+     * 2段目：〇戦〇勝（〇%）＋タイトル保有数
+     */
+
+    const statsRow =
       document.createElement("div");
 
-    bottomRow.style.display =
+    statsRow.style.display =
       "flex";
 
-    bottomRow.style.alignItems =
+    statsRow.style.alignItems =
       "center";
 
-    bottomRow.style.flexWrap =
-      "wrap";
+    statsRow.style.justifyContent =
+      "space-between";
 
-    bottomRow.style.gap =
-      "6px";
+    statsRow.style.gap =
+      "8px";
 
     const info =
       document.createElement("span");
@@ -9701,10 +9763,41 @@ if (isWinner(match, player.name)) {
     info.style.fontSize =
       "13px";
 
-    info.style.flexShrink =
+    const titleInfo =
+      document.createElement("span");
+
+    titleInfo.textContent =
+      `🏅 タイトル保有数 ${titleCount}冠`;
+
+    titleInfo.style.color =
+      "#6b7280";
+
+    titleInfo.style.fontSize =
+      "13px";
+
+    titleInfo.style.flexShrink =
       "0";
 
-    bottomRow.appendChild(info);
+    statsRow.appendChild(info);
+
+    statsRow.appendChild(titleInfo);
+
+
+    /*
+     * 3段目：重さ別勝率バッジ
+     */
+
+    const badgeRow =
+      document.createElement("div");
+
+    badgeRow.style.display =
+      "flex";
+
+    badgeRow.style.flexWrap =
+      "wrap";
+
+    badgeRow.style.gap =
+      "6px";
 
 
 const weightLabels = [
@@ -9793,7 +9886,7 @@ weightLabels.forEach(
 
     }
 
-    bottomRow.appendChild(
+    badgeRow.appendChild(
       badge
     );
 
@@ -9803,10 +9896,13 @@ weightLabels.forEach(
 
 row.appendChild(topRow);
 
-row.appendChild(bottomRow);
+row.appendChild(statsRow);
+
+row.appendChild(badgeRow);
 
 
 container.appendChild(row);
+
 
   });
 

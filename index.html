@@ -4282,7 +4282,7 @@ function addScorePlayer(
   }
 
 
-  const remove =
+    const remove =
     document.createElement("button");
 
   remove.className =
@@ -4293,6 +4293,37 @@ function addScorePlayer(
 
   remove.type =
     "button";
+
+  remove.style.width =
+    "32px";
+
+  remove.style.height =
+    "32px";
+
+  remove.style.minWidth =
+    "32px";
+
+  remove.style.padding =
+    "0";
+
+  remove.style.borderRadius =
+    "50%";
+
+  remove.style.display =
+    "flex";
+
+  remove.style.alignItems =
+    "center";
+
+  remove.style.justifyContent =
+    "center";
+
+  remove.style.fontSize =
+    "16px";
+
+  remove.style.lineHeight =
+    "1";
+
 
   remove.onclick = () =>
     div.remove();

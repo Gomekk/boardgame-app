@@ -5390,14 +5390,14 @@ function renderPlayerList() {
      * 編集ボタン
      */
 
-    const editButton =
+        const editButton =
       document.createElement("button");
 
     editButton.className =
-      "small";
+      "list-item-action-button";
 
     editButton.textContent =
-      "✏️ 編集";
+      "編集";
 
     editButton.type =
       "button";
@@ -5418,11 +5418,12 @@ function renderPlayerList() {
     const button =
       document.createElement("button");
 
-    button.className =
-      "small danger";
+        button.className =
+      "list-item-action-button danger-text";
 
     button.textContent =
-      "登録から外す";
+      "削除";
+
 
     button.type =
       "button";
@@ -5443,6 +5444,7 @@ function renderPlayerList() {
     row.appendChild(button);
 
     container.appendChild(row);
+
 
   });
 
@@ -8622,7 +8624,7 @@ const deleteButton =
   document.createElement("button");
 
 deleteButton.className =
-  "small danger";
+  "list-item-action-button danger-text";
 
 deleteButton.textContent =
   "この対戦を削除";
@@ -8632,6 +8634,7 @@ deleteButton.type =
 
 deleteButton.style.marginTop =
   "8px";
+
 
 deleteButton.onclick = async () => {
 
@@ -8720,10 +8723,10 @@ const editButton =
   document.createElement("button");
 
 editButton.className =
-  "small";
+  "list-item-action-button";
 
 editButton.textContent =
-  "✏️ 編集";
+  "編集";
 
 editButton.type =
   "button";
@@ -8733,9 +8736,10 @@ editButton.style.marginTop =
 
 editButton.style.marginRight =
   "8px";
-
+  
 editButton.style.marginBottom =
   "8px";
+
   
 editButton.onclick = () => {
 

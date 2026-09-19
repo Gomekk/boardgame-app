@@ -720,6 +720,8 @@ button.small {
 .game-roulette-box {
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   width: min(420px, 100%);
   min-height: 480px;
   background: var(--surface);
@@ -729,6 +731,7 @@ button.small {
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
   transition: min-height 0.15s ease;
 }
+
 
 .game-roulette-box.spinning-size {
   min-height: 560px;

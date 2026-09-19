@@ -11432,86 +11432,16 @@ function renderGameRankingGameList() {
 
       });
 
-            button.appendChild(colorStripe);
+                  button.appendChild(colorStripe);
 
 
-      if (holderColors.length > 1) {
-
-        const borderOverlay =
-          document.createElement("div");
-
-        borderOverlay.style.position =
-          "absolute";
-
-        borderOverlay.style.inset =
-          "-1px";
-
-        borderOverlay.style.borderRadius =
-          "10px";
-
-        borderOverlay.style.overflow =
-          "hidden";
-
-        borderOverlay.style.pointerEvents =
-          "none";
-
-        const segmentHeightPercent =
-          100 / holderColors.length;
-
-                holderColors.forEach((color, index) => {
-
-          const segment =
-            document.createElement("div");
-
-          segment.style.position =
-            "absolute";
-
-          segment.style.left =
-            "0";
-
-          segment.style.right =
-            "0";
-
-          segment.style.top =
-            `${(segmentHeightPercent * index).toFixed(2)}%`;
-
-          segment.style.height =
-            `${segmentHeightPercent.toFixed(2)}%`;
-
-          segment.style.borderLeft =
-            `1px solid ${color}`;
-
-          segment.style.borderRight =
-            `1px solid ${color}`;
-
-          segment.style.borderTop =
-            index === 0
-              ? `1px solid ${color}`
-              : "none";
-
-          segment.style.borderBottom =
-            index === holderColors.length - 1
-              ? `1px solid ${color}`
-              : "none";
-
-          segment.style.boxSizing =
-            "border-box";
-
-          borderOverlay.appendChild(segment);
-
-        });
-
-
-        button.appendChild(borderOverlay);
-
-      } else {
-
-        button.style.border =
-          `1px solid ${holderColors[0]}`;
-
-      }
+      button.style.border =
+        holderColors.length === 1
+          ? `1px solid ${holderColors[0]}`
+          : "1px solid #6B7280";
 
     }
+
 
 
     button.onclick = () => {

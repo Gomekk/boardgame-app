@@ -1284,6 +1284,71 @@ button.small {
   <div id="headToHeadRanking"></div>
 </div>
 
+    <!-- タイトル保有ゲーム一覧（ポップアップ） -->
+  <div
+    id="titleGameListOverlay"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:10002;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    "
+    onclick="if(event.target===this) this.style.display='none'"
+  >
+
+    <div
+      id="titleGameListPopup"
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:480px;
+        max-height:80vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
+
+      <button
+        type="button"
+        onclick="document.getElementById('titleGameListOverlay').style.display='none'"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+      <h2 id="titleGameListTitle" style="padding-right:40px;">
+        タイトル保有ゲーム一覧
+      </h2>
+
+      <div
+        id="titleGameListGrid"
+        style="
+          display:grid;
+          grid-template-columns:repeat(3, 1fr);
+          gap:12px 8px;
+        "
+      ></div>
+
+    </div>
+
+  </div>
 
     <!-- プレイヤー詳細（ポップアップ） -->
   <div
@@ -5789,6 +5854,101 @@ targetRow.appendChild(
 
 }
 
+function showTitleGameList(playerName, games) {
+
+  document.getElementById(
+    "titleGameListTitle"
+  ).textContent =
+    `🏅 ${playerName}のタイトル保有ゲーム`;
+
+  const grid =
+    document.getElementById(
+      "titleGameListGrid"
+    );
+
+  grid.innerHTML = "";
+
+  games.forEach(game => {
+
+    const cell =
+      document.createElement("div");
+
+    cell.style.display =
+      "flex";
+
+    cell.style.flexDirection =
+      "column";
+
+    cell.style.alignItems =
+      "center";
+
+    cell.style.gap =
+      "6px";
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      game.image || "";
+
+    image.style.width =
+      "100%";
+
+    image.style.aspectRatio =
+      "1 / 1";
+
+    image.style.objectFit =
+      "cover";
+
+    image.style.borderRadius =
+      "10px";
+
+    image.style.boxShadow =
+      "0 3px 8px rgba(22,35,63,0.18)";
+
+    if (!game.image) {
+
+      image.style.background =
+        "#f1f1f1";
+
+    }
+
+    const name =
+      document.createElement("div");
+
+    name.textContent =
+      game.name;
+
+    name.style.fontSize =
+      "12px";
+
+    name.style.fontWeight =
+      "600";
+
+    name.style.textAlign =
+      "center";
+
+    name.style.lineHeight =
+      "1.3";
+
+    name.style.wordBreak =
+      "break-word";
+
+    cell.appendChild(image);
+
+    cell.appendChild(name);
+
+    grid.appendChild(cell);
+
+  });
+
+  document.getElementById(
+    "titleGameListOverlay"
+  ).style.display = "flex";
+
+}
+
+
 function renderBestScoreCountRanking() {
 
   const container =
@@ -6014,7 +6174,7 @@ function renderBestScoreCountRanking() {
   /*
    * 1つの行（順位バッジ＋名前・スコア／その下にゲーム一覧）を作る共通処理
    */
-  function buildPlayerRow(player, rank, maxBeforeScroll) {
+    function buildPlayerRow(player, rank, maxBeforeScroll) {
 
     const row =
       document.createElement("div");
@@ -6058,6 +6218,21 @@ function renderBestScoreCountRanking() {
       buildGameIconRow(player.games, maxBeforeScroll)
     );
 
+    const scoreArea =
+      document.createElement("div");
+
+    scoreArea.style.display =
+      "flex";
+
+    scoreArea.style.flexDirection =
+      "column";
+
+    scoreArea.style.alignItems =
+      "flex-end";
+
+    scoreArea.style.gap =
+      "4px";
+
     const scoreEl =
       document.createElement("span");
 
@@ -6067,13 +6242,46 @@ function renderBestScoreCountRanking() {
     scoreEl.textContent =
       `${player.count} 冠`;
 
+    scoreArea.appendChild(scoreEl);
+
+    if (player.games.length > 0) {
+
+      const listButton =
+        document.createElement("button");
+
+      listButton.type =
+        "button";
+
+      listButton.className =
+        "small secondary";
+
+      listButton.style.width =
+        "auto";
+
+      listButton.textContent =
+        "一覧";
+
+      listButton.onclick = () => {
+
+        showTitleGameList(
+          player.name,
+          player.games
+        );
+
+      };
+
+      scoreArea.appendChild(listButton);
+
+    }
+
     row.appendChild(rankEl);
     row.appendChild(playerArea);
-    row.appendChild(scoreEl);
+    row.appendChild(scoreArea);
 
     return row;
 
   }
+
 
   /*
    * 1位〜3位：縦に1行ずつ

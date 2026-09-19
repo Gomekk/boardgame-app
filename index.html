@@ -13210,7 +13210,7 @@ function editMatch(matchId) {
     }
 
 
-    const removeButton =
+        const removeButton =
       document.createElement("button");
 
     removeButton.type =
@@ -13222,9 +13222,40 @@ function editMatch(matchId) {
     removeButton.textContent =
       "×";
 
+    removeButton.style.width =
+      "32px";
+
+    removeButton.style.height =
+      "32px";
+
+    removeButton.style.minWidth =
+      "32px";
+
+    removeButton.style.padding =
+      "0";
+
+    removeButton.style.borderRadius =
+      "50%";
+
+    removeButton.style.display =
+      "flex";
+
+    removeButton.style.alignItems =
+      "center";
+
+    removeButton.style.justifyContent =
+      "center";
+
+    removeButton.style.fontSize =
+      "16px";
+
+    removeButton.style.lineHeight =
+      "1";
+
     removeButton.onclick = () => {
       row.remove();
     };
+
 
 
     row.appendChild(select);

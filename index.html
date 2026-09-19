@@ -426,36 +426,20 @@ button.small {
   text-align: center;
   cursor: pointer;
   font-size: 12px;
+  font-weight: 600;
+  color: var(--navy);
+  background: #F1F5F9;
+  transition: background 0.12s ease, color 0.12s ease;
 }
-
 
 .radio-option input[type="radio"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 8px;
-  height: 8px;
-  margin-right: 5px;
-  flex-shrink: 0;
-  border: 1px solid #767676;
-  border-radius: 50%;
-  background: #fff;
-  position: relative;
-  cursor: pointer;
+  display: none;
 }
 
-.radio-option input[type="radio"]:checked::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+.radio-option:has(input[type="radio"]:checked) {
   background: var(--navy);
+  color: #fff;
 }
-
-
 
 
 .section-note {

@@ -7702,11 +7702,26 @@ matches.forEach(match => {
 
 function buildRouletteContent(g) {
 
+  const fontSize =
+    g.name.length > 14
+      ? "18px"
+      : "28px";
+
+  const nameHtml =
+    `<span style="
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+      font-size:${fontSize};
+    ">${escapeHTML(g.name)}</span>`;
+
   return g.image
-    ? `<img src="${escapeHTML(g.image)}" class="game-thumb-large" style="display:block;margin:0 auto 8px;">${escapeHTML(g.name)}`
-    : escapeHTML(g.name);
+    ? `<img src="${escapeHTML(g.image)}" class="game-thumb-large" style="display:block;margin:0 auto 8px;">${nameHtml}`
+    : nameHtml;
 
 }
+
 
 function randomSelectGame() {
 

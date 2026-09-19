@@ -5981,14 +5981,14 @@ function renderGameList() {
      * ゲーム名＋編集・削除（同じ段）
      */
 
-    const nameRow =
+        const nameRow =
       document.createElement("div");
 
     nameRow.style.display =
       "flex";
 
     nameRow.style.alignItems =
-      "center";
+      "flex-start";
 
     nameRow.style.justifyContent =
       "space-between";
@@ -5996,7 +5996,8 @@ function renderGameList() {
     nameRow.style.gap =
       "8px";
 
-    const nameEl =
+
+        const nameEl =
       document.createElement("div");
 
     nameEl.className =
@@ -6011,11 +6012,18 @@ function renderGameList() {
     nameEl.style.overflow =
       "hidden";
 
-    nameEl.style.textOverflow =
-      "ellipsis";
+    nameEl.style.display =
+      "-webkit-box";
 
-    nameEl.style.whiteSpace =
-      "nowrap";
+    nameEl.style.webkitLineClamp =
+      "2";
+
+    nameEl.style.webkitBoxOrient =
+      "vertical";
+
+    nameEl.style.wordBreak =
+      "break-word";
+
 
     const buttonGroup =
       document.createElement("div");

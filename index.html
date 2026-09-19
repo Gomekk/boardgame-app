@@ -7604,15 +7604,16 @@ matches.forEach(match => {
 
   ranking.slice(0, 5).forEach((player, index) => {
 
-    if (player.currentStreak !== previousStreak) {
+    if (player.bestStreak !== previousStreak) {
 
       currentRank =
         index + 1;
 
       previousStreak =
-        player.currentStreak;
+        player.bestStreak;
 
     }
+
 
     const row =
       document.createElement("div");

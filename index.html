@@ -9732,55 +9732,22 @@ if (isWinner(match, player.name)) {
       });
 
 
-    /*
-     * 2段目：〇戦〇勝（〇%）＋タイトル保有数
+        /*
+     * 2段目：〇戦〇勝（〇%）／タイトル保有数：〇冠
      */
 
     const statsRow =
       document.createElement("div");
 
-    statsRow.style.display =
-      "flex";
-
-    statsRow.style.alignItems =
-      "center";
-
-    statsRow.style.justifyContent =
-      "space-between";
-
-    statsRow.style.gap =
-      "8px";
-
-    const info =
-      document.createElement("span");
-
-    info.textContent =
-      `${matches.length}戦${wins}勝（${winRate}%）`;
-
-    info.style.color =
+    statsRow.style.color =
       "#6b7280";
 
-    info.style.fontSize =
+    statsRow.style.fontSize =
       "13px";
 
-    const titleInfo =
-      document.createElement("span");
+    statsRow.textContent =
+      `${matches.length}戦${wins}勝（${winRate}%）／ タイトル保有数：${titleCount}冠`;
 
-    titleInfo.textContent =
-      `タイトル保有数 ${titleCount}冠`;
-
-    titleInfo.style.color =
-      "#6b7280";
-
-    titleInfo.style.fontSize =
-      "13px";
-
-    titleInfo.style.flexShrink =
-      "0";
-
-    statsRow.appendChild(info);
-
-    statsRow.appendChild(titleInfo);
 
 
     /*

@@ -4999,7 +4999,7 @@ function renderMatchGamePickerList(keyword = "") {
 
     }
 
-    const row =
+        const row =
       document.createElement("div");
 
     row.style.display =
@@ -5025,6 +5025,43 @@ function renderMatchGamePickerList(keyword = "") {
 
     row.style.cursor =
       "pointer";
+
+    /*
+     * getGameChampionNames() は
+     * data.games の要素（playTime/direction等を含む形）を
+     * 想定しているので、対応する形に変換して渡す
+     */
+
+    const matchedGame =
+      data.games.find(
+        g => g.id === game.id
+      );
+
+    const championNames =
+      matchedGame
+        ? getGameChampionNames(matchedGame)
+        : [];
+
+    const holderColors =
+      championNames
+        .map(name => {
+
+          const player =
+            data.players.find(
+              p => p.name === name
+            );
+
+          return player?.color;
+
+        })
+        .filter(Boolean);
+
+    if (holderColors.length > 0) {
+
+      row.style.borderRight =
+        `4px solid ${holderColors[0]}`;
+
+    }
 
     const image =
       document.createElement("img");
@@ -5056,6 +5093,35 @@ function renderMatchGamePickerList(keyword = "") {
 
     row.appendChild(name);
 
+    if (championNames.length > 0) {
+
+      const championText =
+        document.createElement("div");
+
+      championText.style.textAlign =
+        "right";
+
+      championText.style.lineHeight =
+        "1.2";
+
+      championText.style.flexShrink =
+        "0";
+
+      championText.innerHTML = `
+        <div style="font-size:9px;color:#aaa;margin-bottom:2px;">
+          Title Holder
+        </div>
+        <div style="font-size:11px;color:#555;">
+          ${championNames.map(
+            n => escapeHTML(n)
+          ).join(" / ")}
+        </div>
+      `;
+
+      row.appendChild(championText);
+
+    }
+
     row.onclick = () => {
 
       selectMatchGame(game.name);
@@ -5063,6 +5129,7 @@ function renderMatchGamePickerList(keyword = "") {
     };
 
     container.appendChild(row);
+
 
   });
 

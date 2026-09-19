@@ -6720,7 +6720,7 @@ function showTitleGameList(playerName, games) {
 
     }
 
-    const name =
+        const name =
       document.createElement("div");
 
     name.textContent =
@@ -6740,6 +6740,29 @@ function showTitleGameList(playerName, games) {
 
     name.style.wordBreak =
       "break-word";
+
+    name.style.width =
+      "100%";
+
+    name.style.overflow =
+      "hidden";
+
+    name.style.display =
+      "-webkit-box";
+
+    name.style.webkitLineClamp =
+      "2";
+
+    name.style.webkitBoxOrient =
+      "vertical";
+
+    if (game.name.length > 14) {
+
+      name.style.fontSize =
+        "10px";
+
+    }
+
 
     cell.appendChild(image);
 

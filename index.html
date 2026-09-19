@@ -8646,16 +8646,13 @@ deleteButton.className =
   "list-item-action-button danger-text";
 
 deleteButton.textContent =
-  "この対戦を削除";
+  "削除";
 
 deleteButton.type =
   "button";
 
-deleteButton.style.marginTop =
-  "8px";
-
-
 deleteButton.onclick = async () => {
+
 
   if (
     !confirm(
@@ -8750,26 +8747,11 @@ editButton.textContent =
 editButton.type =
   "button";
 
-editButton.style.marginTop =
-  "8px";
-
-editButton.style.marginRight =
-  "8px";
-  
-editButton.style.marginBottom =
-  "8px";
-
-  
 editButton.onclick = () => {
 
   editMatch(match.id);
 
 };
-
-wrapper.appendChild(editButton);
-
-wrapper.appendChild(deleteButton);
-
 
     const date =
       document.createElement("div");
@@ -8777,6 +8759,8 @@ wrapper.appendChild(deleteButton);
     date.className =
       "history-date";
 
+    date.style.flex =
+      "1";
 
     date.textContent =
       new Date(
@@ -8791,7 +8775,46 @@ wrapper.appendChild(deleteButton);
       );
 
 
-    wrapper.appendChild(date);
+    const dateRow =
+      document.createElement("div");
+
+    dateRow.style.display =
+      "flex";
+
+    dateRow.style.alignItems =
+      "center";
+
+    dateRow.style.gap =
+      "6px";
+
+    dateRow.style.marginBottom =
+      "6px";
+
+    const buttonGroup =
+      document.createElement("div");
+
+    buttonGroup.style.display =
+      "flex";
+
+    buttonGroup.style.gap =
+      "6px";
+
+    buttonGroup.style.marginLeft =
+      "auto";
+
+    buttonGroup.style.flex =
+      "0 0 auto";
+
+    buttonGroup.appendChild(editButton);
+
+    buttonGroup.appendChild(deleteButton);
+
+    dateRow.appendChild(date);
+
+    dateRow.appendChild(buttonGroup);
+
+    wrapper.appendChild(dateRow);
+
 
 
     /*

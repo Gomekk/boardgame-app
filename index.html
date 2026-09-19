@@ -721,13 +721,14 @@ button.small {
   position: relative;
   overflow: hidden;
   width: min(420px, 100%);
-  min-height: 480px;
+  min-height: 560px;
   background: var(--surface);
   border-radius: 28px;
   padding: 32px 24px 28px;
   text-align: center;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
 }
+
 
 
 .game-roulette-box::before {
@@ -750,8 +751,9 @@ button.small {
 }
 
 #gameRouletteName {
-  height: 90px;
+  height: 170px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 12px;
@@ -762,7 +764,9 @@ button.small {
   word-break: break-word;
   margin-top: 24px;
   box-shadow: none;
+  overflow: hidden;
 }
+
 
 
 .game-roulette-sub {

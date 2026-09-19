@@ -1875,7 +1875,10 @@ button.small {
       </label>
 
 
-      <label class="radio-option">
+           <label
+        class="radio-option"
+        style="font-size:11px;white-space:nowrap;"
+      >
         <input
           type="radio"
           name="scoreDirection"
@@ -1883,6 +1886,7 @@ button.small {
         >
         勝ちor負け
       </label>
+
 
     </div>
 
@@ -3294,6 +3298,16 @@ form.appendChild(maxPlayersInput);
       }
 
 
+            if (value === "win_lose") {
+
+        label.style.fontSize =
+          "11px";
+
+        label.style.whiteSpace =
+          "nowrap";
+
+      }
+
       label.appendChild(
         radio
       );
@@ -3309,6 +3323,7 @@ form.appendChild(maxPlayersInput);
       radioGroup.appendChild(
         label
       );
+
 
     }
   );

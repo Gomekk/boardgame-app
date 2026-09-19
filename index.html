@@ -2435,8 +2435,17 @@ async function registerGame() {
   const name =
   input.value.trim();
 
+const readingInput =
+  document.getElementById("gameReading");
+
+const reading =
+  readingInput
+    ? readingInput.value.trim()
+    : "";
+
 const playTimeInput =
   document.getElementById("gamePlayTime");
+
 
 const playTime =
   playTimeInput
@@ -2535,13 +2544,14 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
 
     if (existingGame) {
 
-            const {
+                        const {
         error: updateError
       } =
         await supabaseClient
           .from("games")
           .update({
             active: true,
+            reading: reading,
             direction: direction,
             min_players: minPlayers,
             max_players: maxPlayers,
@@ -2554,6 +2564,7 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
           );
 
 
+
       if (updateError) {
         throw updateError;
       }
@@ -2563,10 +2574,11 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
       const {
         error: insertError
       } =
-                await supabaseClient
+       await supabaseClient
           .from("games")
           .insert({
   name: name,
+  reading: reading,
   play_time: playTime,
   direction: direction,
   min_players: minPlayers,
@@ -2576,16 +2588,21 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
 });
 
 
+
       if (insertError) {
         throw insertError;
       }
 
     }
 
-        input.value = "";
+      input.value = "";
+    if (readingInput) {
+  readingInput.value = "";
+}
     if (playTimeInput) {
   playTimeInput.value = "";
 }
+
     if (minPlayersInput) { minPlayersInput.value = ""; }
     if (maxPlayersInput) { maxPlayersInput.value = ""; }
 

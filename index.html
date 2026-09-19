@@ -6229,13 +6229,13 @@ function renderBestScoreCountRanking() {
         document.createElement("span");
 
       listLink.textContent =
-        "一覧";
+        "一覧表示";
 
-      listLink.style.position =
+            listLink.style.position =
         "absolute";
 
       listLink.style.top =
-        "-14px";
+        "-24px";
 
       listLink.style.right =
         "0";
@@ -6246,8 +6246,12 @@ function renderBestScoreCountRanking() {
       listLink.style.color =
         "#9ca3af";
 
+      listLink.style.textDecoration =
+        "underline";
+
       listLink.style.cursor =
         "pointer";
+
 
       listLink.onclick = () => {
 

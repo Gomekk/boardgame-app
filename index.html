@@ -5437,7 +5437,7 @@ function renderPlayerList() {
     };
 
 
-        const buttonGroup =
+            const buttonGroup =
       document.createElement("div");
 
     buttonGroup.style.display =
@@ -5449,12 +5449,13 @@ function renderPlayerList() {
     buttonGroup.style.marginLeft =
       "auto";
 
-    buttonGroup.style.flexShrink =
-      "0";
+    buttonGroup.style.flex =
+      "0 0 auto";
 
     buttonGroup.appendChild(editButton);
 
     buttonGroup.appendChild(button);
+
 
     row.appendChild(nameArea);
 

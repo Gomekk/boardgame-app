@@ -11279,6 +11279,7 @@ function renderGameRankingGameList() {
         .filter(Boolean);
 
                     if (
+          if (
       holderColors.length > 0
     ) {
 
@@ -11293,53 +11294,6 @@ function renderGameRankingGameList() {
 
       button.style.overflow =
         "hidden";
-
-      const colorStripe =
-        document.createElement("div");
-
-      colorStripe.style.position =
-        "absolute";
-
-      colorStripe.style.top =
-        "0";
-
-      colorStripe.style.right =
-        "0";
-
-      colorStripe.style.bottom =
-        "0";
-
-      colorStripe.style.width =
-        "12px";
-
-      colorStripe.style.borderRadius =
-        "0 10px 10px 0";
-
-      colorStripe.style.overflow =
-        "hidden";
-
-      colorStripe.style.display =
-        "flex";
-
-      colorStripe.style.flexDirection =
-        "column";
-
-      holderColors.forEach(color => {
-
-        const segment =
-          document.createElement("div");
-
-        segment.style.flex =
-          "1";
-
-        segment.style.background =
-          color;
-
-        colorStripe.appendChild(segment);
-
-      });
-
-      button.appendChild(colorStripe);
 
     }
 

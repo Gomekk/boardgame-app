@@ -230,6 +230,32 @@ button::before {
   box-shadow: none;
 }
 
+/*
+ * ゲーム一覧の編集・削除ボタン（薄いグレー・シンプル）
+ */
+.list-item-action-button {
+  width: auto;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: rgba(107,114,128,0.10);
+  color: #6b7280;
+  box-shadow: none;
+}
+
+.list-item-action-button::before {
+  content: none;
+}
+
+.list-item-action-button:active {
+  box-shadow: none;
+}
+
+.list-item-action-button.danger-text {
+  color: #9B2C2C;
+  background: rgba(155,44,44,0.08);
+}
 
 button:active {
   transform: translateY(1px) scale(0.99);
@@ -4919,7 +4945,7 @@ function renderGameList() {
   container.innerHTML = "";
 
 
-  activeGames.forEach(game => {
+    activeGames.forEach(game => {
 
     const matchCount =
       data.matches.filter(
@@ -4935,148 +4961,14 @@ function renderGameList() {
           : "順位のみ";
 
     const weightLabel =
-  getGameWeightLabel(
-    game.playTime
-  );
+      getGameWeightLabel(
+        game.playTime
+      );
 
-    const item =
-  document.createElement("div");
-
-item.className =
-  "game-item";
-
-item.dataset.gameId =
-  game.id;
-
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "row";
-
-
-    const thumbArea =
-  document.createElement("div");
-
-thumbArea.style.display =
-  "flex";
-
-thumbArea.style.flexDirection =
-  "column";
-
-thumbArea.style.alignItems =
-  "center";
-
-thumbArea.style.flexShrink =
-  "0";
-
-
-const thumb =
-  document.createElement("img");
-
-thumb.className =
-  "game-thumb";
-
-if (game.image) {
-
-  thumb.src =
-    game.image;
-
-} else {
-
-  thumb.classList.add(
-    "hidden"
-  );
-
-}
-
-
-thumbArea.appendChild(
-  thumb
-);
-
-
-/*
- * 重さバッジ
- */
-
-const weight =
-  getGameWeightClass(
-    game.playTime
-  );
-
-const weightBadge =
-  document.createElement("div");
-
-weightBadge.textContent =
-  weightLabel;
-
-weightBadge.style.fontSize =
-  "11px";
-
-weightBadge.style.fontWeight =
-  "600";
-
-weightBadge.style.padding =
-  "3px 8px";
-
-weightBadge.style.borderRadius =
-  "999px";
-
-weightBadge.style.marginTop =
-  "5px";
-
-weightBadge.style.whiteSpace =
-  "nowrap";
-
-
-if (weight === "light") {
-
-  weightBadge.style.background =
-    "#E8F5E9";
-
-  weightBadge.style.color =
-    "#2E7D32";
-
-} else if (weight === "medium") {
-
-  weightBadge.style.background =
-    "#FFF3E0";
-
-  weightBadge.style.color =
-    "#E65100";
-
-} else if (weight === "heavy") {
-
-  weightBadge.style.background =
-    "#FDECEC";
-
-  weightBadge.style.color =
-    "#C62828";
-
-} else {
-
-  weightBadge.style.background =
-    "#F1F1F1";
-
-  weightBadge.style.color =
-    "#777";
-
-}
-
-
-thumbArea.appendChild(
-  weightBadge
-);
-
-row.appendChild(
-  thumbArea
-);
-
-
-        const info =
-      document.createElement("div");
+    const weight =
+      getGameWeightClass(
+        game.playTime
+      );
 
     const playerCountText =
       game.minPlayers && game.maxPlayers
@@ -5087,29 +4979,48 @@ row.appendChild(
           )
         : null;
 
-    info.innerHTML = `
-      <div class="game-title">
-        ${escapeHTML(game.name)}
-      </div>
+    const playTimeText =
+      game.playTime
+        ? `${game.playTime}分程度`
+        : null;
 
-      <div class="game-meta">
-  ${direction}
-  ${playerCountText ? `／ ${playerCountText}` : ""}
-  ／
-  ${matchCount}回対戦
-</div>
-    `;
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "game-item";
+
+    item.dataset.gameId =
+      game.id;
 
 
+    /*
+     * 1段目：編集・削除ボタン（右上）
+     */
+
+    const topRow =
+      document.createElement("div");
+
+    topRow.style.display =
+      "flex";
+
+    topRow.style.justifyContent =
+      "flex-end";
+
+    topRow.style.gap =
+      "6px";
+
+    topRow.style.marginBottom =
+      "8px";
 
     const editButton =
       document.createElement("button");
 
     editButton.className =
-      "small";
+      "list-item-action-button";
 
     editButton.textContent =
-      "✏️ 編集";
+      "編集";
 
     editButton.type =
       "button";
@@ -5122,20 +5033,19 @@ row.appendChild(
 
     };
 
-
-    const button =
+    const removeButton =
       document.createElement("button");
 
-    button.className =
-      "small danger";
+    removeButton.className =
+      "list-item-action-button danger-text";
 
-    button.textContent =
-      "登録から外す";
+    removeButton.textContent =
+      "削除";
 
-    button.type =
+    removeButton.type =
       "button";
 
-    button.onclick = event => {
+    removeButton.onclick = event => {
 
       event.stopPropagation();
 
@@ -5143,19 +5053,170 @@ row.appendChild(
 
     };
 
+    topRow.appendChild(editButton);
 
-    row.appendChild(info);
-
-    row.appendChild(editButton);
-
-    row.appendChild(button);
+    topRow.appendChild(removeButton);
 
 
-    item.appendChild(row);
+    /*
+     * 2段目：画像＋ゲーム名
+     */
+
+    const nameRow =
+      document.createElement("div");
+
+    nameRow.style.display =
+      "flex";
+
+    nameRow.style.alignItems =
+      "center";
+
+    nameRow.style.gap =
+      "10px";
+
+    const thumb =
+      document.createElement("img");
+
+    thumb.className =
+      "game-thumb";
+
+    if (game.image) {
+
+      thumb.src =
+        game.image;
+
+    } else {
+
+      thumb.classList.add("hidden");
+
+    }
+
+    const nameEl =
+      document.createElement("div");
+
+    nameEl.className =
+      "game-title";
+
+    nameEl.textContent =
+      game.name;
+
+    nameRow.appendChild(thumb);
+
+    nameRow.appendChild(nameEl);
+
+
+    /*
+     * 3段目：重さバッジ＋人数／時間／上位設定
+     */
+
+    const metaRow =
+      document.createElement("div");
+
+    metaRow.style.display =
+      "flex";
+
+    metaRow.style.alignItems =
+      "center";
+
+    metaRow.style.gap =
+      "8px";
+
+    metaRow.style.marginTop =
+      "6px";
+
+    const weightBadge =
+      document.createElement("span");
+
+    weightBadge.textContent =
+      weightLabel;
+
+    weightBadge.style.fontSize =
+      "11px";
+
+    weightBadge.style.fontWeight =
+      "600";
+
+    weightBadge.style.padding =
+      "3px 8px";
+
+    weightBadge.style.borderRadius =
+      "999px";
+
+    weightBadge.style.whiteSpace =
+      "nowrap";
+
+    weightBadge.style.flexShrink =
+      "0";
+
+    if (weight === "light") {
+
+      weightBadge.style.background = "#E8F5E9";
+      weightBadge.style.color = "#2E7D32";
+
+    } else if (weight === "medium") {
+
+      weightBadge.style.background = "#FFF3E0";
+      weightBadge.style.color = "#E65100";
+
+    } else if (weight === "heavy") {
+
+      weightBadge.style.background = "#FDECEC";
+      weightBadge.style.color = "#C62828";
+
+    } else {
+
+      weightBadge.style.background = "#F1F1F1";
+      weightBadge.style.color = "#777";
+
+    }
+
+    const metaText =
+      document.createElement("div");
+
+    metaText.className =
+      "game-meta";
+
+    metaText.style.margin =
+      "0";
+
+    const metaParts =
+      [playerCountText, playTimeText, direction]
+        .filter(Boolean);
+
+    metaText.textContent =
+      metaParts.join(" ／ ");
+
+    metaRow.appendChild(weightBadge);
+
+    metaRow.appendChild(metaText);
+
+
+    /*
+     * 4段目：プレイ回数
+     */
+
+    const playCountText =
+      document.createElement("div");
+
+    playCountText.className =
+      "game-meta";
+
+    playCountText.style.marginTop =
+      "4px";
+
+    playCountText.textContent =
+      `${matchCount}回プレイ済`;
+
+
+    item.appendChild(topRow);
+    item.appendChild(nameRow);
+    item.appendChild(metaRow);
+    item.appendChild(playCountText);
 
     container.appendChild(item);
 
   });
+
 
 }
 
@@ -8622,6 +8683,9 @@ editButton.style.marginTop =
 editButton.style.marginRight =
   "8px";
 
+editButton.style.marginBottom =
+  "8px";
+  
 editButton.onclick = () => {
 
   editMatch(match.id);

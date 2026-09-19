@@ -5172,6 +5172,9 @@ function renderMatchGamePickerList(keyword = "") {
       championText.style.flexShrink =
         "0";
 
+            championText.style.paddingRight =
+        "10px";
+
       championText.innerHTML = `
         <div style="font-size:9px;color:#aaa;margin-bottom:2px;">
           Title Holder
@@ -5182,6 +5185,7 @@ function renderMatchGamePickerList(keyword = "") {
           ).join(" / ")}
         </div>
       `;
+
 
       row.appendChild(championText);
 

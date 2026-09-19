@@ -7887,12 +7887,13 @@ function fitRouletteText() {
 
 
 
-function randomSelectGame() {
+function randomSelectGame(autoStart = false) {
 
   const allGames =
   data.games.filter(
     game => game.active
   );
+
 
 if (allGames.length === 0) {
     alert("登録されているゲームがありません。");
@@ -8402,6 +8403,13 @@ resetAllModeStyles(); // 開いた瞬間に「全てのゲーム」を選択状�
 
 updateEligibleCountDisplay();
 
+if (autoStart) {
+
+  startRoulette();
+
+}
+
+
 function updateRoulettePlayerCountButtonStyle(button) {
 
   const count = Number(button.dataset.count);
@@ -8750,7 +8758,7 @@ function openSpecificGameSelector() {
 
 }
 
-    againButton.onclick = () => {
+      againButton.onclick = () => {
 
     lastRouletteSelectedWeight =
       selectedWeight;
@@ -8763,13 +8771,7 @@ function openSpecificGameSelector() {
 
     overlay.remove();
 
-    randomSelectGame();
-
-    setTimeout(() => {
-
-      startRoulette();
-
-    }, 0);
+    randomSelectGame(true);
 
   };
 

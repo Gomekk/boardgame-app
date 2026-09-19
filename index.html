@@ -9647,6 +9647,27 @@ if (isWinner(match, player.name)) {
     nameArea.appendChild(name);
 
 
+        const titleBadge =
+      document.createElement("span");
+
+    titleBadge.textContent =
+      `🏅 × ${titleCount}`;
+
+    titleBadge.style.fontSize =
+      "12px";
+
+    titleBadge.style.color =
+      "#6b7280";
+
+    titleBadge.style.flexShrink =
+      "0";
+
+    titleBadge.style.marginLeft =
+      "auto";
+
+    titleBadge.style.marginRight =
+      "8px";
+
     const detailButton =
       document.createElement("button");
 
@@ -9667,7 +9688,10 @@ if (isWinner(match, player.name)) {
 
     topRow.appendChild(nameArea);
 
+    topRow.appendChild(titleBadge);
+
     topRow.appendChild(detailButton);
+
 
 
         /*
@@ -9732,8 +9756,8 @@ if (isWinner(match, player.name)) {
       });
 
 
-        /*
-     * 2段目：〇戦〇勝（〇%）／タイトル保有数：〇冠
+    /*
+     * 2段目：〇戦〇勝（〇%）
      */
 
     const statsRow =
@@ -9746,8 +9770,7 @@ if (isWinner(match, player.name)) {
       "13px";
 
     statsRow.textContent =
-      `${matches.length}戦${wins}勝（${winRate}%）／ タイトル保有数：${titleCount}冠`;
-
+      `${matches.length}戦${wins}勝（${winRate}%）`;
 
 
     /*

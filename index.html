@@ -721,12 +721,14 @@ button.small {
   position: relative;
   overflow: hidden;
   width: min(420px, 100%);
+  min-height: 480px;
   background: var(--surface);
   border-radius: 28px;
   padding: 32px 24px 28px;
   text-align: center;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
 }
+
 
 .game-roulette-box::before {
   content: "";
@@ -748,7 +750,7 @@ button.small {
 }
 
 #gameRouletteName {
-  min-height: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -761,6 +763,7 @@ button.small {
   margin-top: 24px;
   box-shadow: none;
 }
+
 
 .game-roulette-sub {
   margin-top: 18px;

@@ -12457,6 +12457,18 @@ function renderGameSpecificRanking(gameName) {
 
 }
 
+    const averageRankSection =
+    averageRankRanking?.closest("div");
+
+  if (averageRankSection) {
+
+    averageRankSection.style.display =
+      game.direction === "win_lose"
+        ? "none"
+        : "";
+
+  }
+
   
   const scoreRankingTitle =
   scoreRanking

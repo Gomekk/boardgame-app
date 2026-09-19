@@ -429,12 +429,36 @@ button.small {
 }
 
 
-.radio-option input {
-  width: 4px   !important;  
-  height: 4px   !important;
+.radio-option input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
   margin-right: 5px;
   flex-shrink: 0;
+  border: 2px solid rgba(19,27,46,0.3);
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+  cursor: pointer;
 }
+
+.radio-option input[type="radio"]:checked {
+  border-color: var(--navy);
+}
+
+.radio-option input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--navy);
+}
+
 
 
 .section-note {

@@ -5056,12 +5056,39 @@ function renderMatchGamePickerList(keyword = "") {
         })
         .filter(Boolean);
 
-    if (holderColors.length > 0) {
+        if (holderColors.length === 1) {
 
       row.style.borderRight =
         `4px solid ${holderColors[0]}`;
 
+    } else if (holderColors.length > 1) {
+
+      const segmentSize =
+        100 / holderColors.length;
+
+      const gradientStops =
+        holderColors
+          .map((color, index) => {
+
+            const start =
+              (segmentSize * index).toFixed(2);
+
+            const end =
+              (segmentSize * (index + 1)).toFixed(2);
+
+            return `${color} ${start}%, ${color} ${end}%`;
+
+          })
+          .join(", ");
+
+      row.style.borderRight =
+        "4px solid transparent";
+
+      row.style.borderImage =
+        `linear-gradient(to bottom, ${gradientStops}) 1`;
+
     }
+
 
     const image =
       document.createElement("img");
@@ -11270,29 +11297,57 @@ function renderGameRankingGameList() {
         })
         .filter(Boolean);
 
-        if (
-      holderColors.length > 0
-    ) {
-
-      const color1 =
-        holderColors[0];
+        if (holderColors.length === 1) {
 
       button.style.backgroundImage =
         "none";
-      
+
       button.style.backgroundColor =
         "#e5e7eb";
 
-      button.style.border =
-        `1.0px solid ${color1}`;
+      button.style.borderRight =
+        `12px solid ${holderColors[0]}`;
+
+      button.style.overflow =
+        "hidden";
+
+    } else if (holderColors.length > 1) {
+
+      const segmentSize =
+        100 / holderColors.length;
+
+      const gradientStops =
+        holderColors
+          .map((color, index) => {
+
+            const start =
+              (segmentSize * index).toFixed(2);
+
+            const end =
+              (segmentSize * (index + 1)).toFixed(2);
+
+            return `${color} ${start}%, ${color} ${end}%`;
+
+          })
+          .join(", ");
+
+      button.style.backgroundImage =
+        "none";
+
+      button.style.backgroundColor =
+        "#e5e7eb";
 
       button.style.borderRight =
-        `12px solid ${color1}`;
+        "12px solid transparent";
+
+      button.style.borderImage =
+        `linear-gradient(to bottom, ${gradientStops}) 1`;
 
       button.style.overflow =
         "hidden";
 
     }
+
 
 
         const championText =

@@ -4904,6 +4904,9 @@ let weightSettings = {
   mediumMax: 60
 };
 let specificRouletteSelectedGames = new Set();
+let lastRouletteSelectedWeight = "";
+let lastRouletteSelectedWeights = new Set();
+let lastRouletteSelectedPlayerCounts = new Set();
 
 
 function getGameWeightClass(playTime) {
@@ -8100,10 +8103,11 @@ if (allGames.length === 0) {
   const modeElement =
   document.getElementById("gameRouletteMode");
 
-let selectedWeight = "";
+let selectedWeight = lastRouletteSelectedWeight;
 let games = [];
-let selectedWeights = new Set();
-let selectedPlayerCounts = new Set();
+let selectedWeights = new Set(lastRouletteSelectedWeights);
+let selectedPlayerCounts = new Set(lastRouletteSelectedPlayerCounts);
+
 
 function startRoulette() {
 
@@ -8746,13 +8750,29 @@ function openSpecificGameSelector() {
 
 }
 
-  againButton.onclick = () => {
+    againButton.onclick = () => {
+
+    lastRouletteSelectedWeight =
+      selectedWeight;
+
+    lastRouletteSelectedWeights =
+      new Set(selectedWeights);
+
+    lastRouletteSelectedPlayerCounts =
+      new Set(selectedPlayerCounts);
 
     overlay.remove();
 
     randomSelectGame();
 
+    setTimeout(() => {
+
+      startRoulette();
+
+    }, 0);
+
   };
+
 
 }
 

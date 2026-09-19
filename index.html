@@ -11278,7 +11278,9 @@ function renderGameRankingGameList() {
         })
         .filter(Boolean);
 
-        if (holderColors.length === 1) {
+            if (
+      holderColors.length > 0
+    ) {
 
       button.style.backgroundImage =
         "none";
@@ -11292,42 +11294,8 @@ function renderGameRankingGameList() {
       button.style.overflow =
         "hidden";
 
-    } else if (holderColors.length > 1) {
-
-      const segmentSize =
-        100 / holderColors.length;
-
-      const gradientStops =
-        holderColors
-          .map((color, index) => {
-
-            const start =
-              (segmentSize * index).toFixed(2);
-
-            const end =
-              (segmentSize * (index + 1)).toFixed(2);
-
-            return `${color} ${start}%, ${color} ${end}%`;
-
-          })
-          .join(", ");
-
-      button.style.backgroundImage =
-        "none";
-
-      button.style.backgroundColor =
-        "#e5e7eb";
-
-      button.style.borderRight =
-        "12px solid transparent";
-
-      button.style.borderImage =
-        `linear-gradient(to bottom, ${gradientStops}) 1`;
-
-      button.style.overflow =
-        "hidden";
-
     }
+
 
 
 

@@ -1250,9 +1250,24 @@ button.small {
   <div class="card">
     <h2>🎮 対戦を記録</h2>
 
-    <select id="matchGame">
+        <select id="matchGame" style="display:none;">
       <option value="">ゲームを選択</option>
     </select>
+
+    <button
+      type="button"
+      id="matchGameTrigger"
+      class="secondary"
+      onclick="openMatchGamePicker()"
+      style="display:flex;align-items:center;gap:10px;text-align:left;"
+    >
+      <img id="matchGameTriggerImage" class="game-thumb hidden">
+      <span id="matchGameTriggerLabel" style="flex:1;">ゲームを選択</span>
+      <span style="color:#9ca3af;">▼</span>
+    </button>
+
+    <img id="matchGamePreview" class="game-thumb-large hidden" style="margin-top:8px;">
+
     
     <img id="matchGamePreview" class="game-thumb-large hidden" style="margin-top:8px;">
     
@@ -1995,6 +2010,83 @@ button.small {
 
 </div>
 </div>
+
+    <!-- 対戦記録：ゲーム選択ポップアップ -->
+  <div
+    id="matchGamePickerOverlay"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:10002;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    "
+    onclick="if(event.target===this) this.style.display='none'"
+  >
+
+    <div
+      style="
+        width:100%;
+        max-width:480px;
+        height:80vh;
+        max-height:80vh;
+        background:#ffffff;
+        border-radius:16px;
+        box-shadow:0 10px 40px rgba(0,0,0,.25);
+        overflow:hidden;
+        display:flex;
+        flex-direction:column;
+      "
+    >
+
+      <div
+        style="
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          padding:16px 18px;
+          border-bottom:1px solid #eee;
+        "
+      >
+        <div style="font-size:17px;font-weight:700;color:#333;">
+          ゲームを選択
+        </div>
+
+        <button
+          type="button"
+          onclick="document.getElementById('matchGamePickerOverlay').style.display='none'"
+          style="
+            width:32px;height:32px;min-width:32px;padding:0;
+            border:none;background:#f3f4f6;color:#555;
+            border-radius:50%;font-size:20px;line-height:1;
+          "
+        >×</button>
+      </div>
+
+      <div style="padding:14px 16px 8px;overflow:auto;flex:1;min-height:0;">
+
+        <input
+          id="matchGamePickerSearch"
+          type="text"
+          placeholder="ゲーム検索"
+          style="width:100%;box-sizing:border-box;margin-bottom:10px;font-size:16px;"
+        >
+
+        <div id="matchGamePickerList"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+    <!-- タイトル保有ゲーム一覧（ポップアップ） -->
+  <div
+    id="titleGameListOverlay"
+
 
     <!-- タイトル保有ゲーム一覧（ポップアップ） -->
   <div
@@ -4642,6 +4734,8 @@ function getGameWeightLabel(playTime) {
 
 }
 
+let matchGamePickerGames = [];
+
 async function renderGameSelect() {
 
   const select =
@@ -4661,6 +4755,9 @@ async function renderGameSelect() {
     return;
 
   }
+
+  matchGamePickerGames =
+    games.filter(game => game.active);
 
   select.innerHTML =
     '<option value="">ゲームを選択</option>';
@@ -4690,8 +4787,6 @@ async function renderGameSelect() {
     const preview =
       document.getElementById("matchGamePreview");
 
-    if (!preview) return;
-
     const selectedOption =
       select.options[select.selectedIndex];
 
@@ -4700,13 +4795,19 @@ async function renderGameSelect() {
         ? selectedOption.dataset.image
         : "";
 
-    if (imageUrl) {
-      preview.src = imageUrl;
-      preview.classList.remove("hidden");
-    } else {
-      preview.src = "";
-      preview.classList.add("hidden");
+    if (preview) {
+
+      if (imageUrl) {
+        preview.src = imageUrl;
+        preview.classList.remove("hidden");
+      } else {
+        preview.src = "";
+        preview.classList.add("hidden");
+      }
+
     }
+
+    updateMatchGameTrigger();
 
   };
 
@@ -4727,7 +4828,263 @@ async function renderGameSelect() {
 
   }
 
+  updateMatchGameTrigger();
+
 }
+
+function updateMatchGameTrigger() {
+
+  const select =
+    document.getElementById("matchGame");
+
+  const triggerImage =
+    document.getElementById("matchGameTriggerImage");
+
+  const triggerLabel =
+    document.getElementById("matchGameTriggerLabel");
+
+  if (!select || !triggerImage || !triggerLabel) return;
+
+  const selectedOption =
+    select.options[select.selectedIndex];
+
+  const imageUrl =
+    selectedOption
+      ? selectedOption.dataset.image
+      : "";
+
+  if (select.value && imageUrl) {
+
+    triggerImage.src =
+      imageUrl;
+
+    triggerImage.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    triggerImage.src =
+      "";
+
+    triggerImage.classList.add(
+      "hidden"
+    );
+
+  }
+
+  triggerLabel.textContent =
+    select.value || "ゲームを選択";
+
+}
+
+function openMatchGamePicker() {
+
+  renderMatchGamePickerList();
+
+  const searchInput =
+    document.getElementById(
+      "matchGamePickerSearch"
+    );
+
+  if (searchInput) {
+
+    searchInput.value = "";
+
+    searchInput.oninput = () => {
+
+      renderMatchGamePickerList(
+        searchInput.value
+      );
+
+    };
+
+  }
+
+  document.getElementById(
+    "matchGamePickerOverlay"
+  ).style.display = "flex";
+
+}
+
+function renderMatchGamePickerList(keyword = "") {
+
+  const container =
+    document.getElementById(
+      "matchGamePickerList"
+    );
+
+  if (!container) return;
+
+  const normalizedKeyword =
+    normalizeGameSearch(keyword);
+
+  const games =
+    matchGamePickerGames
+      .filter(game => {
+
+        const name =
+          normalizeGameSearch(game.name);
+
+        const reading =
+          normalizeGameSearch(game.reading || "");
+
+        return (
+          name.includes(normalizedKeyword) ||
+          reading.includes(normalizedKeyword)
+        );
+
+      })
+      .sort((a, b) =>
+        (a.reading || a.name || "").localeCompare(
+          b.reading || b.name || "",
+          "ja"
+        )
+      );
+
+  container.innerHTML = "";
+
+  if (games.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "該当するゲームがありません。";
+
+    container.appendChild(empty);
+
+    return;
+
+  }
+
+  let previousIndex = "";
+
+  games.forEach(game => {
+
+    const currentIndex =
+      getJapaneseIndex(
+        game.reading || game.name
+      );
+
+    if (currentIndex !== previousIndex) {
+
+      const indexLabel =
+        document.createElement("div");
+
+      indexLabel.textContent =
+        currentIndex;
+
+      indexLabel.style.fontSize =
+        "11px";
+
+      indexLabel.style.color =
+        "#999";
+
+      indexLabel.style.fontWeight =
+        "600";
+
+      indexLabel.style.marginTop =
+        previousIndex ? "12px" : "0";
+
+      indexLabel.style.marginBottom =
+        "4px";
+
+      container.appendChild(indexLabel);
+
+      previousIndex = currentIndex;
+
+    }
+
+    const row =
+      document.createElement("div");
+
+    row.style.display =
+      "flex";
+
+    row.style.alignItems =
+      "center";
+
+    row.style.gap =
+      "10px";
+
+    row.style.padding =
+      "8px";
+
+    row.style.border =
+      "1px solid #e5e7eb";
+
+    row.style.borderRadius =
+      "10px";
+
+    row.style.marginBottom =
+      "6px";
+
+    row.style.cursor =
+      "pointer";
+
+    const image =
+      document.createElement("img");
+
+    image.className =
+      "game-thumb";
+
+    if (game.image_url) {
+
+      image.src =
+        game.image_url;
+
+    } else {
+
+      image.classList.add("hidden");
+
+    }
+
+    const name =
+      document.createElement("span");
+
+    name.textContent =
+      game.name;
+
+    name.style.flex =
+      "1";
+
+    row.appendChild(image);
+
+    row.appendChild(name);
+
+    row.onclick = () => {
+
+      selectMatchGame(game.name);
+
+    };
+
+    container.appendChild(row);
+
+  });
+
+}
+
+function selectMatchGame(gameName) {
+
+  const select =
+    document.getElementById("matchGame");
+
+  if (!select) return;
+
+  select.value = gameName;
+
+  select.dispatchEvent(new Event("change"));
+
+  document.getElementById(
+    "matchGamePickerOverlay"
+  ).style.display = "none";
+
+}
+
 
 
 /* =========================

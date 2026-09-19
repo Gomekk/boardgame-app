@@ -13333,11 +13333,11 @@ async function shareAppLink() {
 
     try {
 
-      await navigator.share({
+            await navigator.share({
         title: "ボドゲスコア",
-        text: "ボドゲスコアでスコアを記録しよう！",
         url: shareUrl
       });
+
 
     } catch (error) {
 

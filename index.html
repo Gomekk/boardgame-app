@@ -7807,10 +7807,16 @@ if (allGames.length === 0) {
 
 </div>
 
+<div
+  id="gameRouletteEligibleCount"
+  style="text-align:center;font-size:13px;color:#6b7280;margin:6px 0 2px;"
+>
+</div>
 
 <button
   type="button"
   id="gameRouletteName"
+
 
   style="
     background:#ffffff;
@@ -8013,6 +8019,56 @@ function updateWeightButtonState(button) {
 
 }
 
+function updateEligibleCountDisplay() {
+
+  const label =
+    document.getElementById(
+      "gameRouletteEligibleCount"
+    );
+
+  if (!label) return;
+
+  if (selectedWeight === "specific") {
+
+    label.textContent = "";
+
+    return;
+
+  }
+
+  const eligibleGames =
+    selectedWeights.size > 0
+      ? allGames.filter(game =>
+          selectedWeights.has(
+            getGameWeightClass(game.playTime)
+          )
+        )
+      : allGames;
+
+  const filteredByCount =
+    selectedPlayerCounts.size > 0
+      ? eligibleGames.filter(game => {
+
+          if (!game.minPlayers && !game.maxPlayers) return true;
+
+          const min = game.minPlayers || 1;
+          const max = game.maxPlayers || 99;
+
+          for (const count of selectedPlayerCounts) {
+            if (count >= min && count <= max) return true;
+          }
+
+          return false;
+
+        })
+      : eligibleGames;
+
+  label.textContent =
+    `▼ ${filteredByCount.length}件の中からpick up`;
+
+}
+
+
 function resetAllModeStyles() {
 
   modeButtons.forEach(b => {
@@ -8066,7 +8122,7 @@ modeButtons.forEach(button => {
     weight === "heavy"
   ) {
 
-    button.onclick = () => {
+        button.onclick = () => {
 
       if (selectedWeights.has(weight)) {
         selectedWeights.delete(weight);
@@ -8077,6 +8133,8 @@ modeButtons.forEach(button => {
       selectedWeight = "";
 
       resetAllModeStyles();
+
+      updateEligibleCountDisplay();
 
     };
 
@@ -8104,11 +8162,15 @@ modeButtons.forEach(button => {
 
     resetAllModeStyles();
 
+    updateEligibleCountDisplay();
+
   };
 
 });
 
 resetAllModeStyles(); // 開いた瞬間に「全てのゲーム」を選択状態にする
+
+updateEligibleCountDisplay();
 
 function updateRoulettePlayerCountButtonStyle(button) {
 
@@ -8132,7 +8194,7 @@ playerCountButtons.forEach(button => {
 
   updateRoulettePlayerCountButtonStyle(button);
 
-  button.onclick = () => {
+    button.onclick = () => {
 
     const count = Number(button.dataset.count);
 
@@ -8144,11 +8206,14 @@ playerCountButtons.forEach(button => {
 
     updateRoulettePlayerCountButtonStyle(button);
 
+    updateEligibleCountDisplay();
+
   };
 
 });
 
 nameElement.onclick = () => {
+
 
   startRoulette();
 
@@ -8426,15 +8491,18 @@ function openSpecificGameSelector() {
       return;
     }
 
-    selectedWeight = "specific";
+        selectedWeight = "specific";
 
     selectedWeights.clear();
 
     resetAllModeStyles();
 
+    updateEligibleCountDisplay();
+
     selectorOverlay.remove();
     // ここでは spinRoulette() を呼ばない → STARTボタンを押すまで待つ
   };
+
 
 
 }

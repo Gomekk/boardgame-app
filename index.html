@@ -7726,7 +7726,20 @@ function fitRouletteText() {
       "#gameRouletteName .roulette-fit-text"
     );
 
-  if (!el) return;
+  const box =
+    document.getElementById(
+      "gameRouletteName"
+    );
+
+  if (!el || !box) return;
+
+  const boxStyle =
+    getComputedStyle(box);
+
+  const availableWidth =
+    box.clientWidth -
+    parseFloat(boxStyle.paddingLeft || 0) -
+    parseFloat(boxStyle.paddingRight || 0);
 
   let size = 28;
 
@@ -7735,7 +7748,7 @@ function fitRouletteText() {
 
   while (
     size > 10 &&
-    el.scrollWidth > el.clientWidth + 2
+    el.scrollWidth > availableWidth
   ) {
 
     size -= 1;
@@ -7746,8 +7759,6 @@ function fitRouletteText() {
   }
 
 }
-
-
 
 
 function randomSelectGame() {

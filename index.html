@@ -11278,24 +11278,50 @@ function renderGameRankingGameList() {
         })
         .filter(Boolean);
 
-            if (
+                if (
       holderColors.length > 0
     ) {
 
-      button.style.backgroundImage =
-        "none";
+      const stripeWidth =
+        12;
+
+      const segmentHeight =
+        100 / holderColors.length;
+
+      const gradientStops =
+        holderColors
+          .map((color, index) => {
+
+            const start =
+              (segmentHeight * index).toFixed(2);
+
+            const end =
+              (segmentHeight * (index + 1)).toFixed(2);
+
+            return `${color} ${start}%, ${color} ${end}%`;
+
+          })
+          .join(", ");
 
       button.style.backgroundColor =
         "#e5e7eb";
 
-      button.style.borderRight =
-        `12px solid ${holderColors[0]}`;
+      button.style.backgroundImage =
+        `linear-gradient(to bottom, ${gradientStops})`;
+
+      button.style.backgroundRepeat =
+        "no-repeat";
+
+      button.style.backgroundPosition =
+        "right center";
+
+      button.style.backgroundSize =
+        `${stripeWidth}px 100%`;
 
       button.style.overflow =
         "hidden";
 
     }
-
 
 
 

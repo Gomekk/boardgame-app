@@ -5809,13 +5809,19 @@ function renderGameList() {
   }
 
 
-  container.innerHTML = "";
+    container.innerHTML = "";
 
-
+  let previousIndex = "";
 
       activeGames.forEach(game => {
 
+    const currentIndex =
+      getJapaneseIndex(
+        game.reading || game.name
+      );
+
     const matchCount =
+
       data.matches.filter(
         m => m.game === game.name
       ).length;
@@ -5852,14 +5858,72 @@ function renderGameList() {
         ? `${game.playTime}分程度`
         : null;
 
+        const indexLabel =
+      document.createElement("div");
+
+    indexLabel.style.width =
+      "20px";
+
+    indexLabel.style.flexShrink =
+      "0";
+
+    indexLabel.style.fontSize =
+      "11px";
+
+    indexLabel.style.color =
+      "#999";
+
+    indexLabel.style.fontWeight =
+      "600";
+
+    indexLabel.style.textAlign =
+      "center";
+
+    indexLabel.style.paddingTop =
+      "16px";
+
+    if (currentIndex !== previousIndex) {
+
+      indexLabel.textContent =
+        currentIndex;
+
+      indexLabel.style.marginTop =
+        previousIndex ? "14px" : "0";
+
+    } else {
+
+      indexLabel.textContent =
+        "";
+
+    }
+
+    const itemRow =
+      document.createElement("div");
+
+    itemRow.style.display =
+      "flex";
+
+    itemRow.style.alignItems =
+      "flex-start";
+
+    itemRow.style.gap =
+      "6px";
+
     const item =
       document.createElement("div");
 
     item.className =
       "game-item";
 
+    item.style.flex =
+      "1";
+
+    item.style.minWidth =
+      "0";
+
     item.dataset.gameId =
       game.id;
+
 
 
     /*
@@ -6133,15 +6197,23 @@ function renderGameList() {
     rightCol.appendChild(playCountText);
 
 
-    outerRow.appendChild(leftCol);
+        outerRow.appendChild(leftCol);
 
     outerRow.appendChild(rightCol);
 
     item.appendChild(outerRow);
 
-    container.appendChild(item);
+    itemRow.appendChild(indexLabel);
+
+    itemRow.appendChild(item);
+
+    container.appendChild(itemRow);
+
+    previousIndex =
+      currentIndex;
 
   });
+
 
 
 

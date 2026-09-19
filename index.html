@@ -11458,7 +11458,7 @@ function renderGameRankingGameList() {
         const segmentHeightPercent =
           100 / holderColors.length;
 
-        holderColors.forEach((color, index) => {
+                holderColors.forEach((color, index) => {
 
           const segment =
             document.createElement("div");
@@ -11478,8 +11478,21 @@ function renderGameRankingGameList() {
           segment.style.height =
             `${segmentHeightPercent.toFixed(2)}%`;
 
-          segment.style.border =
+          segment.style.borderLeft =
             `1px solid ${color}`;
+
+          segment.style.borderRight =
+            `1px solid ${color}`;
+
+          segment.style.borderTop =
+            index === 0
+              ? `1px solid ${color}`
+              : "none";
+
+          segment.style.borderBottom =
+            index === holderColors.length - 1
+              ? `1px solid ${color}`
+              : "none";
 
           segment.style.boxSizing =
             "border-box";
@@ -11487,6 +11500,7 @@ function renderGameRankingGameList() {
           borderOverlay.appendChild(segment);
 
         });
+
 
         button.appendChild(borderOverlay);
 

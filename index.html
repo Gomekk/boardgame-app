@@ -7702,25 +7702,54 @@ matches.forEach(match => {
 
 function buildRouletteContent(g) {
 
-  const fontSize =
-    g.name.length > 14
-      ? "18px"
-      : "28px";
-
   const nameHtml =
-    `<span style="
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-      font-size:${fontSize};
-    ">${escapeHTML(g.name)}</span>`;
+    `<span
+      class="roulette-fit-text"
+      style="
+        display:block;
+        overflow:hidden;
+        max-height:76px;
+        line-height:1.15;
+      "
+    >${escapeHTML(g.name)}</span>`;
 
   return g.image
     ? `<img src="${escapeHTML(g.image)}" class="game-thumb-large" style="display:block;margin:0 auto 8px;">${nameHtml}`
     : nameHtml;
 
 }
+
+function fitRouletteText() {
+
+  const el =
+    document.querySelector(
+      "#gameRouletteName .roulette-fit-text"
+    );
+
+  if (!el) return;
+
+  let size = 28;
+
+  el.style.fontSize =
+    `${size}px`;
+
+  while (
+    size > 12 &&
+    (
+      el.scrollWidth > el.clientWidth + 2 ||
+      el.scrollHeight > 76
+    )
+  ) {
+
+    size -= 1;
+
+    el.style.fontSize =
+      `${size}px`;
+
+  }
+
+}
+
 
 
 function randomSelectGame() {
@@ -8324,12 +8353,15 @@ function spinRoulette() {
 
   void nameElement.offsetWidth;
 
-  nameElement.innerHTML =
+    nameElement.innerHTML =
     buildRouletteContent(game);
+
+  fitRouletteText();
 
   nameElement.classList.add(
     "game-roulette-spinning"
   );
+
 
   count++;
 
@@ -8342,15 +8374,18 @@ function spinRoulette() {
         )
       ];
 
-    nameElement.classList.remove(
+        nameElement.classList.remove(
       "game-roulette-spinning"
     );
 
     nameElement.innerHTML =
       buildRouletteContent(selectedGame);
 
+    fitRouletteText();
+
     subElement.textContent =
       "🎉 このゲームに決定！";
+
 
     buttonsElement.style.display =
       "flex";

@@ -1435,9 +1435,11 @@ button.small {
       placeholder="ゲーム名を検索"
     >
     
-           <div class="section-note" style="margin:6px 0 6px;">
-      絞込み&gt;&gt;
+   <div class="section-note" style="margin:6px 0 6px;display:flex;justify-content:space-between;">
+      <span>絞込み&gt;&gt;</span>
+      <span id="gameRankingCount"></span>
     </div>
+
 
     <!-- 重さで絞り込み -->
         <div
@@ -1492,8 +1494,12 @@ button.small {
     </div>
 
 
-    <!-- ゲーム一覧 -->
-    <div id="gameRankingGameList"></div>
+     <!-- ゲーム一覧 -->
+  <div class="card">
+
+    <h2>🎲 ゲーム一覧 <span id="gameListCount" class="section-note" style="margin:0;"></span></h2>
+
+    <div id="gameList"></div>
 
   </div>
 
@@ -1954,14 +1960,15 @@ button.small {
 
   </div>
 
-    <!-- プレイヤー一覧 -->
+        <!-- プレイヤー一覧 -->
   <div class="card">
 
-    <h2>👥 プレイヤー一覧</h2>
+    <h2>👥 プレイヤー一覧 <span id="playerListCount" class="section-note" style="margin:0;"></span></h2>
 
     <div id="playerList"></div>
 
   </div>
+
 
 </div>
 
@@ -5459,6 +5466,16 @@ function renderGameList() {
     );
 
 
+    const countLabel =
+    document.getElementById("gameListCount");
+
+  if (countLabel) {
+
+    countLabel.textContent =
+      `（全${activeGames.length}件）`;
+
+  }
+
   if (activeGames.length === 0) {
 
     container.innerHTML =
@@ -5472,6 +5489,7 @@ function renderGameList() {
 
 
   container.innerHTML = "";
+
 
 
       activeGames.forEach(game => {
@@ -5827,6 +5845,16 @@ function renderPlayerList() {
 );
 
 
+    const countLabel =
+    document.getElementById("playerListCount");
+
+  if (countLabel) {
+
+    countLabel.textContent =
+      `（全${activePlayers.length}件）`;
+
+  }
+
   if (activePlayers.length === 0) {
 
     container.innerHTML =
@@ -5840,6 +5868,7 @@ function renderPlayerList() {
 
 
   container.innerHTML = "";
+
 
 
   activePlayers.forEach(player => {
@@ -11396,6 +11425,19 @@ function renderGameRankingGameList() {
         )
       );
 
+    const totalActiveCount =
+    data.games.filter(g => g.active).length;
+
+  const countLabel =
+    document.getElementById("gameRankingCount");
+
+  if (countLabel) {
+
+    countLabel.textContent =
+      `全${totalActiveCount}件中${games.length}件`;
+
+  }
+
   container.innerHTML = "";
 
   if (games.length === 0) {
@@ -11418,6 +11460,7 @@ function renderGameRankingGameList() {
 
     return;
   }
+
 
 
   let previousIndex = "";

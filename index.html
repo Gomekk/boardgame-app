@@ -4945,7 +4945,7 @@ function renderGameList() {
   container.innerHTML = "";
 
 
-    activeGames.forEach(game => {
+      activeGames.forEach(game => {
 
     const matchCount =
       data.matches.filter(
@@ -4995,23 +4995,173 @@ function renderGameList() {
 
 
     /*
-     * 1段目：編集・削除ボタン（右上）
+     * 全体を横2列に：
+     * 左列＝画像＋重さバッジ（縦に中央揃え）
+     * 右列＝ゲーム名+編集/削除、メタ情報、プレイ回数
      */
 
-    const topRow =
+    const outerRow =
       document.createElement("div");
 
-    topRow.style.display =
+    outerRow.style.display =
       "flex";
 
-    topRow.style.justifyContent =
-      "flex-end";
+    outerRow.style.gap =
+      "10px";
 
-    topRow.style.gap =
+
+    /*
+     * 左列：画像＋バッジ
+     */
+
+    const leftCol =
+      document.createElement("div");
+
+    leftCol.style.display =
+      "flex";
+
+    leftCol.style.flexDirection =
+      "column";
+
+    leftCol.style.alignItems =
+      "center";
+
+    leftCol.style.gap =
       "6px";
 
-    topRow.style.marginBottom =
+    leftCol.style.flexShrink =
+      "0";
+
+    const thumb =
+      document.createElement("img");
+
+    thumb.className =
+      "game-thumb";
+
+    if (game.image) {
+
+      thumb.src =
+        game.image;
+
+    } else {
+
+      thumb.classList.add("hidden");
+
+    }
+
+    const weightBadge =
+      document.createElement("span");
+
+    weightBadge.textContent =
+      weightLabel;
+
+    weightBadge.style.fontSize =
+      "11px";
+
+    weightBadge.style.fontWeight =
+      "600";
+
+    weightBadge.style.padding =
+      "3px 8px";
+
+    weightBadge.style.borderRadius =
+      "999px";
+
+    weightBadge.style.whiteSpace =
+      "nowrap";
+
+    if (weight === "light") {
+
+      weightBadge.style.background = "#E8F5E9";
+      weightBadge.style.color = "#2E7D32";
+
+    } else if (weight === "medium") {
+
+      weightBadge.style.background = "#FFF3E0";
+      weightBadge.style.color = "#E65100";
+
+    } else if (weight === "heavy") {
+
+      weightBadge.style.background = "#FDECEC";
+      weightBadge.style.color = "#C62828";
+
+    } else {
+
+      weightBadge.style.background = "#F1F1F1";
+      weightBadge.style.color = "#777";
+
+    }
+
+    leftCol.appendChild(thumb);
+
+    leftCol.appendChild(weightBadge);
+
+
+    /*
+     * 右列
+     */
+
+    const rightCol =
+      document.createElement("div");
+
+    rightCol.style.flex =
+      "1";
+
+    rightCol.style.minWidth =
+      "0";
+
+
+    /*
+     * ゲーム名＋編集・削除（同じ段）
+     */
+
+    const nameRow =
+      document.createElement("div");
+
+    nameRow.style.display =
+      "flex";
+
+    nameRow.style.alignItems =
+      "center";
+
+    nameRow.style.justifyContent =
+      "space-between";
+
+    nameRow.style.gap =
       "8px";
+
+    const nameEl =
+      document.createElement("div");
+
+    nameEl.className =
+      "game-title";
+
+    nameEl.textContent =
+      game.name;
+
+    nameEl.style.minWidth =
+      "0";
+
+    nameEl.style.overflow =
+      "hidden";
+
+    nameEl.style.textOverflow =
+      "ellipsis";
+
+    nameEl.style.whiteSpace =
+      "nowrap";
+
+    const buttonGroup =
+      document.createElement("div");
+
+    buttonGroup.style.display =
+      "flex";
+
+    buttonGroup.style.gap =
+      "6px";
+
+    buttonGroup.style.flexShrink =
+      "0";
 
     const editButton =
       document.createElement("button");
@@ -5053,122 +5203,18 @@ function renderGameList() {
 
     };
 
-    topRow.appendChild(editButton);
+    buttonGroup.appendChild(editButton);
 
-    topRow.appendChild(removeButton);
-
-
-    /*
-     * 2段目：画像＋ゲーム名
-     */
-
-    const nameRow =
-      document.createElement("div");
-
-    nameRow.style.display =
-      "flex";
-
-    nameRow.style.alignItems =
-      "center";
-
-    nameRow.style.gap =
-      "10px";
-
-    const thumb =
-      document.createElement("img");
-
-    thumb.className =
-      "game-thumb";
-
-    if (game.image) {
-
-      thumb.src =
-        game.image;
-
-    } else {
-
-      thumb.classList.add("hidden");
-
-    }
-
-    const nameEl =
-      document.createElement("div");
-
-    nameEl.className =
-      "game-title";
-
-    nameEl.textContent =
-      game.name;
-
-    nameRow.appendChild(thumb);
+    buttonGroup.appendChild(removeButton);
 
     nameRow.appendChild(nameEl);
 
+    nameRow.appendChild(buttonGroup);
+
 
     /*
-     * 3段目：重さバッジ＋人数／時間／上位設定
+     * メタ情報：人数／時間／上位設定
      */
-
-    const metaRow =
-      document.createElement("div");
-
-    metaRow.style.display =
-      "flex";
-
-    metaRow.style.alignItems =
-      "center";
-
-    metaRow.style.gap =
-      "8px";
-
-    metaRow.style.marginTop =
-      "6px";
-
-    const weightBadge =
-      document.createElement("span");
-
-    weightBadge.textContent =
-      weightLabel;
-
-    weightBadge.style.fontSize =
-      "11px";
-
-    weightBadge.style.fontWeight =
-      "600";
-
-    weightBadge.style.padding =
-      "3px 8px";
-
-    weightBadge.style.borderRadius =
-      "999px";
-
-    weightBadge.style.whiteSpace =
-      "nowrap";
-
-    weightBadge.style.flexShrink =
-      "0";
-
-    if (weight === "light") {
-
-      weightBadge.style.background = "#E8F5E9";
-      weightBadge.style.color = "#2E7D32";
-
-    } else if (weight === "medium") {
-
-      weightBadge.style.background = "#FFF3E0";
-      weightBadge.style.color = "#E65100";
-
-    } else if (weight === "heavy") {
-
-      weightBadge.style.background = "#FDECEC";
-      weightBadge.style.color = "#C62828";
-
-    } else {
-
-      weightBadge.style.background = "#F1F1F1";
-      weightBadge.style.color = "#777";
-
-    }
 
     const metaText =
       document.createElement("div");
@@ -5176,8 +5222,8 @@ function renderGameList() {
     metaText.className =
       "game-meta";
 
-    metaText.style.margin =
-      "0";
+    metaText.style.marginTop =
+      "6px";
 
     const metaParts =
       [playerCountText, playTimeText, direction]
@@ -5186,13 +5232,9 @@ function renderGameList() {
     metaText.textContent =
       metaParts.join(" ／ ");
 
-    metaRow.appendChild(weightBadge);
-
-    metaRow.appendChild(metaText);
-
 
     /*
-     * 4段目：プレイ回数
+     * プレイ回数
      */
 
     const playCountText =
@@ -5208,14 +5250,23 @@ function renderGameList() {
       `${matchCount}回プレイ済`;
 
 
-    item.appendChild(topRow);
-    item.appendChild(nameRow);
-    item.appendChild(metaRow);
-    item.appendChild(playCountText);
+    rightCol.appendChild(nameRow);
+
+    rightCol.appendChild(metaText);
+
+    rightCol.appendChild(playCountText);
+
+
+    outerRow.appendChild(leftCol);
+
+    outerRow.appendChild(rightCol);
+
+    item.appendChild(outerRow);
 
     container.appendChild(item);
 
   });
+
 
 
 }

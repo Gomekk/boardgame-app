@@ -6271,18 +6271,27 @@ function renderPlayerList() {
     );
 
 
-  const activePlayers =
+    const searchInput =
+    document.getElementById("playerListSearch");
+
+  const keyword =
+    searchInput
+      ? normalizeGameSearch(searchInput.value)
+      : "";
+
+  const allActivePlayers =
     data.players.filter(
       p => p.active
     );
-    
-    console.log(
-  "プレイヤーカラー確認:",
-  activePlayers.map(p => ({
-    name: p.name,
-    color: p.color
-  }))
-);
+
+  const activePlayers =
+    allActivePlayers
+      .filter(player =>
+        normalizeGameSearch(player.name).includes(keyword)
+      )
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, "ja")
+      );
 
 
     const countLabel =
@@ -6291,7 +6300,7 @@ function renderPlayerList() {
   if (countLabel) {
 
     countLabel.textContent =
-      `（全${activePlayers.length}件）`;
+      `（全${allActivePlayers.length}件中${activePlayers.length}件）`;
 
   }
 
@@ -6309,9 +6318,66 @@ function renderPlayerList() {
 
   container.innerHTML = "";
 
+  let previousIndex = "";
+
 
 
   activePlayers.forEach(player => {
+
+    const currentIndex =
+      getJapaneseIndex(player.name);
+
+
+        const indexLabel =
+      document.createElement("div");
+
+    indexLabel.style.width =
+      "20px";
+
+    indexLabel.style.flexShrink =
+      "0";
+
+    indexLabel.style.fontSize =
+      "11px";
+
+    indexLabel.style.color =
+      "#999";
+
+    indexLabel.style.fontWeight =
+      "600";
+
+    indexLabel.style.textAlign =
+      "center";
+
+    if (currentIndex !== previousIndex) {
+
+      indexLabel.textContent =
+        currentIndex;
+
+      indexLabel.style.marginTop =
+        previousIndex ? "10px" : "0";
+
+    } else {
+
+      indexLabel.textContent =
+        "";
+
+    }
+
+    const itemRow =
+      document.createElement("div");
+
+    itemRow.style.display =
+      "flex";
+
+    itemRow.style.alignItems =
+      "center";
+
+    itemRow.style.gap =
+      "6px";
+
+    itemRow.style.marginBottom =
+      "8px";
 
     const row =
       document.createElement("div");
@@ -6319,8 +6385,15 @@ function renderPlayerList() {
     row.className =
       "row";
 
+    row.style.flex =
+      "1";
+
+    row.style.minWidth =
+      "0";
+
     row.style.marginBottom =
-      "8px";
+      "0";
+
 
 
         const nameArea =
@@ -6459,11 +6532,17 @@ function renderPlayerList() {
 
     row.appendChild(buttonGroup);
 
-    container.appendChild(row);
+    itemRow.appendChild(indexLabel);
 
+    itemRow.appendChild(row);
 
+    container.appendChild(itemRow);
+
+    previousIndex =
+      currentIndex;
 
   });
+
 
 }
 
@@ -13177,7 +13256,7 @@ document.addEventListener(
 
     }
 
-    if (
+        if (
       event.target &&
       event.target.id ===
         "gameListSearch"
@@ -13187,8 +13266,19 @@ document.addEventListener(
 
     }
 
+    if (
+      event.target &&
+      event.target.id ===
+        "playerListSearch"
+    ) {
+
+      renderPlayerList();
+
+    }
+
   }
 );
+
 
 
 /*

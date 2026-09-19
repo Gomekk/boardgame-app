@@ -1284,72 +1284,6 @@ button.small {
   <div id="headToHeadRanking"></div>
 </div>
 
-    <!-- タイトル保有ゲーム一覧（ポップアップ） -->
-  <div
-    id="titleGameListOverlay"
-    style="
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.45);
-      z-index:10002;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-    "
-    onclick="if(event.target===this) this.style.display='none'"
-  >
-
-    <div
-      id="titleGameListPopup"
-      class="card"
-      style="
-        position:relative;
-        width:100%;
-        max-width:480px;
-        max-height:80vh;
-        overflow-y:auto;
-        margin-bottom:0;
-      "
-    >
-
-      <button
-        type="button"
-        onclick="document.getElementById('titleGameListOverlay').style.display='none'"
-        style="
-          position:absolute;
-          top:14px;
-          right:14px;
-          width:32px;
-          height:32px;
-          min-width:32px;
-          padding:0;
-          border:none;
-          background:#f3f4f6;
-          color:#555;
-          border-radius:50%;
-          font-size:20px;
-          line-height:1;
-        "
-      >×</button>
-
-      <h2 id="titleGameListTitle" style="padding-right:40px;">
-        タイトル保有ゲーム一覧
-      </h2>
-
-      <div
-        id="titleGameListGrid"
-        style="
-          display:grid;
-          grid-template-columns:repeat(3, 1fr);
-          gap:12px 8px;
-        "
-      ></div>
-
-    </div>
-
-  </div>
-
     <!-- プレイヤー詳細（ポップアップ） -->
   <div
     id="playerDetailOverlay"
@@ -2037,15 +1971,81 @@ button.small {
 </button>
 
 </div>
+</div>
+</div>
 
-</div>
-</div>
+    <!-- タイトル保有ゲーム一覧（ポップアップ） -->
+  <div
+    id="titleGameListOverlay"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:10002;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    "
+    onclick="if(event.target===this) this.style.display='none'"
+  >
+
+    <div
+      id="titleGameListPopup"
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:480px;
+        max-height:80vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
+
+      <button
+        type="button"
+        onclick="document.getElementById('titleGameListOverlay').style.display='none'"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+      <h2 id="titleGameListTitle" style="padding-right:40px;">
+        タイトル保有ゲーム一覧
+      </h2>
+
+      <div
+        id="titleGameListGrid"
+        style="
+          display:grid;
+          grid-template-columns:repeat(3, 1fr);
+          gap:12px 8px;
+        "
+      ></div>
+
+    </div>
+
+  </div>
 
 <script>
 
 /* =========================
    データ読み込み
 ========================= */
+
 
 const SUPABASE_URL =
   "https://tnjcfgtebiqxvipvklmn.supabase.co";
@@ -6174,7 +6174,7 @@ function renderBestScoreCountRanking() {
   /*
    * 1つの行（順位バッジ＋名前・スコア／その下にゲーム一覧）を作る共通処理
    */
-        function buildPlayerRow(player, rank, maxBeforeScroll, showListLink) {
+  function buildPlayerRow(player, rank, maxBeforeScroll, showListLink) {
 
     const row =
       document.createElement("div");

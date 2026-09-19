@@ -9647,54 +9647,7 @@ if (isWinner(match, player.name)) {
     nameArea.appendChild(name);
 
 
-        const titleBadge =
-      document.createElement("span");
-
-    titleBadge.textContent =
-      `🏅 × ${titleCount}`;
-
-    titleBadge.style.fontSize =
-      "12px";
-
-    titleBadge.style.color =
-      "#6b7280";
-
-    titleBadge.style.flexShrink =
-      "0";
-
-    titleBadge.style.marginLeft =
-      "auto";
-
-    titleBadge.style.marginRight =
-      "8px";
-
-    const detailButton =
-      document.createElement("button");
-
-    detailButton.className =
-      "list-item-action-button";
-
-    detailButton.type =
-      "button";
-
-    detailButton.textContent =
-      "詳細";
-
-    detailButton.style.flexShrink =
-      "0";
-
-    detailButton.onclick = () =>
-      showPlayerDetail(player.name);
-
-    topRow.appendChild(nameArea);
-
-    topRow.appendChild(titleBadge);
-
-    topRow.appendChild(detailButton);
-
-
-
-        /*
+                /*
      * タイトル保有数（ベストスコアを持っているゲームの数）を計算
      */
 
@@ -9756,9 +9709,57 @@ if (isWinner(match, player.name)) {
       });
 
 
+    const titleBadge =
+      document.createElement("span");
+
+    titleBadge.textContent =
+      `🏅 × ${titleCount}`;
+
+
+    titleBadge.style.fontSize =
+      "12px";
+
+    titleBadge.style.color =
+      "#6b7280";
+
+    titleBadge.style.flexShrink =
+      "0";
+
+    titleBadge.style.marginLeft =
+      "auto";
+
+    titleBadge.style.marginRight =
+      "8px";
+
+    const detailButton =
+      document.createElement("button");
+
+    detailButton.className =
+      "list-item-action-button";
+
+    detailButton.type =
+      "button";
+
+    detailButton.textContent =
+      "詳細";
+
+    detailButton.style.flexShrink =
+      "0";
+
+    detailButton.onclick = () =>
+      showPlayerDetail(player.name);
+
+        topRow.appendChild(nameArea);
+
+    topRow.appendChild(titleBadge);
+
+    topRow.appendChild(detailButton);
+
+
     /*
      * 2段目：〇戦〇勝（〇%）
      */
+
 
     const statsRow =
       document.createElement("div");

@@ -1480,7 +1480,7 @@ button.small {
         style="padding-right:38px;"
       >
 
-      <button
+            <button
         type="button"
         id="gameRankingSearchClear"
         aria-label="検索をクリア"
@@ -1500,8 +1500,11 @@ button.small {
           line-height:1;
           box-shadow:none;
           display:none;
+          align-items:center;
+          justify-content:center;
         "
       >×</button>
+
 
     </div>
 
@@ -5017,12 +5020,13 @@ function setupSearchClearButton(inputId, buttonId, onClear) {
 
   if (!input || !button) return;
 
-  function updateVisibility() {
+    function updateVisibility() {
 
     button.style.display =
-      input.value ? "block" : "none";
+      input.value ? "flex" : "none";
 
   }
+
 
   input.addEventListener(
     "input",

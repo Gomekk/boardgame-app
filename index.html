@@ -1470,12 +1470,41 @@ button.small {
 
     <h2>🎲 ゲーム別ランキング</h2>
 
-    <!-- ゲーム検索 -->
-    <input
-      type="text"
-      id="gameRankingSearch"
-      placeholder="ゲーム名を検索"
-    >
+        <!-- ゲーム検索 -->
+    <div style="position:relative;">
+
+      <input
+        type="text"
+        id="gameRankingSearch"
+        placeholder="ゲーム名を検索"
+        style="padding-right:38px;"
+      >
+
+      <button
+        type="button"
+        id="gameRankingSearchClear"
+        aria-label="検索をクリア"
+        style="
+          position:absolute;
+          top:50%;
+          right:6px;
+          transform:translateY(-50%);
+          width:28px;
+          height:28px;
+          min-width:28px;
+          padding:0;
+          border:none;
+          background:transparent;
+          color:#9ca3af;
+          font-size:18px;
+          line-height:1;
+          box-shadow:none;
+          display:none;
+        "
+      >×</button>
+
+    </div>
+
     
    <div class="section-note" style="margin:6px 0 6px;display:flex;justify-content:space-between;">
       <span>絞込み&gt;&gt;</span>
@@ -4977,6 +5006,51 @@ initGameRankingWeightFilterButtons();
 
 let gameRankingPlayerCountFilter =
   new Set();
+  
+function setupSearchClearButton(inputId, buttonId, onClear) {
+
+  const input =
+    document.getElementById(inputId);
+
+  const button =
+    document.getElementById(buttonId);
+
+  if (!input || !button) return;
+
+  function updateVisibility() {
+
+    button.style.display =
+      input.value ? "block" : "none";
+
+  }
+
+  input.addEventListener(
+    "input",
+    updateVisibility
+  );
+
+  button.addEventListener("click", () => {
+
+    input.value = "";
+
+    updateVisibility();
+
+    input.focus();
+
+    onClear();
+
+  });
+
+  updateVisibility();
+
+}
+
+setupSearchClearButton(
+  "gameRankingSearch",
+  "gameRankingSearchClear",
+  renderGameRankingGameList
+);
+
 
 function updateGameRankingPlayerCountButtonStyle(button) {
 

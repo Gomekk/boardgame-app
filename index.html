@@ -1958,12 +1958,42 @@ button.small {
 
     </div>
     
-    <input
-      type="text"
-      id="gameListSearch"
-      placeholder="ゲーム名を検索"
-      style="margin-top:12px;"
-    >
+        <div style="position:relative;margin-top:12px;">
+
+      <input
+        type="text"
+        id="gameListSearch"
+        placeholder="ゲーム名を検索"
+        style="padding-right:38px;"
+      >
+
+      <button
+        type="button"
+        id="gameListSearchClear"
+        aria-label="検索をクリア"
+        style="
+          position:absolute;
+          top:50%;
+          right:6px;
+          transform:translateY(-50%);
+          width:28px;
+          height:28px;
+          min-width:28px;
+          padding:0;
+          border:none;
+          background:transparent;
+          color:#9ca3af;
+          font-size:20px;
+          line-height:1;
+          box-shadow:none;
+          display:none;
+          align-items:center;
+          justify-content:center;
+        "
+      ><span style="display:block;transform:translateY(-5.5px);">×</span></button>
+
+    </div>
+
 
     <div id="gameList" style="margin-top:14px;"></div>
 
@@ -2190,12 +2220,42 @@ button.small {
 
     </div>
 
-   <input
-      type="text"
-      id="playerListSearch"
-      placeholder="プレイヤー名を検索"
-      style="margin-top:12px;"
-    >
+       <div style="position:relative;margin-top:12px;">
+
+      <input
+        type="text"
+        id="playerListSearch"
+        placeholder="プレイヤー名を検索"
+        style="padding-right:38px;"
+      >
+
+      <button
+        type="button"
+        id="playerListSearchClear"
+        aria-label="検索をクリア"
+        style="
+          position:absolute;
+          top:50%;
+          right:6px;
+          transform:translateY(-50%);
+          width:28px;
+          height:28px;
+          min-width:28px;
+          padding:0;
+          border:none;
+          background:transparent;
+          color:#9ca3af;
+          font-size:20px;
+          line-height:1;
+          box-shadow:none;
+          display:none;
+          align-items:center;
+          justify-content:center;
+        "
+      ><span style="display:block;transform:translateY(-5.5px);">×</span></button>
+
+    </div>
+
 
     <div id="playerList" style="margin-top:14px;"></div>
 
@@ -2315,12 +2375,42 @@ button.small {
 
       <div style="padding:14px 16px 8px;overflow:auto;flex:1;min-height:0;">
 
-        <input
-          id="matchGamePickerSearch"
-          type="text"
-          placeholder="ゲーム検索"
-          style="width:100%;box-sizing:border-box;margin-bottom:10px;font-size:16px;"
-        >
+               <div style="position:relative;margin-bottom:10px;">
+
+          <input
+            id="matchGamePickerSearch"
+            type="text"
+            placeholder="ゲーム検索"
+            style="width:100%;box-sizing:border-box;font-size:16px;padding-right:38px;"
+          >
+
+          <button
+            type="button"
+            id="matchGamePickerSearchClear"
+            aria-label="検索をクリア"
+            style="
+              position:absolute;
+              top:50%;
+              right:6px;
+              transform:translateY(-50%);
+              width:28px;
+              height:28px;
+              min-width:28px;
+              padding:0;
+              border:none;
+              background:transparent;
+              color:#9ca3af;
+              font-size:20px;
+              line-height:1;
+              box-shadow:none;
+              display:none;
+              align-items:center;
+              justify-content:center;
+            "
+          ><span style="display:block;transform:translateY(-5.5px);">×</span></button>
+
+        </div>
+
 
         <div id="matchGamePickerList"></div>
 
@@ -5056,6 +5146,19 @@ setupSearchClearButton(
   renderGameRankingGameList
 );
 
+setupSearchClearButton(
+  "gameListSearch",
+  "gameListSearchClear",
+  renderGameList
+);
+
+setupSearchClearButton(
+  "playerListSearch",
+  "playerListSearchClear",
+  renderPlayerList
+);
+
+
 
 function updateGameRankingPlayerCountButtonStyle(button) {
 
@@ -5327,11 +5430,18 @@ function openMatchGamePicker() {
 
   }
 
+  setupSearchClearButton(
+    "matchGamePickerSearch",
+    "matchGamePickerSearchClear",
+    () => renderMatchGamePickerList(searchInput.value)
+  );
+
   document.getElementById(
     "matchGamePickerOverlay"
   ).style.display = "flex";
 
 }
+
 
 function renderMatchGamePickerList(keyword = "") {
 
@@ -9040,12 +9150,42 @@ function openSpecificGameSelector() {
 
       <div style="padding:14px 16px 8px;overflow:auto;flex:1;min-height:0;">
 
-                <input
-          id="specificGameSearch"
-          type="text"
-          placeholder="ゲーム検索"
-          style="width:100%;box-sizing:border-box;margin-bottom:10px;font-size:16px;"
-        >
+                <div style="position:relative;margin-bottom:10px;">
+
+          <input
+            id="specificGameSearch"
+            type="text"
+            placeholder="ゲーム検索"
+            style="width:100%;box-sizing:border-box;font-size:16px;padding-right:38px;"
+          >
+
+          <button
+            type="button"
+            id="specificGameSearchClear"
+            aria-label="検索をクリア"
+            style="
+              position:absolute;
+              top:50%;
+              right:6px;
+              transform:translateY(-50%);
+              width:28px;
+              height:28px;
+              min-width:28px;
+              padding:0;
+              border:none;
+              background:transparent;
+              color:#9ca3af;
+              font-size:20px;
+              line-height:1;
+              box-shadow:none;
+              display:none;
+              align-items:center;
+              justify-content:center;
+            "
+          ><span style="display:block;transform:translateY(-5.5px);">×</span></button>
+
+        </div>
+
 
         <div
           id="specificGameSelectedCount"
@@ -9078,7 +9218,7 @@ function openSpecificGameSelector() {
     selectorOverlay
   );
   
-    renderSpecificGameList();
+        renderSpecificGameList();
 
   const searchInput =
     document.getElementById(
@@ -9086,6 +9226,8 @@ function openSpecificGameSelector() {
     );
 
   if (searchInput) {
+
+    searchInput.value = "";
 
     searchInput.oninput = () => {
 
@@ -9096,6 +9238,13 @@ function openSpecificGameSelector() {
     };
 
   }
+
+  setupSearchClearButton(
+    "specificGameSearch",
+    "specificGameSearchClear",
+    () => renderSpecificGameList(searchInput.value)
+  );
+
 
   const closeButton =
     document.getElementById(

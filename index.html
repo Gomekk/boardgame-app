@@ -5209,6 +5209,8 @@ let weightSettings = {
   mediumMax: 60
 };
 let specificRouletteSelectedGames = new Set();
+let specificGameWeightFilter = new Set();
+let specificGamePlayerCountFilter = new Set();
 let lastRouletteSelectedWeight = "";
 let lastRouletteSelectedWeights = new Set();
 let lastRouletteSelectedPlayerCounts = new Set();
@@ -9190,13 +9192,64 @@ function openSpecificGameSelector() {
         >
         </div>
 
-        <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <div style="display:flex;gap:8px;margin-bottom:12px;">
 
           <button type="button" id="specificSelectAll" class="secondary small" style="flex:1;">全選択</button>
           <button type="button" id="specificDeselectAll" class="secondary small" style="flex:1;">全解除</button>
         </div>
 
+        <div class="section-note" style="margin:0 0 6px;">絞込み&gt;&gt;</div>
+
+        <div
+          id="specificGameWeightFilter"
+          style="display:flex;gap:8px;margin-bottom:8px;"
+        >
+          <button
+            type="button"
+            class="small filter-chip-button"
+            data-weight="light"
+            style="flex:1;background:#E8F5E9;color:#2E7D32;"
+          >軽量級</button>
+
+          <button
+            type="button"
+            class="small filter-chip-button"
+            data-weight="medium"
+            style="flex:1;background:#FFF3E0;color:#E65100;"
+          >中量級</button>
+
+          <button
+            type="button"
+            class="small filter-chip-button"
+            data-weight="heavy"
+            style="flex:1;background:#FDECEC;color:#C62828;"
+          >重量級</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+
+          <span class="section-note" style="margin:0;white-space:nowrap;">人数 ▶</span>
+
+          <div
+            id="specificGamePlayerCountFilter"
+            style="display:flex;gap:3px;flex:1;"
+          >
+            <button type="button" class="filter-chip-button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
+            <button type="button" class="filter-chip-button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
+            <button type="button" class="filter-chip-button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
+            <button type="button" class="filter-chip-button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
+            <button type="button" class="filter-chip-button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
+            <button type="button" class="filter-chip-button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
+            <button type="button" class="filter-chip-button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
+            <button type="button" class="filter-chip-button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
+            <button type="button" class="filter-chip-button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
+            <button type="button" class="filter-chip-button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
+          </div>
+
+        </div>
+
         <div id="specificGameList"></div>
+
 
       </div>
 
@@ -9236,17 +9289,93 @@ function openSpecificGameSelector() {
 
   }
 
-  setupSearchClearButton(
+    setupSearchClearButton(
     "specificGameSearch",
     "specificGameSearchClear",
     () => renderSpecificGameList(searchInput.value)
   );
+
+  specificGameWeightFilter = new Set();
+  specificGamePlayerCountFilter = new Set();
+
+  function updateSpecificWeightButtonStyle(button) {
+
+    const weight = button.dataset.weight;
+
+    const active =
+      specificGameWeightFilter.has(weight);
+
+    button.style.opacity = active ? "1" : "0.35";
+
+  }
+
+  document
+    .querySelectorAll("#specificGameWeightFilter button")
+    .forEach(button => {
+
+      updateSpecificWeightButtonStyle(button);
+
+      button.onclick = () => {
+
+        const weight = button.dataset.weight;
+
+        if (specificGameWeightFilter.has(weight)) {
+          specificGameWeightFilter.delete(weight);
+        } else {
+          specificGameWeightFilter.add(weight);
+        }
+
+        updateSpecificWeightButtonStyle(button);
+
+        renderSpecificGameList(searchInput.value);
+
+      };
+
+    });
+
+  function updateSpecificPlayerCountButtonStyle(button) {
+
+    const count = Number(button.dataset.count);
+
+    const active =
+      specificGamePlayerCountFilter.has(count);
+
+    button.style.background = active ? "#1E3A5F" : "#ffffff";
+    button.style.color = active ? "#ffffff" : "#111827";
+    button.style.borderColor = active ? "#1E3A5F" : "#d1d5db";
+
+  }
+
+  document
+    .querySelectorAll("#specificGamePlayerCountFilter button")
+    .forEach(button => {
+
+      updateSpecificPlayerCountButtonStyle(button);
+
+      button.onclick = () => {
+
+        const count = Number(button.dataset.count);
+
+        if (specificGamePlayerCountFilter.has(count)) {
+          specificGamePlayerCountFilter.delete(count);
+        } else {
+          specificGamePlayerCountFilter.add(count);
+        }
+
+        updateSpecificPlayerCountButtonStyle(button);
+
+        renderSpecificGameList(searchInput.value);
+
+      };
+
+    });
 
 
   const closeButton =
     document.getElementById(
       "specificGameSelectorClose"
     );
+
 
   closeButton.onclick = () => {
 
@@ -9334,9 +9463,38 @@ function getVisibleSpecificGames(keyword = "") {
         reading.includes(normalizedKeyword)
       );
 
+    })
+    .filter(game => {
+
+      if (specificGameWeightFilter.size === 0) return true;
+
+      const weight =
+        getGameWeightClass(game.playTime);
+
+      if (!weight) return true;
+
+      return specificGameWeightFilter.has(weight);
+
+    })
+    .filter(game => {
+
+      if (specificGamePlayerCountFilter.size === 0) return true;
+
+      if (!game.minPlayers && !game.maxPlayers) return true;
+
+      const min = game.minPlayers || 1;
+      const max = game.maxPlayers || 99;
+
+      for (const count of specificGamePlayerCountFilter) {
+        if (count >= min && count <= max) return true;
+      }
+
+      return false;
+
     });
 
 }
+
 
 function updateSpecificGameSelectedCount() {
 
@@ -9365,7 +9523,7 @@ function renderSpecificGameList(keyword = "") {
   const normalizedKeyword =
     normalizeGameSearch(keyword);
 
-  const games =
+    const games =
     data.games
       .filter(game => game.active)
       .filter(game => {
@@ -9386,12 +9544,41 @@ function renderSpecificGameList(keyword = "") {
         );
 
       })
+      .filter(game => {
+
+        if (specificGameWeightFilter.size === 0) return true;
+
+        const weight =
+          getGameWeightClass(game.playTime);
+
+        if (!weight) return true;
+
+        return specificGameWeightFilter.has(weight);
+
+      })
+      .filter(game => {
+
+        if (specificGamePlayerCountFilter.size === 0) return true;
+
+        if (!game.minPlayers && !game.maxPlayers) return true;
+
+        const min = game.minPlayers || 1;
+        const max = game.maxPlayers || 99;
+
+        for (const count of specificGamePlayerCountFilter) {
+          if (count >= min && count <= max) return true;
+        }
+
+        return false;
+
+      })
       .sort((a, b) =>
         (a.reading || a.name || "").localeCompare(
           b.reading || b.name || "",
           "ja"
         )
       );
+
 
   container.innerHTML = "";
 

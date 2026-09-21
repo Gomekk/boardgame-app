@@ -7262,7 +7262,7 @@ function showTitleGameList(playerName, games) {
 
   grid.innerHTML = "";
 
-  games.forEach(game => {
+    games.forEach(game => {
 
     const cell =
       document.createElement("div");
@@ -7278,6 +7278,24 @@ function showTitleGameList(playerName, games) {
 
     cell.style.gap =
       "6px";
+
+    cell.style.cursor =
+      "pointer";
+
+    cell.onclick = () => {
+
+      document.getElementById(
+        "titleGameListOverlay"
+      ).style.display = "none";
+
+      showScreen("gameRankingScreen");
+
+      renderGameSpecificRanking(
+        game.name
+      );
+
+    };
+
 
     const image =
       document.createElement("img");

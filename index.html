@@ -3295,9 +3295,25 @@ form.appendChild(maxPlayersInput);
   }
 
 
-  /*
-   * 新しい写真
+    /*
+   * 新しい写真・削除（同じ段に配置）
    */
+
+  const imageRow =
+    document.createElement("div");
+
+  imageRow.style.display =
+    "flex";
+
+  imageRow.style.alignItems =
+    "center";
+
+  imageRow.style.justifyContent =
+    "space-between";
+
+  imageRow.style.marginTop =
+    "12px";
+
 
   const imageLabel =
     document.createElement("label");
@@ -3305,17 +3321,54 @@ form.appendChild(maxPlayersInput);
   imageLabel.className =
     "section-note";
 
-  imageLabel.style.display =
-    "block";
-
-  imageLabel.style.marginTop =
-    "12px";
+  imageLabel.style.margin =
+    "0";
 
   imageLabel.textContent =
     "📷 写真を変更";
 
-  form.appendChild(
+
+  let deleteImageMarked =
+    false;
+
+  const deleteImageButton =
+    document.createElement("button");
+
+  deleteImageButton.type =
+    "button";
+
+  deleteImageButton.className =
+    "list-item-action-button danger-text";
+
+  deleteImageButton.textContent =
+    "写真を削除";
+
+  deleteImageButton.onclick = () => {
+
+    deleteImageMarked =
+      !deleteImageMarked;
+
+    deleteImageButton.style.opacity =
+      deleteImageMarked ? "0.5" : "1";
+
+    deleteImageButton.textContent =
+      deleteImageMarked
+        ? "削除を取消す"
+        : "写真を削除";
+
+  };
+
+
+  imageRow.appendChild(
     imageLabel
+  );
+
+  imageRow.appendChild(
+    deleteImageButton
+  );
+
+  form.appendChild(
+    imageRow
   );
 
 
@@ -3332,83 +3385,6 @@ form.appendChild(maxPlayersInput);
     imageInput
   );
 
-
-  /*
-   * 写真削除
-   */
-
-    const deleteImageLabel =
-    document.createElement("label");
-
-  deleteImageLabel.className =
-    "radio-option";
-
-  deleteImageLabel.style.display =
-    "flex";
-
-  deleteImageLabel.style.alignItems =
-    "center";
-
-  deleteImageLabel.style.justifyContent =
-    "center";
-
-  deleteImageLabel.style.gap =
-    "8px";
-
-  deleteImageLabel.style.marginTop =
-    "8px";
-
-
-
-      const deleteImageCheckbox =
-    document.createElement("input");
-
-  deleteImageCheckbox.type =
-    "checkbox";
-
-  deleteImageCheckbox.style.webkitAppearance =
-    "checkbox";
-
-  deleteImageCheckbox.style.appearance =
-    "checkbox";
-
-  deleteImageCheckbox.style.width =
-    "18px";
-
-  deleteImageCheckbox.style.height =
-    "18px";
-
-  deleteImageCheckbox.style.minWidth =
-    "18px";
-
-  deleteImageCheckbox.style.maxWidth =
-    "18px";
-
-  deleteImageCheckbox.style.flex =
-    "none";
-
-  deleteImageCheckbox.style.padding =
-    "0";
-
-  deleteImageCheckbox.style.margin =
-    "0";
-
-
-  deleteImageLabel.appendChild(
-    deleteImageCheckbox
-  );
-
-
-  deleteImageLabel.appendChild(
-    document.createTextNode(
-      " 写真を削除"
-    )
-  );
-
-
-  form.appendChild(
-    deleteImageLabel
-  );
 
 
   /*
@@ -3791,14 +3767,15 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
 
       }
 
-    } else if (
-      deleteImageCheckbox.checked
+        } else if (
+      deleteImageMarked
     ) {
 
       newImageUrl =
         null;
 
     }
+
 
 
     /*
@@ -3856,13 +3833,14 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
        * または写真を削除した場合のみ実行
        */
 
-      if (
+            if (
         oldImagePath &&
         (
           newFile ||
-          deleteImageCheckbox.checked
+          deleteImageMarked
         )
       ) {
+
 
         const {
           error: deleteImageError

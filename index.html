@@ -6386,14 +6386,14 @@ function renderGameList() {
      * メタ情報：人数／時間／上位設定
      */
 
-    const metaText =
+        const metaText =
       document.createElement("div");
 
     metaText.className =
       "game-meta";
 
     metaText.style.marginTop =
-      "6px";
+      "3px";
 
     const metaParts =
       [playerCountText, playTimeText, direction]
@@ -6407,14 +6407,15 @@ function renderGameList() {
      * プレイ回数
      */
 
-    const playCountText =
+        const playCountText =
       document.createElement("div");
 
     playCountText.className =
       "game-meta";
 
     playCountText.style.marginTop =
-      "4px";
+      "2px";
+
 
     playCountText.textContent =
       `${matchCount}回プレイ済`;

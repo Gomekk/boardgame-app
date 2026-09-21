@@ -3360,10 +3360,16 @@ form.appendChild(maxPlayersInput);
 
 
 
-    const deleteImageCheckbox =
+      const deleteImageCheckbox =
     document.createElement("input");
 
   deleteImageCheckbox.type =
+    "checkbox";
+
+  deleteImageCheckbox.style.webkitAppearance =
+    "checkbox";
+
+  deleteImageCheckbox.style.appearance =
     "checkbox";
 
   deleteImageCheckbox.style.width =
@@ -3372,12 +3378,20 @@ form.appendChild(maxPlayersInput);
   deleteImageCheckbox.style.height =
     "18px";
 
-  deleteImageCheckbox.style.flexShrink =
-    "0";
+  deleteImageCheckbox.style.minWidth =
+    "18px";
+
+  deleteImageCheckbox.style.maxWidth =
+    "18px";
+
+  deleteImageCheckbox.style.flex =
+    "none";
 
   deleteImageCheckbox.style.padding =
     "0";
 
+  deleteImageCheckbox.style.margin =
+    "0";
 
 
   deleteImageLabel.appendChild(

@@ -461,15 +461,19 @@ button.small {
 
 .radio-option {
   flex: 1;
-  height: 58px;
+  height: 44px;
   box-sizing: border-box;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(22,35,63,0.14);
   border-radius: var(--radius-sm);
-  padding: 9px 6px;
+  padding: 6px 4px;
   text-align: center;
+  white-space: nowrap;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--navy);
   background: #F1F5F9;
@@ -1904,31 +1908,24 @@ button.small {
       </label>
 
 
-           <label
-        class="radio-option"
-        style="display:flex;flex-direction:column;justify-content:center;"
-      >
+                     <label class="radio-option">
         <input
           type="radio"
           name="scoreDirection"
           value="rank"
         >
-        順位のみ
+        順位
       </label>
 
 
-      <label
-        class="radio-option"
-        style="display:flex;flex-direction:column;justify-content:center;"
-      >
+      <label class="radio-option">
         <input
           type="radio"
           name="scoreDirection"
           value="win_lose"
         >
-        勝ち/負け
+        勝・負
       </label>
-
 
     </div>
 
@@ -3416,11 +3413,11 @@ form.appendChild(maxPlayersInput);
     "radio-group";
 
 
-      [
+        [
     ["high", "高得点"],
     ["low", "低得点"],
-    ["rank", "順位のみ"],
-    ["win_lose", "勝ち負け"]
+    ["rank", "順位"],
+    ["win_lose", "勝・負"]
   ].forEach(
 
 
@@ -3454,28 +3451,13 @@ form.appendChild(maxPlayersInput);
       }
 
 
-            if (value === "win_lose") {
-
-        label.style.display =
-          "flex";
-
-        label.style.flexDirection =
-          "column";
-
-        label.style.justifyContent =
-          "center";
-
-      }
-
-      label.appendChild(
+              label.appendChild(
         radio
       );
 
       label.appendChild(
         document.createTextNode(
-          value === "win_lose"
-            ? "勝ち/負け"
-            : ` ${labelText}`
+          ` ${labelText}`
         )
       );
 

@@ -9598,14 +9598,14 @@ function renderSpecificGameList(keyword = "") {
 
       return false;
 
-    });
-
+        })
       .sort((a, b) =>
         (a.reading || a.name || "").localeCompare(
           b.reading || b.name || "",
           "ja"
         )
       );
+
 
 
   container.innerHTML = "";

@@ -12429,7 +12429,8 @@ function getGameChampionNames(game) {
       if (!stats[item.player]) {
         stats[item.player] = {
           bestScore: null,
-          wins: 0
+          wins: 0,
+          matches: 0
         };
       }
 
@@ -12444,6 +12445,8 @@ function getGameChampionNames(game) {
         game.direction === "rank" ||
         game.direction === "win_lose"
       ) {
+
+        player.matches++;
 
         if (score === 1) {
           player.wins++;
@@ -12474,20 +12477,47 @@ function getGameChampionNames(game) {
   const players =
     Object.entries(stats);
 
-  if (game.direction === "rank") {
+  /*
+   * 順位のみ・勝ちor負けのゲームは
+   * 勝率が最も高い人をタイトル保有者とする
+   */
 
-    const maxWins =
+  if (
+    game.direction === "rank" ||
+    game.direction === "win_lose"
+  ) {
+
+    const withRate =
+      players
+        .filter(
+          ([, stat]) => stat.matches > 0
+        )
+        .map(
+          ([name, stat]) => [
+            name,
+            stat.wins / stat.matches
+          ]
+        );
+
+    if (withRate.length === 0) {
+      return [];
+    }
+
+    const maxRate =
       Math.max(
-        ...players.map(
-          ([, stat]) => stat.wins
+        ...withRate.map(
+          ([, rate]) => rate
         )
       );
 
-    return players
+    if (maxRate <= 0) {
+      return [];
+    }
+
+    return withRate
       .filter(
-        ([, stat]) =>
-          stat.wins === maxWins &&
-          maxWins > 0
+        ([, rate]) =>
+          Math.abs(rate - maxRate) < 0.0000001
       )
       .map(
         ([name]) => name
@@ -12528,6 +12558,7 @@ function getGameChampionNames(game) {
     );
 
 }
+
 
 function getJapaneseIndex(reading) {
 

@@ -3336,17 +3336,27 @@ form.appendChild(maxPlayersInput);
    * 写真削除
    */
 
-  const deleteImageLabel =
+    const deleteImageLabel =
     document.createElement("label");
 
   deleteImageLabel.className =
     "radio-option";
 
   deleteImageLabel.style.display =
-    "block";
+    "flex";
+
+  deleteImageLabel.style.alignItems =
+    "center";
+
+  deleteImageLabel.style.justifyContent =
+    "center";
+
+  deleteImageLabel.style.gap =
+    "8px";
 
   deleteImageLabel.style.marginTop =
     "8px";
+
 
 
   const deleteImageCheckbox =
@@ -3401,12 +3411,13 @@ form.appendChild(maxPlayersInput);
     "radio-group";
 
 
-   [
-    ["high", "高得点が上位"],
-    ["low", "低得点が上位"],
-    ["rank", "順位のみ"],
-    ["win_lose", "勝ちor負け"]
+      [
+    ["high", "高得点"],
+    ["low", "低得点"],
+    ["rank", "順位"],
+    ["win_lose", "勝ち負け"]
   ].forEach(
+
 
     ([value, labelText]) => {
 

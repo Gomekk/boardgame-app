@@ -7375,7 +7375,7 @@ function renderBestScoreCountRanking() {
 
   container.innerHTML = "";
 
-  const holderCounts = {};
+    const holderCounts = {};
 
   const holderGames = {};
 
@@ -7390,53 +7390,8 @@ function renderBestScoreCountRanking() {
 
       if (matches.length === 0) return;
 
-      let bestScore =
-        game.direction === "low"
-          ? Infinity
-          : -Infinity;
-
-      matches.forEach(match => {
-
-        (match.scores || []).forEach(item => {
-
-          const score =
-            Number(item.score);
-
-          if (game.direction === "low") {
-
-            if (score < bestScore) {
-              bestScore = score;
-            }
-
-          } else {
-
-            if (score > bestScore) {
-              bestScore = score;
-            }
-
-          }
-
-        });
-
-      });
-
-      const holders = new Set();
-
-      matches.forEach(match => {
-
-        (match.scores || []).forEach(item => {
-
-          if (
-            Number(item.score) === bestScore
-          ) {
-
-            holders.add(item.player);
-
-          }
-
-        });
-
-      });
+      const holders =
+        getGameChampionNames(game);
 
       holders.forEach(playerName => {
 
@@ -7455,6 +7410,7 @@ function renderBestScoreCountRanking() {
       });
 
     });
+
 
   const ranking =
     data.players
@@ -10893,7 +10849,7 @@ if (isWinner(match, player.name)) {
      * タイトル保有数（ベストスコアを持っているゲームの数）を計算
      */
 
-    let titleCount = 0;
+        let titleCount = 0;
 
     data.games
       .filter(g => g.active)
@@ -10906,46 +10862,15 @@ if (isWinner(match, player.name)) {
 
         if (gameMatches.length === 0) return;
 
-        let bestScore =
-          g.direction === "low"
-            ? Infinity
-            : -Infinity;
+        const holders =
+          getGameChampionNames(g);
 
-        gameMatches.forEach(m => {
-
-          (m.scores || []).forEach(s => {
-
-            const score =
-              Number(s.score);
-
-            if (g.direction === "low") {
-
-              if (score < bestScore) {
-                bestScore = score;
-              }
-
-            } else {
-
-              if (score > bestScore) {
-                bestScore = score;
-              }
-
-            }
-
-          });
-
-        });
-
-        const isHolder =
-          gameMatches.some(m =>
-            (m.scores || []).some(s =>
-              s.player === player.name &&
-              Number(s.score) === bestScore
-            )
-          );
-
-        if (isHolder) {
+        if (holders.includes(player.name)) {
           titleCount++;
+        }
+
+      });
+nt++;
         }
 
       });

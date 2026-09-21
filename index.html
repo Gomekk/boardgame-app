@@ -1848,24 +1848,16 @@ button.small {
   ※現在の設定：軽量級＝<span id="weightLightNote">30</span>分以内／中量級＝<span id="weightMediumNote">60</span>分以内／重量級＝<span id="weightMediumNoteHeavy">60</span>分超
 </div>
 
-<div style="margin-top:12px;display:flex;align-items:center;gap:8px;">
-  <input
-    id="gameMinPlayers"
-    type="number"
-    min="1"
-    placeholder="最小人数"
-    style="flex:1;"
-  >
-  <span>〜</span>
-  <input
-    id="gameMaxPlayers"
-    type="number"
-    min="1"
-    placeholder="最大人数"
-    style="flex:1;"
-  >
-  <span>人</span>
+<div style="margin-top:12px;">
+
+  <label class="section-note" style="display:block;margin:0 0 6px;">
+    プレイ人数（任意・複数選択可）
+  </label>
+
+  <div id="gamePlayerCountPicker" style="display:flex;gap:3px;"></div>
+
 </div>
+
 
         <div style="margin-top:12px;">
       <label class="section-note">📷 ゲーム写真（任意）</label>
@@ -2811,43 +2803,11 @@ if (!name) {
 
 }
 
-const minPlayersInput =
-  document.getElementById("gameMinPlayers");
+const playerCounts =
+  gameRegisterSelectedPlayerCounts.size > 0
+    ? Array.from(gameRegisterSelectedPlayerCounts).sort((a, b) => a - b)
+    : null;
 
-const maxPlayersInput =
-  document.getElementById("gameMaxPlayers");
-
-const minPlayersRaw =
-  minPlayersInput ? minPlayersInput.value.trim() : "";
-
-const maxPlayersRaw =
-  maxPlayersInput ? maxPlayersInput.value.trim() : "";
-
-let minPlayers = null;
-let maxPlayers = null;
-
-if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
-
-  minPlayers = Number(minPlayersRaw);
-  maxPlayers = Number(maxPlayersRaw);
-
-  if (
-    !Number.isInteger(minPlayers) ||
-    !Number.isInteger(maxPlayers) ||
-    minPlayers <= 0 ||
-    maxPlayers <= 0 ||
-    maxPlayers < minPlayers
-  ) {
-
-    alert(
-      "プレイ人数は最小・最大とも1人以上で、最大は最小以上にしてください。"
-    );
-
-    return;
-
-  }
-
-}
 
   const direction =
     document.querySelector(
@@ -2883,7 +2843,7 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
 
     if (existingGame) {
 
-                        const {
+        const {
         error: updateError
       } =
         await supabaseClient
@@ -2892,8 +2852,7 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
             active: true,
             reading: reading,
             direction: direction,
-            min_players: minPlayers,
-            max_players: maxPlayers,
+            player_counts: playerCounts,
             image_url:
               newImageUrl || existingGame.image_url
           })
@@ -2913,19 +2872,17 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
       const {
         error: insertError
       } =
-       await supabaseClient
+              await supabaseClient
           .from("games")
           .insert({
   name: name,
   reading: reading,
   play_time: playTime,
   direction: direction,
-  min_players: minPlayers,
-  max_players: maxPlayers,
+  player_counts: playerCounts,
   active: true,
   image_url: newImageUrl
 });
-
 
 
       if (insertError) {
@@ -2942,8 +2899,12 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
   playTimeInput.value = "";
 }
 
-    if (minPlayersInput) { minPlayersInput.value = ""; }
-    if (maxPlayersInput) { maxPlayersInput.value = ""; }
+       gameRegisterSelectedPlayerCounts.clear();
+
+    renderPlayerCountPicker(
+      document.getElementById("gamePlayerCountPicker"),
+      gameRegisterSelectedPlayerCounts
+    );
 
     
         if (imageInput) {
@@ -3243,30 +3204,45 @@ form.appendChild(
   playTimeNote
 );
 
-const minPlayersInput =
-  document.createElement("input");
+const playerCountLabel =
+  document.createElement("label");
 
-minPlayersInput.type = "number";
-minPlayersInput.min = "1";
-minPlayersInput.placeholder = "最小人数";
-minPlayersInput.value = game.minPlayers || "";
-minPlayersInput.style.marginTop = "8px";
-minPlayersInput.style.width = "48%";
+playerCountLabel.className =
+  "section-note";
 
-const maxPlayersInput =
-  document.createElement("input");
+playerCountLabel.style.display =
+  "block";
 
-maxPlayersInput.type = "number";
-maxPlayersInput.min = "1";
-maxPlayersInput.placeholder = "最大人数";
-maxPlayersInput.value = game.maxPlayers || "";
-maxPlayersInput.style.marginTop = "8px";
-maxPlayersInput.style.marginLeft = "4%";
-maxPlayersInput.style.width = "48%";
+playerCountLabel.style.marginTop =
+  "12px";
 
-form.appendChild(minPlayersInput);
-form.appendChild(maxPlayersInput);
+playerCountLabel.textContent =
+  "プレイ人数（任意・複数選択可）";
 
+form.appendChild(
+  playerCountLabel
+);
+
+const editSelectedPlayerCounts =
+  new Set(game.playerCounts || []);
+
+const playerCountPicker =
+  document.createElement("div");
+
+playerCountPicker.style.display =
+  "flex";
+
+playerCountPicker.style.gap =
+  "3px";
+
+form.appendChild(
+  playerCountPicker
+);
+
+renderPlayerCountPicker(
+  playerCountPicker,
+  editSelectedPlayerCounts
+);
 
 /*
  * 現在の写真
@@ -3597,34 +3573,11 @@ if (
 
 }
 
-const minPlayersRaw = minPlayersInput.value.trim();
-const maxPlayersRaw = maxPlayersInput.value.trim();
+const newPlayerCounts =
+  editSelectedPlayerCounts.size > 0
+    ? Array.from(editSelectedPlayerCounts).sort((a, b) => a - b)
+    : null;
 
-let newMinPlayers = null;
-let newMaxPlayers = null;
-
-if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
-
-  newMinPlayers = Number(minPlayersRaw);
-  newMaxPlayers = Number(maxPlayersRaw);
-
-  if (
-    !Number.isInteger(newMinPlayers) ||
-    !Number.isInteger(newMaxPlayers) ||
-    newMinPlayers <= 0 ||
-    newMaxPlayers <= 0 ||
-    newMaxPlayers < newMinPlayers
-  ) {
-
-    alert(
-      "プレイ人数は最小・最大とも1人以上で、最大は最小以上にしてください。"
-    );
-
-    return;
-
-  }
-
-}
 
     const selectedDirection =
 
@@ -3773,7 +3726,7 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
       const {
         error
       } =
-                await supabaseClient
+                                await supabaseClient
           .from("games")
           .update({
   name:
@@ -3785,11 +3738,8 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
   play_time:
     newPlayTime,
 
-  min_players:
-    newMinPlayers,
-
-  max_players:
-    newMaxPlayers,
+  player_counts:
+    newPlayerCounts,
 
   direction:
     newDirection,
@@ -3802,6 +3752,7 @@ if (minPlayersRaw !== "" || maxPlayersRaw !== "") {
             "id",
             game.id
           );
+
 
 
       if (error) {
@@ -5032,10 +4983,15 @@ async function loadDataFromSupabase() {
         game.reading || "",
       playTime:
         game.play_time || null,
-      minPlayers:
+            minPlayers:
         game.min_players || null,
       maxPlayers:
         game.max_players || null,
+      playerCounts:
+        Array.isArray(game.player_counts) && game.player_counts.length > 0
+          ? game.player_counts
+          : null,
+
       direction:
         game.direction || "high",
       active:
@@ -5219,6 +5175,7 @@ let specificGamePlayerCountFilter = new Set();
 let lastRouletteSelectedWeight = "";
 let lastRouletteSelectedWeights = new Set();
 let lastRouletteSelectedPlayerCounts = new Set();
+let gameRegisterSelectedPlayerCounts = new Set();
 
 
 function getGameWeightClass(playTime) {
@@ -5266,6 +5223,109 @@ function getGameWeightLabel(playTime) {
   return "級未設定";
 
 }
+
+function renderPlayerCountPicker(container, selectedSet) {
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  for (let count = 1; count <= 10; count++) {
+
+    const button =
+      document.createElement("button");
+
+    button.type =
+      "button";
+
+    button.className =
+      "filter-chip-button";
+
+    button.textContent =
+      String(count);
+
+    button.style.flex =
+      "1";
+
+    button.style.minWidth =
+      "0";
+
+    button.style.padding =
+      "4px 0";
+
+    button.style.fontSize =
+      "11px";
+
+    button.style.borderRadius =
+      "6px";
+
+    function updateStyle() {
+
+      const active =
+        selectedSet.has(count);
+
+      button.style.background =
+        active ? "#1E3A5F" : "#ffffff";
+
+      button.style.color =
+        active ? "#ffffff" : "#111827";
+
+      button.style.border =
+        active
+          ? "1px solid #1E3A5F"
+          : "1px solid #d1d5db";
+
+    }
+
+    updateStyle();
+
+    button.onclick = () => {
+
+      if (selectedSet.has(count)) {
+        selectedSet.delete(count);
+      } else {
+        selectedSet.add(count);
+      }
+
+      updateStyle();
+
+    };
+
+    container.appendChild(button);
+
+  }
+
+}
+
+function formatPlayerCountsLabel(counts) {
+
+  if (!counts || counts.length === 0) return null;
+
+  const sorted =
+    [...counts].sort((a, b) => a - b);
+
+  const isContinuous =
+    sorted.every((value, index) =>
+      index === 0 || value === sorted[index - 1] + 1
+    );
+
+  if (isContinuous) {
+
+    return sorted.length === 1
+      ? `${sorted[0]}人`
+      : `${sorted[0]}〜${sorted[sorted.length - 1]}人`;
+
+  }
+
+  return `${sorted.join("・")}人`;
+
+}
+
+renderPlayerCountPicker(
+  document.getElementById("gamePlayerCountPicker"),
+  gameRegisterSelectedPlayerCounts
+);
+
 
 let matchGamePickerGames = [];
 
@@ -6076,14 +6136,9 @@ function renderGameList() {
         game.playTime
       );
 
-    const playerCountText =
-      game.minPlayers && game.maxPlayers
-        ? (
-            game.minPlayers === game.maxPlayers
-              ? `${game.minPlayers}人`
-              : `${game.minPlayers}〜${game.maxPlayers}人`
-          )
-        : null;
+        const playerCountText =
+      formatPlayerCountsLabel(game.playerCounts);
+
 
     const playTimeText =
       game.playTime
@@ -8607,7 +8662,7 @@ function startRoulette() {
           )
         : allGames;
 
-  if (
+    if (
     selectedWeight !== "specific" &&
     selectedPlayerCounts.size > 0
   ) {
@@ -8615,13 +8670,10 @@ function startRoulette() {
     games =
       games.filter(game => {
 
-        if (!game.minPlayers && !game.maxPlayers) return true;
-
-        const min = game.minPlayers || 1;
-        const max = game.maxPlayers || 99;
+        if (!game.playerCounts || game.playerCounts.length === 0) return true;
 
         for (const count of selectedPlayerCounts) {
-          if (count >= min && count <= max) return true;
+          if (game.playerCounts.includes(count)) return true;
         }
 
         return false;
@@ -8629,6 +8681,7 @@ function startRoulette() {
       });
 
   }
+
 
   if (games.length === 0) {
     alert(
@@ -8758,23 +8811,21 @@ function updateEligibleCountDisplay() {
         )
       : allGames;
 
-  const filteredByCount =
+    const filteredByCount =
     selectedPlayerCounts.size > 0
       ? eligibleGames.filter(game => {
 
-          if (!game.minPlayers && !game.maxPlayers) return true;
-
-          const min = game.minPlayers || 1;
-          const max = game.maxPlayers || 99;
+          if (!game.playerCounts || game.playerCounts.length === 0) return true;
 
           for (const count of selectedPlayerCounts) {
-            if (count >= min && count <= max) return true;
+            if (game.playerCounts.includes(count)) return true;
           }
 
           return false;
 
         })
       : eligibleGames;
+
 
   label.textContent =
     `▼ ${filteredByCount.length}件の中からpick up`;
@@ -9458,17 +9509,14 @@ function getVisibleSpecificGames(keyword = "") {
       return specificGameWeightFilter.has(weight);
 
     })
-    .filter(game => {
+     .filter(game => {
 
       if (specificGamePlayerCountFilter.size === 0) return true;
 
-      if (!game.minPlayers && !game.maxPlayers) return true;
-
-      const min = game.minPlayers || 1;
-      const max = game.maxPlayers || 99;
+      if (!game.playerCounts || game.playerCounts.length === 0) return true;
 
       for (const count of specificGamePlayerCountFilter) {
-        if (count >= min && count <= max) return true;
+        if (game.playerCounts.includes(count)) return true;
       }
 
       return false;
@@ -9538,22 +9586,20 @@ function renderSpecificGameList(keyword = "") {
         return specificGameWeightFilter.has(weight);
 
       })
-      .filter(game => {
+        .filter(game => {
 
-        if (specificGamePlayerCountFilter.size === 0) return true;
+      if (specificGamePlayerCountFilter.size === 0) return true;
 
-        if (!game.minPlayers && !game.maxPlayers) return true;
+      if (!game.playerCounts || game.playerCounts.length === 0) return true;
 
-        const min = game.minPlayers || 1;
-        const max = game.maxPlayers || 99;
+      for (const count of specificGamePlayerCountFilter) {
+        if (game.playerCounts.includes(count)) return true;
+      }
 
-        for (const count of specificGamePlayerCountFilter) {
-          if (count >= min && count <= max) return true;
-        }
+      return false;
 
-        return false;
+    });
 
-      })
       .sort((a, b) =>
         (a.reading || a.name || "").localeCompare(
           b.reading || b.name || "",
@@ -12606,7 +12652,7 @@ function renderGameRankingGameList() {
         return gameRankingWeightFilter.has(weight);
 
       })
-            .filter(game => {
+                      .filter(game => {
 
         /*
          * 何も選択していない時は絞り込みなし
@@ -12617,18 +12663,16 @@ function renderGameRankingGameList() {
          * 人数未設定のゲームは
          * 絞り込みの対象外として常に表示
          */
-        if (!game.minPlayers && !game.maxPlayers) return true;
-
-        const min = game.minPlayers || 1;
-        const max = game.maxPlayers || 99;
+        if (!game.playerCounts || game.playerCounts.length === 0) return true;
 
         for (const count of gameRankingPlayerCountFilter) {
-          if (count >= min && count <= max) return true;
+          if (game.playerCounts.includes(count)) return true;
         }
 
         return false;
 
       })
+
 
       .sort((a, b) =>
 

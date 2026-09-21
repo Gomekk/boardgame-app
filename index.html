@@ -3324,8 +3324,8 @@ form.appendChild(maxPlayersInput);
   imageLabel.style.margin =
     "0";
 
-  imageLabel.textContent =
-    "📷 写真を変更";
+    imageLabel.textContent =
+    "📷 変更";
 
 
   let deleteImageMarked =
@@ -3340,8 +3340,8 @@ form.appendChild(maxPlayersInput);
   deleteImageButton.className =
     "list-item-action-button danger-text";
 
-  deleteImageButton.textContent =
-    "写真を削除";
+    deleteImageButton.textContent =
+    "削除";
 
   deleteImageButton.onclick = () => {
 
@@ -3353,10 +3353,11 @@ form.appendChild(maxPlayersInput);
 
     deleteImageButton.textContent =
       deleteImageMarked
-        ? "削除を取消す"
-        : "写真を削除";
+        ? "取消す"
+        : "削除";
 
   };
+
 
 
   imageRow.appendChild(

@@ -3360,11 +3360,24 @@ form.appendChild(maxPlayersInput);
 
 
 
-  const deleteImageCheckbox =
+    const deleteImageCheckbox =
     document.createElement("input");
 
   deleteImageCheckbox.type =
     "checkbox";
+
+  deleteImageCheckbox.style.width =
+    "18px";
+
+  deleteImageCheckbox.style.height =
+    "18px";
+
+  deleteImageCheckbox.style.flexShrink =
+    "0";
+
+  deleteImageCheckbox.style.padding =
+    "0";
+
 
 
   deleteImageLabel.appendChild(

@@ -2803,13 +2803,22 @@ if (!name) {
 
 }
 
+if (gameRegisterSelectedPlayerCounts.size === 0) {
+
+  alert(
+    "プレイ人数を選択してください"
+  );
+
+  return;
+
+}
+
 const playerCounts =
-  gameRegisterSelectedPlayerCounts.size > 0
-    ? Array.from(gameRegisterSelectedPlayerCounts).sort((a, b) => a - b)
-    : null;
+  Array.from(gameRegisterSelectedPlayerCounts).sort((a, b) => a - b);
 
 
-    const selectedDirectionInput =
+  const selectedDirectionInput =
+
     document.querySelector(
       'input[name="scoreDirection"]:checked'
     );
@@ -3594,10 +3603,18 @@ if (
 
 }
 
+if (editSelectedPlayerCounts.size === 0) {
+
+  alert(
+    "プレイ人数を選択してください"
+  );
+
+  return;
+
+}
+
 const newPlayerCounts =
-  editSelectedPlayerCounts.size > 0
-    ? Array.from(editSelectedPlayerCounts).sort((a, b) => a - b)
-    : null;
+  Array.from(editSelectedPlayerCounts).sort((a, b) => a - b);
 
 
     const selectedDirection =

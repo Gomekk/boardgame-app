@@ -9101,20 +9101,34 @@ if (allGames.length === 0) {
         style="display:none;"
       >
 
-        <button
+              <button
           type="button"
           id="gameRouletteRecord"
         >
-          🎮 このゲームで記録
+          このゲームで記録
         </button>
 
-        <button
-          type="button"
-          id="gameRouletteAgain"
-          class="secondary"
-        >
-          🔄 もう一回回す
-        </button>
+              <div style="display:flex;gap:8px;">
+
+          <button
+            type="button"
+            id="gameRouletteChangeSetting"
+            class="secondary"
+            style="flex:1;margin-bottom:0;"
+          >
+            設定を変える
+          </button>
+
+          <button
+            type="button"
+            id="gameRouletteAgain"
+            class="secondary"
+            style="flex:1;margin-bottom:0;"
+          >
+            🔄 もう一回
+          </button>
+
+        </div>
 
       </div>
       
@@ -10401,8 +10415,7 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
 
 }
 
-
-      againButton.onclick = () => {
+            againButton.onclick = () => {
 
     lastRouletteSelectedWeight =
       selectedWeight;
@@ -10416,6 +10429,28 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
     overlay.remove();
 
     randomSelectGame(true);
+
+  };
+
+  const changeSettingButton =
+    document.getElementById(
+      "gameRouletteChangeSetting"
+    );
+
+  changeSettingButton.onclick = () => {
+
+    lastRouletteSelectedWeight =
+      selectedWeight;
+
+    lastRouletteSelectedWeights =
+      new Set(selectedWeights);
+
+    lastRouletteSelectedPlayerCounts =
+      new Set(selectedPlayerCounts);
+
+    overlay.remove();
+
+    randomSelectGame(false);
 
   };
 

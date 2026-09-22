@@ -4887,10 +4887,7 @@ async function recordMatch() {
 
     });
 
-            const keepGameName =
-      gameName;
-
-    document
+                document
       .querySelectorAll(
         "#scorePlayers .player-row"
       )
@@ -4920,19 +4917,6 @@ async function recordMatch() {
     );
 
     updateAll();
-
-    const gameSelect =
-      document.getElementById("matchGame");
-
-    if (gameSelect) {
-
-      gameSelect.value =
-        keepGameName;
-
-      updateMatchGameTrigger();
-
-    }
-
 
 
   } catch (error) {
@@ -5576,6 +5560,9 @@ async function renderGameSelect() {
 
   if (!select) return;
 
+  const previousValue =
+    select.value;
+
   const games =
     await loadGamesFromSupabase();
 
@@ -5647,7 +5634,7 @@ async function renderGameSelect() {
   /*
    * ルーレットからゲームが渡されている場合
    */
-  if (window.rouletteSelectedGame) {
+    if (window.rouletteSelectedGame) {
 
     select.value =
       window.rouletteSelectedGame;
@@ -5659,11 +5646,22 @@ async function renderGameSelect() {
     window.rouletteSelectedGame =
       null;
 
+  } else if (
+    previousValue &&
+    matchGamePickerGames.some(
+      game => game.name === previousValue
+    )
+  ) {
+
+    select.value =
+      previousValue;
+
   }
 
   updateMatchGameTrigger();
 
 }
+
 
 function updateMatchGameTrigger() {
 

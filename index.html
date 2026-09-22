@@ -9493,7 +9493,7 @@ async function openFavoriteSetSelector() {
         "
       >×</button>
 
-      <h2 style="padding-right:40px;">⭐ お気に入りセット</h2>
+      <h2 style="padding-right:40px;">お気に入り</h2>
 
       <button
         type="button"
@@ -9616,20 +9616,36 @@ async function openFavoriteSetSelector() {
 
     nameArea.appendChild(countEl);
 
-    const useButton =
+        const useButton =
       document.createElement("button");
 
     useButton.type =
       "button";
 
-    useButton.className =
-      "small";
-
     useButton.style.width =
       "auto";
 
+    useButton.style.padding =
+      "7px 12px";
+
+    useButton.style.fontSize =
+      "12px";
+
+    useButton.style.borderRadius =
+      "999px";
+
+    useButton.style.background =
+      "#DFF3D8";
+
+    useButton.style.color =
+      "#2E7D32";
+
+    useButton.style.boxShadow =
+      "none";
+
     useButton.textContent =
       "使う";
+
 
     useButton.onclick = () => {
 
@@ -9648,6 +9664,29 @@ async function openFavoriteSetSelector() {
 
     };
 
+        const editButton =
+      document.createElement("button");
+
+    editButton.type =
+      "button";
+
+    editButton.className =
+      "list-item-action-button";
+
+    editButton.textContent =
+      "編集";
+
+    editButton.onclick = () => {
+
+      favoriteOverlay.remove();
+
+      specificRouletteSelectedGames =
+        new Set(set.game_names || []);
+
+      openSpecificGameSelector(set);
+
+    };
+
     const deleteButton =
       document.createElement("button");
 
@@ -9662,6 +9701,7 @@ async function openFavoriteSetSelector() {
 
     deleteButton.textContent =
       "削除";
+
 
     deleteButton.onclick = async () => {
 
@@ -9703,7 +9743,10 @@ async function openFavoriteSetSelector() {
 
     row.appendChild(useButton);
 
+    row.appendChild(editButton);
+
     row.appendChild(deleteButton);
+
 
     listContainer.appendChild(row);
 
@@ -9712,7 +9755,7 @@ async function openFavoriteSetSelector() {
 }
 
 
-function openSpecificGameSelector() {
+function openSpecificGameSelector(editingSet = null) {
 
   const existing =
     document.getElementById(
@@ -9780,8 +9823,8 @@ function openSpecificGameSelector() {
         "
       >
 
-        <div style="font-size:17px;font-weight:700;color:#333;">
-          ゲームを選択
+       <div style="font-size:17px;font-weight:700;color:#333;">
+          ${editingSet ? "お気に入りを編集" : "ゲームを選択"}
         </div>
 
         <button
@@ -10053,7 +10096,7 @@ function openSpecificGameSelector() {
     renderSpecificGameList(searchInput.value);
   };
 
-        document.getElementById("specificGameSaveFavorite").onclick = async () => {
+            document.getElementById("specificGameSaveFavorite").onclick = async () => {
 
     if (specificRouletteSelectedGames.size === 0) {
       alert("1つ以上のゲームを選択してください。");
@@ -10061,7 +10104,10 @@ function openSpecificGameSelector() {
     }
 
     const setName =
-      prompt("セットの名前を入力してください");
+      prompt(
+        "セットの名前を入力してください",
+        editingSet ? editingSet.name : ""
+      );
 
     if (!setName || !setName.trim()) {
       return;
@@ -10070,13 +10116,25 @@ function openSpecificGameSelector() {
     const {
       error
     } =
-      await supabaseClient
-        .from("favorite_game_sets")
-        .insert({
-          name: setName.trim(),
-          game_names:
-            Array.from(specificRouletteSelectedGames)
-        });
+      editingSet
+        ? await supabaseClient
+            .from("favorite_game_sets")
+            .update({
+              name: setName.trim(),
+              game_names:
+                Array.from(specificRouletteSelectedGames)
+            })
+            .eq(
+              "id",
+              editingSet.id
+            )
+        : await supabaseClient
+            .from("favorite_game_sets")
+            .insert({
+              name: setName.trim(),
+              game_names:
+                Array.from(specificRouletteSelectedGames)
+            });
 
     if (error) {
 
@@ -10094,6 +10152,7 @@ function openSpecificGameSelector() {
     );
 
   };
+
 
     document.getElementById("specificGameConfirm").onclick = () => {
 

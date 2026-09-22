@@ -8754,21 +8754,22 @@ if (allGames.length === 0) {
   overlay.innerHTML = `
     <div class="game-roulette-box">
 
-           <div class="game-roulette-title" style="margin-bottom:12px;">
+    <div class="game-roulette-title" style="margin-bottom:2px;">
    今回のゲームは？
     </div>
 
-    <button
-      type="button"
-      id="gameRouletteFavoriteButton"
-      class="secondary"
-      style="margin-bottom:12px;padding:8px;font-size:13px;"
-    >
-      ⭐ お気に入りから選ぶ
-    </button>
+    <div style="text-align:right;margin-bottom:6px;">
+      <span
+        id="gameRouletteFavoriteButton"
+        style="font-size:12px;color:#9ca3af;text-decoration:underline;cursor:pointer;"
+      >
+        お気に入り
+      </span>
+    </div>
 
 <div
   id="gameRouletteMode"
+
 
   style="
     display:grid;

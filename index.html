@@ -6607,14 +6607,16 @@ function renderGameList() {
       ).length;
 
 
-    const direction =
+        const direction =
       game.direction === "high"
         ? "高得点"
         : game.direction === "low"
           ? "低得点"
           : game.direction === "win_lose"
             ? "勝・負"
-            : "順位";
+            : game.direction === "co_op"
+              ? "協力型"
+              : "順位";
 
 
     const weightLabel =

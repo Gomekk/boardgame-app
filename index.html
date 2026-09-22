@@ -5995,7 +5995,7 @@ function renderScoreHelperItemsBuilder(container, items) {
     "1";
 
   previewButton.textContent =
-    "👁 プレビューを見る";
+    "プレビューを見る";
 
   previewButton.onclick = () => {
 
@@ -6640,11 +6640,14 @@ function openScoreHelperItemsPreview(items) {
     cell.style.padding =
       "4px";
 
-    const input =
+        const input =
       document.createElement("input");
 
     input.type =
       "number";
+
+    input.disabled =
+      true;
 
     input.style.width =
       "70px";
@@ -6655,14 +6658,8 @@ function openScoreHelperItemsPreview(items) {
     input.style.fontSize =
       "13px";
 
-    input.oninput = () => {
-
-      values[index] =
-        input.value;
-
-      updateTotal();
-
-    };
+    input.style.background =
+      "#F1F5F9";
 
     cell.appendChild(input);
 
@@ -6681,6 +6678,7 @@ function openScoreHelperItemsPreview(items) {
 }
 
 function openScoreHelperPopup() {
+
 
   const select =
     document.getElementById("matchGame");

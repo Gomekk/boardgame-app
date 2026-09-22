@@ -7202,7 +7202,7 @@ function openScoreHelperPopup() {
 
   const totalCellByPlayer = {};
 
-  players.forEach(player => {
+    players.forEach(player => {
 
     const cell =
       document.createElement("div");
@@ -7234,12 +7234,31 @@ function openScoreHelperPopup() {
     cell.style.justifyContent =
       "flex-end";
 
+    const playerData =
+      data.players.find(
+        p => p.name === player
+      );
+
+    if (playerData && playerData.color) {
+
+      cell.style.border =
+        `2px solid ${playerData.color}`;
+
+      cell.style.borderRadius =
+        "6px";
+
+      cell.style.margin =
+        "2px 0";
+
+    }
+
     totalCellByPlayer[player] =
       cell;
 
     totalCol.appendChild(cell);
 
   });
+
 
   function updateTotal(player) {
 

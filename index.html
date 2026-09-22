@@ -7010,7 +7010,7 @@ function openScoreHelperPopup() {
       const input =
         itemCellByPlayer[player][index];
 
-      if (
+            if (
         Number.isFinite(value) &&
         value === bestValue
       ) {
@@ -7022,11 +7022,11 @@ function openScoreHelperPopup() {
 
         input.style.background =
           playerData && playerData.color
-            ? playerData.color
-            : "#FFCC80";
+            ? playerData.color + "33"
+            : "#FFE8CC";
 
         input.style.color =
-          "#ffffff";
+          "#111827";
 
       } else {
 
@@ -7037,6 +7037,7 @@ function openScoreHelperPopup() {
           "";
 
       }
+
 
     });
 
@@ -7285,11 +7286,11 @@ function openScoreHelperPopup() {
     inner.style.padding =
       "0 6px";
 
-    inner.style.fontWeight =
+        inner.style.fontWeight =
       "800";
 
     inner.style.fontSize =
-      "13px";
+      "16px";
 
     inner.style.borderRadius =
       "6px";

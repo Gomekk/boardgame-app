@@ -8754,11 +8754,11 @@ if (allGames.length === 0) {
   overlay.innerHTML = `
     <div class="game-roulette-box">
 
-    <div class="game-roulette-title" style="margin-bottom:2px;">
+        <div class="game-roulette-title" style="margin-bottom:2px;">
    今回のゲームは？
     </div>
 
-    <div style="text-align:right;margin-bottom:0;">
+    <div style="text-align:right;margin-bottom:-6px;">
       <span
         id="gameRouletteFavoriteButton"
         style="font-size:12px;color:#9ca3af;text-decoration:underline;cursor:pointer;display:inline-flex;align-items:center;gap:3px;"
@@ -8768,16 +8768,13 @@ if (allGames.length === 0) {
       </span>
     </div>
 
-
 <div
   id="gameRouletteMode"
-
-
   style="
     display:grid;
     grid-template-columns:repeat(6, 1fr);
     gap:6px;
-    margin:12px 0;
+    margin:4px 0 12px;
   "
 >
 

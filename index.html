@@ -1357,8 +1357,18 @@ button.small {
   >
 </div>
     
-      <div id="previousMembersArea" style="margin-top:10px;"></div>
-  
+           <div id="previousMembersArea" style="margin-top:10px;"></div>
+
+      <div style="text-align:right;margin-top:8px;">
+        <button
+          type="button"
+          id="scoreHelperOpenButton"
+          style="width:auto;padding:6px 14px;font-size:12px;box-shadow:none;"
+        >
+          得点計算補助機能を使用
+        </button>
+      </div>
+
       <div id="scorePlayers" style="margin-top:12px;"></div>
 
     <button class="secondary" onclick="addScorePlayer()">
@@ -1889,9 +1899,19 @@ button.small {
 
 </div>
 
+<div style="margin-top:16px;display:flex;align-items:center;gap:8px;">
+  <input type="checkbox" id="gameScoreHelperEnabled" style="width:auto;margin:0;">
+  <label for="gameScoreHelperEnabled" class="section-note" style="margin:0;">
+    得点計算補助機能を登録する
+  </label>
+</div>
+
+<div id="gameScoreHelperItemsArea" style="display:none;margin-top:8px;"></div>
+
 
         <div style="margin-top:12px;">
       <label class="section-note">📷 ゲーム写真（任意）</label>
+
             <input
         type="file"
         id="gameImageInput"
@@ -2916,6 +2936,30 @@ if (gameRegisterSelectedPlayerCounts.size === 0) {
 const playerCounts =
   Array.from(gameRegisterSelectedPlayerCounts).sort((a, b) => a - b);
 
+const scoreHelperCheckbox =
+  document.getElementById("gameScoreHelperEnabled");
+
+const scoreHelperItemsToSave =
+  scoreHelperCheckbox && scoreHelperCheckbox.checked
+    ? gameRegisterScoreHelperItems
+        .map(item => item.trim())
+        .filter(item => item !== "")
+    : null;
+
+if (
+  scoreHelperCheckbox &&
+  scoreHelperCheckbox.checked &&
+  scoreHelperItemsToSave.length === 0
+) {
+
+  alert(
+    "得点計算補助機能の項目を1つ以上入力してください。"
+  );
+
+  return;
+
+}
+
 
   const selectedDirectionInput =
 
@@ -2971,14 +3015,16 @@ const playerCounts =
       } =
         await supabaseClient
           .from("games")
-          .update({
+                    .update({
             active: true,
             reading: reading,
             direction: direction,
             player_counts: playerCounts,
+            score_helper_items: scoreHelperItemsToSave,
             image_url:
               newImageUrl || existingGame.image_url
           })
+
           .eq(
             "id",
             existingGame.id
@@ -2997,12 +3043,13 @@ const playerCounts =
       } =
               await supabaseClient
           .from("games")
-          .insert({
+                    .insert({
   name: name,
   reading: reading,
   play_time: playTime,
   direction: direction,
   player_counts: playerCounts,
+  score_helper_items: scoreHelperItemsToSave,
   active: true,
   image_url: newImageUrl
 });
@@ -3022,12 +3069,29 @@ const playerCounts =
   playTimeInput.value = "";
 }
 
-  gameRegisterSelectedPlayerCounts.clear();
+    gameRegisterSelectedPlayerCounts.clear();
 
     renderPlayerCountPicker(
       document.getElementById("gamePlayerCountPicker"),
       gameRegisterSelectedPlayerCounts
     );
+
+  gameRegisterScoreHelperItems = [];
+
+  if (gameScoreHelperItemsAreaEl) {
+
+    gameScoreHelperItemsAreaEl.innerHTML = "";
+
+    gameScoreHelperItemsAreaEl.style.display = "none";
+
+  }
+
+  if (scoreHelperCheckbox) {
+
+    scoreHelperCheckbox.checked = false;
+
+  }
+
 
     document
       .querySelectorAll('input[name="scoreDirection"]')
@@ -3373,6 +3437,114 @@ renderPlayerCountPicker(
   playerCountPicker,
   editSelectedPlayerCounts
 );
+
+const editSelectedScoreHelperItems =
+  game.scoreHelperItems
+    ? [...game.scoreHelperItems]
+    : [];
+
+const scoreHelperRow =
+  document.createElement("div");
+
+scoreHelperRow.style.display =
+  "flex";
+
+scoreHelperRow.style.alignItems =
+  "center";
+
+scoreHelperRow.style.gap =
+  "8px";
+
+scoreHelperRow.style.marginTop =
+  "16px";
+
+const scoreHelperCheckboxEdit =
+  document.createElement("input");
+
+scoreHelperCheckboxEdit.type =
+  "checkbox";
+
+scoreHelperCheckboxEdit.style.width =
+  "auto";
+
+scoreHelperCheckboxEdit.style.margin =
+  "0";
+
+scoreHelperCheckboxEdit.checked =
+  editSelectedScoreHelperItems.length > 0;
+
+const scoreHelperLabelEdit =
+  document.createElement("label");
+
+scoreHelperLabelEdit.className =
+  "section-note";
+
+scoreHelperLabelEdit.style.margin =
+  "0";
+
+scoreHelperLabelEdit.textContent =
+  "得点計算補助機能を登録する";
+
+scoreHelperRow.appendChild(
+  scoreHelperCheckboxEdit
+);
+
+scoreHelperRow.appendChild(
+  scoreHelperLabelEdit
+);
+
+form.appendChild(
+  scoreHelperRow
+);
+
+const scoreHelperItemsAreaEdit =
+  document.createElement("div");
+
+scoreHelperItemsAreaEdit.style.marginTop =
+  "8px";
+
+scoreHelperItemsAreaEdit.style.display =
+  editSelectedScoreHelperItems.length > 0
+    ? "block"
+    : "none";
+
+form.appendChild(
+  scoreHelperItemsAreaEdit
+);
+
+if (editSelectedScoreHelperItems.length > 0) {
+
+  renderScoreHelperItemsBuilder(
+    scoreHelperItemsAreaEdit,
+    editSelectedScoreHelperItems
+  );
+
+}
+
+scoreHelperCheckboxEdit.onchange = () => {
+
+  if (scoreHelperCheckboxEdit.checked) {
+
+    scoreHelperItemsAreaEdit.style.display =
+      "block";
+
+    if (editSelectedScoreHelperItems.length === 0) {
+      editSelectedScoreHelperItems.push("");
+    }
+
+    renderScoreHelperItemsBuilder(
+      scoreHelperItemsAreaEdit,
+      editSelectedScoreHelperItems
+    );
+
+  } else {
+
+    scoreHelperItemsAreaEdit.style.display =
+      "none";
+
+  }
+
+};
 
 /*
  * 現在の写真
@@ -3857,6 +4029,26 @@ const newPlayerCounts =
 
 
 
+        const newScoreHelperItems =
+      scoreHelperCheckboxEdit.checked
+        ? editSelectedScoreHelperItems
+            .map(item => item.trim())
+            .filter(item => item !== "")
+        : null;
+
+    if (
+      scoreHelperCheckboxEdit.checked &&
+      newScoreHelperItems.length === 0
+    ) {
+
+      alert(
+        "得点計算補助機能の項目を1つ以上入力してください。"
+      );
+
+      return;
+
+    }
+
     /*
      * ゲーム情報を更新
      */
@@ -3866,7 +4058,7 @@ const newPlayerCounts =
       const {
         error
       } =
-                                await supabaseClient
+      await supabaseClient
           .from("games")
           .update({
   name:
@@ -3880,6 +4072,9 @@ const newPlayerCounts =
 
   player_counts:
     newPlayerCounts,
+
+  score_helper_items:
+    newScoreHelperItems,
 
   direction:
     newDirection,
@@ -5228,13 +5423,19 @@ async function loadDataFromSupabase() {
         game.min_players || null,
       maxPlayers:
         game.max_players || null,
-      playerCounts:
+            playerCounts:
         Array.isArray(game.player_counts) && game.player_counts.length > 0
           ? game.player_counts
           : null,
 
+      scoreHelperItems:
+        Array.isArray(game.score_helper_items) && game.score_helper_items.length > 0
+          ? game.score_helper_items
+          : null,
+
       direction:
         game.direction || "high",
+
       active:
         game.active !== false,
       image:
@@ -5512,6 +5713,7 @@ let lastRouletteSelectedWeight = "";
 let lastRouletteSelectedWeights = new Set();
 let lastRouletteSelectedPlayerCounts = new Set();
 let gameRegisterSelectedPlayerCounts = new Set();
+let gameRegisterScoreHelperItems = [];
 
 function getGameWeightClass(playTime) {
 
@@ -5657,6 +5859,118 @@ function renderPlayerCountPicker(container, selectedSet) {
 
 }
 
+function renderScoreHelperItemsBuilder(container, items) {
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  items.forEach((itemName, index) => {
+
+    const row =
+      document.createElement("div");
+
+    row.style.display =
+      "flex";
+
+    row.style.gap =
+      "6px";
+
+    row.style.marginBottom =
+      "6px";
+
+    const input =
+      document.createElement("input");
+
+    input.type =
+      "text";
+
+    input.value =
+      itemName;
+
+    input.placeholder =
+      `項目${index + 1}（例：素点）`;
+
+    input.oninput = () => {
+
+      items[index] =
+        input.value;
+
+    };
+
+    const removeButton =
+      document.createElement("button");
+
+    removeButton.type =
+      "button";
+
+    removeButton.className =
+      "small danger";
+
+    removeButton.textContent =
+      "×";
+
+    removeButton.style.width =
+      "32px";
+
+    removeButton.style.height =
+      "32px";
+
+    removeButton.style.minWidth =
+      "32px";
+
+    removeButton.style.padding =
+      "0";
+
+    removeButton.style.borderRadius =
+      "50%";
+
+    removeButton.onclick = () => {
+
+      items.splice(index, 1);
+
+      renderScoreHelperItemsBuilder(
+        container,
+        items
+      );
+
+    };
+
+    row.appendChild(input);
+
+    row.appendChild(removeButton);
+
+    container.appendChild(row);
+
+  });
+
+  const addButton =
+    document.createElement("button");
+
+  addButton.type =
+    "button";
+
+  addButton.className =
+    "secondary small";
+
+  addButton.textContent =
+    "＋ 項目を追加";
+
+  addButton.onclick = () => {
+
+    items.push("");
+
+    renderScoreHelperItemsBuilder(
+      container,
+      items
+    );
+
+  };
+
+  container.appendChild(addButton);
+
+}
+
 function formatPlayerCountsLabel(counts) {
 
   if (!counts || counts.length === 0) return null;
@@ -5685,6 +5999,41 @@ renderPlayerCountPicker(
   document.getElementById("gamePlayerCountPicker"),
   gameRegisterSelectedPlayerCounts
 );
+
+const gameScoreHelperCheckboxEl =
+  document.getElementById("gameScoreHelperEnabled");
+
+const gameScoreHelperItemsAreaEl =
+  document.getElementById("gameScoreHelperItemsArea");
+
+if (gameScoreHelperCheckboxEl && gameScoreHelperItemsAreaEl) {
+
+  gameScoreHelperCheckboxEl.onchange = () => {
+
+    if (gameScoreHelperCheckboxEl.checked) {
+
+      gameScoreHelperItemsAreaEl.style.display =
+        "block";
+
+      if (gameRegisterScoreHelperItems.length === 0) {
+        gameRegisterScoreHelperItems.push("");
+      }
+
+      renderScoreHelperItemsBuilder(
+        gameScoreHelperItemsAreaEl,
+        gameRegisterScoreHelperItems
+      );
+
+    } else {
+
+      gameScoreHelperItemsAreaEl.style.display =
+        "none";
+
+    }
+
+  };
+
+}
 
 
 let matchGamePickerGames = [];
@@ -5765,11 +6114,13 @@ async function renderGameSelect() {
 
     }
 
-    updateMatchGameTrigger();
+        updateMatchGameTrigger();
 
     matchCoOpResult = null;
 
     updateCoOpResultArea();
+
+    updateScoreHelperButtonState();
 
   };
 
@@ -5789,7 +6140,7 @@ async function renderGameSelect() {
     window.rouletteSelectedGame =
       null;
 
-  } else if (
+    } else if (
     previousValue &&
     matchGamePickerGames.some(
       game => game.name === previousValue
@@ -5803,8 +6154,9 @@ async function renderGameSelect() {
 
   updateMatchGameTrigger();
 
-}
+  updateScoreHelperButtonState();
 
+}
 
 function updateMatchGameTrigger() {
 
@@ -5914,7 +6266,7 @@ function updateCoOpResultArea() {
 
   };
 
-  failButton.onclick = () => {
+    failButton.onclick = () => {
 
     matchCoOpResult = "fail";
 
@@ -5924,7 +6276,448 @@ function updateCoOpResultArea() {
 
 }
 
+function updateScoreHelperButtonState() {
+
+  const select =
+    document.getElementById("matchGame");
+
+  const button =
+    document.getElementById("scoreHelperOpenButton");
+
+  if (!select || !button) return;
+
+  const selectedGame =
+    data.games.find(
+      game => game.name === select.value
+    );
+
+  const items =
+    selectedGame && selectedGame.scoreHelperItems
+      ? selectedGame.scoreHelperItems
+      : [];
+
+  const usable =
+    items.length > 0 &&
+    selectedGame &&
+    (
+      selectedGame.direction === "high" ||
+      selectedGame.direction === "low"
+    );
+
+  button.disabled = !usable;
+
+  if (usable) {
+
+    button.style.background =
+      "#E65100";
+
+    button.style.color =
+      "#ffffff";
+
+    button.style.opacity =
+      "1";
+
+    button.style.cursor =
+      "pointer";
+
+  } else {
+
+    button.style.background =
+      "#4B5563";
+
+    button.style.color =
+      "#ffffff";
+
+    button.style.opacity =
+      "0.45";
+
+    button.style.cursor =
+      "not-allowed";
+
+  }
+
+  button.onclick = usable
+    ? openScoreHelperPopup
+    : null;
+
+}
+
+function openScoreHelperPopup() {
+
+  const select =
+    document.getElementById("matchGame");
+
+  const selectedGame =
+    data.games.find(
+      game => game.name === select.value
+    );
+
+  if (
+    !selectedGame ||
+    !selectedGame.scoreHelperItems ||
+    selectedGame.scoreHelperItems.length === 0
+  ) {
+    return;
+  }
+
+  const playerRows =
+    Array.from(
+      document.querySelectorAll(
+        "#scorePlayers .player-row"
+      )
+    );
+
+  const players =
+    playerRows
+      .map(row =>
+        row.querySelector(".match-player")?.value
+      )
+      .filter(name => name);
+
+  if (players.length === 0) {
+
+    alert(
+      "先にプレイヤーを選択してください。"
+    );
+
+    return;
+
+  }
+
+  const items =
+    selectedGame.scoreHelperItems;
+
+  const existing =
+    document.getElementById(
+      "scoreHelperOverlay"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "scoreHelperOverlay";
+
+  overlay.style.position =
+    "fixed";
+
+  overlay.style.inset =
+    "0";
+
+  overlay.style.background =
+    "rgba(0,0,0,.45)";
+
+  overlay.style.zIndex =
+    "10002";
+
+  overlay.style.display =
+    "flex";
+
+  overlay.style.alignItems =
+    "center";
+
+  overlay.style.justifyContent =
+    "center";
+
+  overlay.style.padding =
+    "20px";
+
+  overlay.innerHTML = `
+    <div
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:560px;
+        max-height:85vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
+
+      <button
+        type="button"
+        id="scoreHelperClose"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+      <h2 style="padding-right:40px;">得点計算補助</h2>
+
+      <div
+        id="scoreHelperTable"
+        style="overflow-x:auto;"
+      ></div>
+
+      <button
+        type="button"
+        id="scoreHelperConfirm"
+        style="margin-top:16px;"
+      >
+        この得点で確定
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById(
+    "scoreHelperClose"
+  ).onclick = () => {
+
+    overlay.remove();
+
+  };
+
+  const values = {};
+
+  players.forEach(player => {
+
+    values[player] =
+      items.map(() => "");
+
+  });
+
+  const tableContainer =
+    document.getElementById(
+      "scoreHelperTable"
+    );
+
+  const table =
+    document.createElement("table");
+
+  table.style.width =
+    "100%";
+
+  table.style.borderCollapse =
+    "collapse";
+
+  table.style.fontSize =
+    "13px";
+
+  const headRow =
+    document.createElement("tr");
+
+  const nameHeadCell =
+    document.createElement("th");
+
+  nameHeadCell.textContent =
+    "プレイヤー";
+
+  nameHeadCell.style.textAlign =
+    "left";
+
+  nameHeadCell.style.padding =
+    "6px 4px";
+
+  nameHeadCell.style.borderBottom =
+    "2px solid rgba(22,35,63,0.1)";
+
+  headRow.appendChild(
+    nameHeadCell
+  );
+
+  items.forEach(itemName => {
+
+    const th =
+      document.createElement("th");
+
+    th.textContent =
+      itemName;
+
+    th.style.padding =
+      "6px 4px";
+
+    th.style.borderBottom =
+      "2px solid rgba(22,35,63,0.1)";
+
+    th.style.whiteSpace =
+      "nowrap";
+
+    headRow.appendChild(th);
+
+  });
+
+  const totalHeadCell =
+    document.createElement("th");
+
+  totalHeadCell.textContent =
+    "合計";
+
+  totalHeadCell.style.padding =
+    "6px 4px";
+
+  totalHeadCell.style.borderBottom =
+    "2px solid rgba(22,35,63,0.1)";
+
+  headRow.appendChild(
+    totalHeadCell
+  );
+
+  table.appendChild(headRow);
+
+  players.forEach(player => {
+
+    const row =
+      document.createElement("tr");
+
+    const nameCell =
+      document.createElement("td");
+
+    nameCell.textContent =
+      player;
+
+    nameCell.style.padding =
+      "6px 4px";
+
+    nameCell.style.fontWeight =
+      "700";
+
+    nameCell.style.whiteSpace =
+      "nowrap";
+
+    row.appendChild(nameCell);
+
+    const totalCell =
+      document.createElement("td");
+
+    totalCell.style.padding =
+      "6px 4px";
+
+    totalCell.style.fontWeight =
+      "800";
+
+    totalCell.style.textAlign =
+      "right";
+
+    totalCell.textContent =
+      "0";
+
+    function updateTotal() {
+
+      const sum =
+        values[player].reduce(
+          (total, value) =>
+            total + (Number(value) || 0),
+          0
+        );
+
+      totalCell.textContent =
+        String(sum);
+
+    }
+
+    items.forEach((itemName, index) => {
+
+      const cell =
+        document.createElement("td");
+
+      cell.style.padding =
+        "4px";
+
+      const input =
+        document.createElement("input");
+
+      input.type =
+        "number";
+
+      input.style.width =
+        "70px";
+
+      input.style.padding =
+        "6px 8px";
+
+      input.style.fontSize =
+        "13px";
+
+      input.oninput = () => {
+
+        values[player][index] =
+          input.value;
+
+        updateTotal();
+
+      };
+
+      cell.appendChild(input);
+
+      row.appendChild(cell);
+
+    });
+
+    row.appendChild(totalCell);
+
+    table.appendChild(row);
+
+  });
+
+  tableContainer.appendChild(
+    table
+  );
+
+  document.getElementById(
+    "scoreHelperConfirm"
+  ).onclick = () => {
+
+    playerRows.forEach(row => {
+
+      const playerName =
+        row.querySelector(
+          ".match-player"
+        )?.value;
+
+      if (
+        !playerName ||
+        !values[playerName]
+      ) {
+        return;
+      }
+
+      const scoreField =
+        row.querySelector(
+          ".match-score"
+        );
+
+      if (!scoreField) return;
+
+      const sum =
+        values[playerName].reduce(
+          (total, value) =>
+            total + (Number(value) || 0),
+          0
+        );
+
+      scoreField.value =
+        String(sum);
+
+    });
+
+    overlay.remove();
+
+  };
+
+}
+
 function openMatchGamePicker() {
+
 
   renderMatchGamePickerList();
 

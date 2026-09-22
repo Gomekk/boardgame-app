@@ -9523,7 +9523,7 @@ async function openFavoriteSetSelector() {
 
   };
 
-  document.getElementById(
+    document.getElementById(
     "favoriteSetCreateNew"
   ).onclick = () => {
 
@@ -9531,7 +9531,7 @@ async function openFavoriteSetSelector() {
 
     specificRouletteSelectedGames.clear();
 
-    openSpecificGameSelector();
+    openSpecificGameSelector(null, true);
 
   };
 
@@ -9754,7 +9754,7 @@ async function openFavoriteSetSelector() {
 }
 
 
-function openSpecificGameSelector(editingSet = null) {
+function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
 
   const existing =
     document.getElementById(
@@ -9944,15 +9944,23 @@ function openSpecificGameSelector(editingSet = null) {
 
       </div>
 
-          <div style="padding:12px 16px;border-top:1px solid #eee;">
+      <div style="padding:12px 16px;border-top:1px solid #eee;display:flex;gap:8px;">
         <button
           type="button"
           id="specificGameSaveFavorite"
-          style="margin-bottom:0;"
+          style="margin-bottom:0;flex:1;background:#DCEEF9;color:#1E3A5F;box-shadow:none;font-size:13px;white-space:nowrap;"
         >
           ${editingSet ? "更新" : "お気に入りに保存"}
         </button>
+        ${
+          (editingSet || isCreatingNew)
+            ? ""
+            : `<button type="button" id="specificGameConfirm" style="margin-bottom:0;flex:1;">
+                セット
+              </button>`
+        }
       </div>
+
 
     </div>
 
@@ -10141,13 +10149,40 @@ function openSpecificGameSelector(editingSet = null) {
 
     }
 
-    alert(
+        alert(
       `「${setName.trim()}」として保存しました。`
     );
 
   };
 
+    const confirmButton =
+      document.getElementById("specificGameConfirm");
+
+    if (confirmButton) {
+
+      confirmButton.onclick = () => {
+
+        if (specificRouletteSelectedGames.size === 0) {
+          alert("1つ以上のゲームを選択してください。");
+          return;
+        }
+
+            selectedWeight = "specific";
+
+        selectedWeights.clear();
+
+        resetAllModeStyles();
+
+        updateEligibleCountDisplay();
+
+        selectorOverlay.remove();
+        // ここでは spinRoulette() を呼ばない → STARTボタンを押すまで待つ
+      };
+
+    }
+
 }
+
 
       againButton.onclick = () => {
 

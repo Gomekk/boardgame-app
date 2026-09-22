@@ -7209,22 +7209,12 @@ function openScoreHelperPopup() {
 
   const totalCellByPlayer = {};
 
-    players.forEach(player => {
+      const totalInnerByPlayer = {};
+
+  players.forEach(player => {
 
     const cell =
       document.createElement("div");
-
-    cell.textContent =
-      "0";
-
-    cell.style.fontWeight =
-      "800";
-
-    cell.style.fontSize =
-      "13px";
-
-    cell.style.padding =
-      "0 4px";
 
     cell.style.height =
       rowHeight;
@@ -7238,8 +7228,44 @@ function openScoreHelperPopup() {
     cell.style.alignItems =
       "center";
 
-    cell.style.justifyContent =
+    cell.style.padding =
+      "2px 4px";
+
+    const inner =
+      document.createElement("div");
+
+    inner.textContent =
+      "0";
+
+    inner.style.width =
+      "100%";
+
+    inner.style.height =
+      "100%";
+
+    inner.style.boxSizing =
+      "border-box";
+
+    inner.style.display =
+      "flex";
+
+    inner.style.alignItems =
+      "center";
+
+    inner.style.justifyContent =
       "flex-end";
+
+    inner.style.padding =
+      "0 6px";
+
+    inner.style.fontWeight =
+      "800";
+
+    inner.style.fontSize =
+      "13px";
+
+    inner.style.borderRadius =
+      "6px";
 
     const playerData =
       data.players.find(
@@ -7248,19 +7274,18 @@ function openScoreHelperPopup() {
 
     if (playerData && playerData.color) {
 
-      cell.style.border =
+      inner.style.border =
         `2px solid ${playerData.color}`;
-
-      cell.style.borderRadius =
-        "6px";
-
-      cell.style.margin =
-        "2px 0";
 
     }
 
+    cell.appendChild(inner);
+
     totalCellByPlayer[player] =
       cell;
+
+    totalInnerByPlayer[player] =
+      inner;
 
     totalCol.appendChild(cell);
 
@@ -7297,10 +7322,10 @@ function openScoreHelperPopup() {
             ...totalsByPlayer.map(item => item.total)
           );
 
-    totalsByPlayer.forEach(({ player, total }) => {
+        totalsByPlayer.forEach(({ player, total }) => {
 
-      const cell =
-        totalCellByPlayer[player];
+      const inner =
+        totalInnerByPlayer[player];
 
       const playerData =
         data.players.find(
@@ -7309,34 +7334,35 @@ function openScoreHelperPopup() {
 
       if (total === bestTotal) {
 
-        cell.style.background =
+        inner.style.background =
           playerData && playerData.color
             ? playerData.color
             : "#FFCC80";
 
-        cell.style.color =
+        inner.style.color =
           "#ffffff";
 
       } else {
 
-        cell.style.background =
+        inner.style.background =
           "";
 
-        cell.style.color =
+        inner.style.color =
           "";
 
       }
 
     });
 
+
   }
 
-  function updateTotal(player) {
+    function updateTotal(player) {
 
     const sum =
       computePlayerTotal(player);
 
-    totalCellByPlayer[player].textContent =
+    totalInnerByPlayer[player].textContent =
       String(sum);
 
     updateAllTotalHighlights();

@@ -9687,21 +9687,17 @@ async function openFavoriteSetSelector() {
 
     };
 
-    const deleteButton =
+        const deleteButton =
       document.createElement("button");
 
     deleteButton.type =
       "button";
 
     deleteButton.className =
-      "small danger";
-
-    deleteButton.style.width =
-      "auto";
+      "list-item-action-button danger-text";
 
     deleteButton.textContent =
       "削除";
-
 
     deleteButton.onclick = async () => {
 

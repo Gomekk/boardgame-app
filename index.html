@@ -5426,6 +5426,31 @@ function getGameWeightClass(playTime) {
 
 }
 
+async function loadFavoriteSets() {
+
+  const {
+    data: sets,
+    error
+  } = await supabaseClient
+    .from("favorite_game_sets")
+    .select("*")
+    .order("created_at");
+
+  if (error) {
+
+    console.error(
+      "お気に入りセット取得エラー:",
+      error
+    );
+
+    return [];
+
+  }
+
+  return sets || [];
+
+}
+
 
 function getGameWeightLabel(playTime) {
 
@@ -8729,12 +8754,22 @@ if (allGames.length === 0) {
   overlay.innerHTML = `
     <div class="game-roulette-box">
 
-      <div class="game-roulette-title">
+           <div class="game-roulette-title" style="margin-bottom:12px;">
    今回のゲームは？
     </div>
 
+    <button
+      type="button"
+      id="gameRouletteFavoriteButton"
+      class="secondary"
+      style="margin-bottom:12px;padding:8px;font-size:13px;"
+    >
+      ⭐ お気に入りから選ぶ
+    </button>
+
 <div
   id="gameRouletteMode"
+
   style="
     display:grid;
     grid-template-columns:repeat(6, 1fr);
@@ -9260,6 +9295,18 @@ nameElement.onclick = () => {
 
 };
 
+const favoriteButton =
+  document.getElementById(
+    "gameRouletteFavoriteButton"
+  );
+
+favoriteButton.onclick = () => {
+
+  openFavoriteSetSelector();
+
+};
+
+
 
   const recordButton =
     document.getElementById("gameRouletteRecord");
@@ -9371,6 +9418,299 @@ setTimeout(
   overlay.remove();
 
 };
+
+async function openFavoriteSetSelector() {
+
+  const existing =
+    document.getElementById(
+      "favoriteSetSelectorOverlay"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const favoriteOverlay =
+    document.createElement("div");
+
+  favoriteOverlay.id =
+    "favoriteSetSelectorOverlay";
+
+  favoriteOverlay.style.position =
+    "fixed";
+
+  favoriteOverlay.style.inset =
+    "0";
+
+  favoriteOverlay.style.background =
+    "rgba(0,0,0,.45)";
+
+  favoriteOverlay.style.zIndex =
+    "10001";
+
+  favoriteOverlay.style.display =
+    "flex";
+
+  favoriteOverlay.style.alignItems =
+    "center";
+
+  favoriteOverlay.style.justifyContent =
+    "center";
+
+  favoriteOverlay.style.padding =
+    "20px";
+
+  favoriteOverlay.innerHTML = `
+    <div
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:480px;
+        max-height:80vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
+
+      <button
+        type="button"
+        id="favoriteSetSelectorClose"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+      <h2 style="padding-right:40px;">⭐ お気に入りセット</h2>
+
+      <button
+        type="button"
+        id="favoriteSetCreateNew"
+        style="margin-bottom:16px;"
+      >
+        ＋ 新しいセットを作る
+      </button>
+
+      <div id="favoriteSetList"></div>
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    favoriteOverlay
+  );
+
+  document.getElementById(
+    "favoriteSetSelectorClose"
+  ).onclick = () => {
+
+    favoriteOverlay.remove();
+
+  };
+
+  document.getElementById(
+    "favoriteSetCreateNew"
+  ).onclick = () => {
+
+    favoriteOverlay.remove();
+
+    specificRouletteSelectedGames.clear();
+
+    openSpecificGameSelector();
+
+  };
+
+  const listContainer =
+    document.getElementById(
+      "favoriteSetList"
+    );
+
+  listContainer.innerHTML =
+    '<div class="section-note">読み込み中...</div>';
+
+  const sets =
+    await loadFavoriteSets();
+
+  listContainer.innerHTML = "";
+
+  if (sets.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "section-note";
+
+    empty.textContent =
+      "まだお気に入りセットがありません。";
+
+    listContainer.appendChild(empty);
+
+    return;
+
+  }
+
+  sets.forEach(set => {
+
+    const row =
+      document.createElement("div");
+
+    row.style.display =
+      "flex";
+
+    row.style.alignItems =
+      "center";
+
+    row.style.gap =
+      "8px";
+
+    row.style.padding =
+      "10px 0";
+
+    row.style.borderBottom =
+      "1px solid rgba(22,35,63,0.08)";
+
+    const nameArea =
+      document.createElement("div");
+
+    nameArea.style.flex =
+      "1";
+
+    nameArea.style.minWidth =
+      "0";
+
+    const nameEl =
+      document.createElement("div");
+
+    nameEl.style.fontWeight =
+      "700";
+
+    nameEl.textContent =
+      set.name;
+
+    const countEl =
+      document.createElement("div");
+
+    countEl.className =
+      "section-note";
+
+    countEl.style.margin =
+      "2px 0 0";
+
+    countEl.textContent =
+      `${(set.game_names || []).length}件`;
+
+    nameArea.appendChild(nameEl);
+
+    nameArea.appendChild(countEl);
+
+    const useButton =
+      document.createElement("button");
+
+    useButton.type =
+      "button";
+
+    useButton.className =
+      "small";
+
+    useButton.style.width =
+      "auto";
+
+    useButton.textContent =
+      "使う";
+
+    useButton.onclick = () => {
+
+      specificRouletteSelectedGames =
+        new Set(set.game_names || []);
+
+      selectedWeight = "specific";
+
+      selectedWeights.clear();
+
+      resetAllModeStyles();
+
+      updateEligibleCountDisplay();
+
+      favoriteOverlay.remove();
+
+    };
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.type =
+      "button";
+
+    deleteButton.className =
+      "small danger";
+
+    deleteButton.style.width =
+      "auto";
+
+    deleteButton.textContent =
+      "削除";
+
+    deleteButton.onclick = async () => {
+
+      if (
+        !confirm(
+          `「${set.name}」を削除しますか？`
+        )
+      ) {
+        return;
+      }
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("favorite_game_sets")
+          .delete()
+          .eq(
+            "id",
+            set.id
+          );
+
+      if (error) {
+
+        alert(
+          "❌ 削除に失敗しました。\n\n" +
+          error.message
+        );
+
+        return;
+
+      }
+
+      row.remove();
+
+    };
+
+    row.appendChild(nameArea);
+
+    row.appendChild(useButton);
+
+    row.appendChild(deleteButton);
+
+    listContainer.appendChild(row);
+
+  });
+
+}
+
 
 function openSpecificGameSelector() {
 
@@ -9562,11 +9902,20 @@ function openSpecificGameSelector() {
 
       </div>
 
-      <div style="padding:12px 16px;border-top:1px solid #eee;">
-        <button type="button" id="specificGameConfirm" style="margin-bottom:0;">
+            <div style="padding:12px 16px;border-top:1px solid #eee;display:flex;gap:8px;">
+        <button
+          type="button"
+          id="specificGameSaveFavorite"
+          class="secondary"
+          style="margin-bottom:0;flex:1;"
+        >
+          ⭐ 保存
+        </button>
+        <button type="button" id="specificGameConfirm" style="margin-bottom:0;flex:1;">
           セットする
         </button>
       </div>
+
 
     </div>
 
@@ -9702,6 +10051,48 @@ function openSpecificGameSelector() {
     getVisibleSpecificGames(searchInput.value)
       .forEach(g => specificRouletteSelectedGames.delete(g.name));
     renderSpecificGameList(searchInput.value);
+  };
+
+        document.getElementById("specificGameSaveFavorite").onclick = async () => {
+
+    if (specificRouletteSelectedGames.size === 0) {
+      alert("1つ以上のゲームを選択してください。");
+      return;
+    }
+
+    const setName =
+      prompt("セットの名前を入力してください");
+
+    if (!setName || !setName.trim()) {
+      return;
+    }
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("favorite_game_sets")
+        .insert({
+          name: setName.trim(),
+          game_names:
+            Array.from(specificRouletteSelectedGames)
+        });
+
+    if (error) {
+
+      alert(
+        "❌ お気に入りの保存に失敗しました。\n\n" +
+        error.message
+      );
+
+      return;
+
+    }
+
+    alert(
+      `「${setName.trim()}」として保存しました。`
+    );
+
   };
 
     document.getElementById("specificGameConfirm").onclick = () => {

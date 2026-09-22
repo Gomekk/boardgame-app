@@ -7143,8 +7143,11 @@ function openScoreHelperPopup() {
       "scoreHelperTable"
     );
 
-  const rowHeight =
+    const rowHeight =
     "40px";
+
+  const unusedRowHeight =
+    "28px";
 
   const nameColWidth =
     "60px";
@@ -7154,6 +7157,7 @@ function openScoreHelperPopup() {
 
   const wrapper =
     document.createElement("div");
+
 
   wrapper.style.display =
     "flex";
@@ -7286,15 +7290,12 @@ function openScoreHelperPopup() {
   itemsRow.style.minWidth =
     "max-content";
 
-  const itemCellByPlayer = {};
+    const itemCellByPlayer = {};
 
   const itemHeaderFontSize =
     items.some(itemName => itemName.length > 4)
       ? "10px"
       : "12px";
-
-  const unusedRowHeight =
-    "28px";
 
 
   function updateItemColumnHighlight(index) {

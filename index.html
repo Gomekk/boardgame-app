@@ -5364,11 +5364,15 @@ function initGameListPlayerCountFilterButtons() {
 
 initGameListPlayerCountFilterButtons();
 
+let gameListWeightFilter = new Set();
+let gameListPlayerCountFilter = new Set();
+
 
 let weightSettings = {
   lightMax: 30,
   mediumMax: 60
 };
+
 let specificRouletteSelectedGames = new Set();
 let specificGameWeightFilter = new Set();
 let specificGamePlayerCountFilter = new Set();

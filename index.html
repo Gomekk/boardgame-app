@@ -6969,7 +6969,69 @@ function openScoreHelperPopup() {
   itemsRow.style.minWidth =
     "max-content";
 
+          const itemCellByPlayer = {};
+
+  function updateItemColumnHighlight(index) {
+
+    const direction =
+      selectedGame.direction;
+
+    const numericValues =
+      players
+        .map(player => Number(values[player][index]))
+        .filter(value => Number.isFinite(value));
+
+    if (numericValues.length === 0) {
+
+      players.forEach(player => {
+
+        itemCellByPlayer[player][index].style.background =
+          "";
+
+      });
+
+      return;
+
+    }
+
+    const bestValue =
+      direction === "low"
+        ? Math.min(...numericValues)
+        : Math.max(...numericValues);
+
+    players.forEach(player => {
+
+      const value =
+        Number(values[player][index]);
+
+      if (
+        Number.isFinite(value) &&
+        value === bestValue
+      ) {
+
+        const playerData =
+          data.players.find(
+            p => p.name === player
+          );
+
+        itemCellByPlayer[player][index].style.background =
+          playerData && playerData.color
+            ? playerData.color + "33"
+            : "#FFE8CC";
+
+      } else {
+
+        itemCellByPlayer[player][index].style.background =
+          "";
+
+      }
+
+    });
+
+  }
+
   items.forEach((itemName, index) => {
+
 
     const itemCol =
       document.createElement("div");
@@ -7053,7 +7115,7 @@ function openScoreHelperPopup() {
         "6px 6px";
 
       input.style.fontSize =
-        "13px";
+        "16px";
 
       input.oninput = () => {
 
@@ -7062,17 +7124,27 @@ function openScoreHelperPopup() {
 
         updateTotal(player);
 
+        updateItemColumnHighlight(index);
+
       };
 
       cell.appendChild(input);
 
       itemCol.appendChild(cell);
 
+      if (!itemCellByPlayer[player]) {
+        itemCellByPlayer[player] = {};
+      }
+
+      itemCellByPlayer[player][index] =
+        cell;
+
     });
 
     itemsRow.appendChild(itemCol);
 
   });
+
 
   scrollArea.appendChild(
     itemsRow

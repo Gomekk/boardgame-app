@@ -1952,7 +1952,7 @@ button.small {
 
     </div>
     
-        <div style="position:relative;margin-top:12px;">
+              <div style="position:relative;margin-top:12px;">
 
       <input
         type="text"
@@ -1985,6 +1985,59 @@ button.small {
           justify-content:center;
         "
             >×</button>
+
+    </div>
+
+    <div class="section-note" style="margin:6px 0 6px;display:flex;justify-content:space-between;">
+      <span>絞込み&gt;&gt;</span>
+      <span id="gameListFilteredCount"></span>
+    </div>
+
+    <div
+      id="gameListWeightFilter"
+      style="display:flex;gap:8px;margin-bottom:8px;"
+    >
+      <button
+        type="button"
+        class="small filter-chip-button"
+        data-weight="light"
+        style="flex:1;background:#E8F5E9;color:#2E7D32;"
+      >軽量級</button>
+
+      <button
+        type="button"
+        class="small filter-chip-button"
+        data-weight="medium"
+        style="flex:1;background:#FFF3E0;color:#E65100;"
+      >中量級</button>
+
+      <button
+        type="button"
+        class="small filter-chip-button"
+        data-weight="heavy"
+        style="flex:1;background:#FDECEC;color:#C62828;"
+      >重量級</button>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
+
+      <span class="section-note" style="margin:0;white-space:nowrap;">人数 ▶</span>
+
+      <div
+        id="gameListPlayerCountFilter"
+        style="display:flex;gap:3px;flex:1;"
+      >
+        <button type="button" class="filter-chip-button" data-count="1" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">1</button>
+        <button type="button" class="filter-chip-button" data-count="2" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">2</button>
+        <button type="button" class="filter-chip-button" data-count="3" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">3</button>
+        <button type="button" class="filter-chip-button" data-count="4" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">4</button>
+        <button type="button" class="filter-chip-button" data-count="5" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">5</button>
+        <button type="button" class="filter-chip-button" data-count="6" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">6</button>
+        <button type="button" class="filter-chip-button" data-count="7" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">7</button>
+        <button type="button" class="filter-chip-button" data-count="8" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">8</button>
+        <button type="button" class="filter-chip-button" data-count="9" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">9</button>
+        <button type="button" class="filter-chip-button" data-count="10" style="flex:1;min-width:0;padding:4px 0;font-size:11px;background:#ffffff;color:#111827;border:1px solid #d1d5db;border-radius:6px;">10</button>
+      </div>
 
     </div>
 
@@ -5202,6 +5255,96 @@ function initGameRankingPlayerCountFilterButtons() {
 
 initGameRankingPlayerCountFilterButtons();
 
+function updateGameListWeightButtonStyle(button) {
+
+  const weight = button.dataset.weight;
+
+  const active =
+    gameListWeightFilter.has(weight);
+
+  button.style.opacity = active ? "1" : "0.35";
+
+}
+
+function initGameListWeightFilterButtons() {
+
+  const buttons =
+    document.querySelectorAll(
+      "#gameListWeightFilter button"
+    );
+
+  buttons.forEach(button => {
+
+    updateGameListWeightButtonStyle(button);
+
+    button.onclick = () => {
+
+      const weight = button.dataset.weight;
+
+      if (gameListWeightFilter.has(weight)) {
+        gameListWeightFilter.delete(weight);
+      } else {
+        gameListWeightFilter.add(weight);
+      }
+
+      updateGameListWeightButtonStyle(button);
+
+      renderGameList();
+
+    };
+
+  });
+
+}
+
+initGameListWeightFilterButtons();
+
+function updateGameListPlayerCountButtonStyle(button) {
+
+  const count = Number(button.dataset.count);
+
+  const active =
+    gameListPlayerCountFilter.has(count);
+
+  button.style.background = active ? "#1E3A5F" : "#ffffff";
+  button.style.color = active ? "#ffffff" : "#111827";
+  button.style.borderColor = active ? "#1E3A5F" : "#d1d5db";
+
+}
+
+function initGameListPlayerCountFilterButtons() {
+
+  const buttons =
+    document.querySelectorAll(
+      "#gameListPlayerCountFilter button"
+    );
+
+  buttons.forEach(button => {
+
+    updateGameListPlayerCountButtonStyle(button);
+
+    button.onclick = () => {
+
+      const count = Number(button.dataset.count);
+
+      if (gameListPlayerCountFilter.has(count)) {
+        gameListPlayerCountFilter.delete(count);
+      } else {
+        gameListPlayerCountFilter.add(count);
+      }
+
+      updateGameListPlayerCountButtonStyle(button);
+
+      renderGameList();
+
+    };
+
+  });
+
+}
+
+initGameListPlayerCountFilterButtons();
+
 
 let weightSettings = {
   lightMax: 30,
@@ -5214,7 +5357,8 @@ let lastRouletteSelectedWeight = "";
 let lastRouletteSelectedWeights = new Set();
 let lastRouletteSelectedPlayerCounts = new Set();
 let gameRegisterSelectedPlayerCounts = new Set();
-
+let gameListWeightFilter = new Set();
+let gameListPlayerCountFilter = new Set();
 
 function getGameWeightClass(playTime) {
 
@@ -6089,7 +6233,7 @@ function renderGameList() {
       g => g.active
     );
 
-  const activeGames =
+    const activeGames =
   allActiveGames
     .filter(game => {
 
@@ -6105,6 +6249,31 @@ function renderGameList() {
         gameName.includes(keyword) ||
         gameReading.includes(keyword)
       );
+
+    })
+    .filter(game => {
+
+      if (gameListWeightFilter.size === 0) return true;
+
+      const weight =
+        getGameWeightClass(game.playTime);
+
+      if (!weight) return true;
+
+      return gameListWeightFilter.has(weight);
+
+    })
+    .filter(game => {
+
+      if (gameListPlayerCountFilter.size === 0) return true;
+
+      if (!game.playerCounts || game.playerCounts.length === 0) return true;
+
+      for (const count of gameListPlayerCountFilter) {
+        if (game.playerCounts.includes(count)) return true;
+      }
+
+      return false;
 
     })
     .sort(
@@ -6123,6 +6292,16 @@ function renderGameList() {
 
     countLabel.textContent =
       `（全${allActiveGames.length}件中${activeGames.length}件）`;
+
+  }
+
+  const filteredCountLabel =
+    document.getElementById("gameListFilteredCount");
+
+  if (filteredCountLabel) {
+
+    filteredCountLabel.textContent =
+      `全${allActiveGames.length}件中${activeGames.length}件`;
 
   }
 

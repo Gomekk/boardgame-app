@@ -6157,12 +6157,14 @@ function renderGameList() {
       ).length;
 
 
-    const direction =
+        const direction =
       game.direction === "high"
         ? "高得点が上位"
         : game.direction === "low"
           ? "低得点が上位"
-          : "順位のみ";
+          : game.direction === "win_lose"
+            ? "勝ち/負け"
+            : "順位のみ";
 
     const weightLabel =
       getGameWeightLabel(

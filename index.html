@@ -7082,7 +7082,7 @@ function openScoreHelperPopup() {
 
     itemCol.appendChild(th);
 
-    players.forEach(player => {
+        players.forEach(player => {
 
       const cell =
         document.createElement("div");
@@ -7100,7 +7100,7 @@ function openScoreHelperPopup() {
         "center";
 
       cell.style.padding =
-        "4px";
+        "2px 4px";
 
       const input =
         document.createElement("input");
@@ -7111,8 +7111,14 @@ function openScoreHelperPopup() {
       input.style.width =
         "100%";
 
+      input.style.height =
+        "100%";
+
+      input.style.boxSizing =
+        "border-box";
+
       input.style.padding =
-        "6px 6px";
+        "0 6px";
 
       input.style.fontSize =
         "16px";
@@ -7140,6 +7146,7 @@ function openScoreHelperPopup() {
         cell;
 
     });
+
 
     itemsRow.appendChild(itemCol);
 
@@ -7260,19 +7267,82 @@ function openScoreHelperPopup() {
   });
 
 
+    function computePlayerTotal(player) {
+
+    return values[player].reduce(
+      (total, value) =>
+        total + (Number(value) || 0),
+      0
+    );
+
+  }
+
+  function updateAllTotalHighlights() {
+
+    const direction =
+      selectedGame.direction;
+
+    const totalsByPlayer =
+      players.map(player => ({
+        player: player,
+        total: computePlayerTotal(player)
+      }));
+
+    const bestTotal =
+      direction === "low"
+        ? Math.min(
+            ...totalsByPlayer.map(item => item.total)
+          )
+        : Math.max(
+            ...totalsByPlayer.map(item => item.total)
+          );
+
+    totalsByPlayer.forEach(({ player, total }) => {
+
+      const cell =
+        totalCellByPlayer[player];
+
+      const playerData =
+        data.players.find(
+          p => p.name === player
+        );
+
+      if (total === bestTotal) {
+
+        cell.style.background =
+          playerData && playerData.color
+            ? playerData.color
+            : "#FFCC80";
+
+        cell.style.color =
+          "#ffffff";
+
+      } else {
+
+        cell.style.background =
+          "";
+
+        cell.style.color =
+          "";
+
+      }
+
+    });
+
+  }
+
   function updateTotal(player) {
 
     const sum =
-      values[player].reduce(
-        (total, value) =>
-          total + (Number(value) || 0),
-        0
-      );
+      computePlayerTotal(player);
 
     totalCellByPlayer[player].textContent =
       String(sum);
 
+    updateAllTotalHighlights();
+
   }
+
 
   wrapper.appendChild(nameCol);
 

@@ -9822,9 +9822,10 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
         "
       >
 
-       <div style="font-size:17px;font-weight:700;color:#333;">
+        <div style="font-size:17px;font-weight:700;color:#333;">
           ${editingSet ? "お気に入りを編集" : "ゲームを選択"}
         </div>
+
 
         <button
           type="button"
@@ -9840,7 +9841,19 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
 
       <div style="padding:14px 16px 8px;overflow:auto;flex:1;min-height:0;">
 
-                <div style="position:relative;margin-bottom:10px;">
+                          ${
+          editingSet
+            ? `<input
+                id="specificGameSetNameInput"
+                type="text"
+                placeholder="セット名"
+                value="${escapeHTML(editingSet.name)}"
+                style="width:100%;box-sizing:border-box;font-size:16px;margin-bottom:10px;"
+              >`
+            : ""
+        }
+
+        <div style="position:relative;margin-bottom:10px;">
 
           <input
             id="specificGameSearch"
@@ -10105,15 +10118,28 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
       return;
     }
 
-    const setName =
-      prompt(
-        "セットの名前を入力してください",
-        editingSet ? editingSet.name : ""
+        const nameInput =
+      document.getElementById(
+        "specificGameSetNameInput"
       );
 
+    const setName =
+      nameInput
+        ? nameInput.value
+        : prompt(
+            "セットの名前を入力してください"
+          );
+
     if (!setName || !setName.trim()) {
+
+      alert(
+        "セット名を入力してください"
+      );
+
       return;
+
     }
+
 
     const {
       error

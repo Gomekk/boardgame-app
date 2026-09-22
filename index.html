@@ -5214,15 +5214,18 @@ async function recordMatch() {
 
       });
 
-    matchCoOpResult = null;
+        matchCoOpResult = null;
 
     updateCoOpResultArea();
+
+    matchScoreHelperValues = {};
 
     alert(
       "対戦結果を記録しました！"
     );
 
     updateAll();
+
 
 
   } catch (error) {
@@ -6078,6 +6081,7 @@ if (gameScoreHelperCheckboxEl && gameScoreHelperItemsAreaEl) {
 
 let matchGamePickerGames = [];
 let matchCoOpResult = null;
+let matchScoreHelperValues = {};
 
 
 async function renderGameSelect() {
@@ -6154,7 +6158,7 @@ async function renderGameSelect() {
 
     }
 
-        updateMatchGameTrigger();
+    updateMatchGameTrigger();
 
     matchCoOpResult = null;
 
@@ -6162,7 +6166,10 @@ async function renderGameSelect() {
 
     updateScoreHelperButtonState();
 
+    matchScoreHelperValues = {};
+
   };
+
 
 
   /*
@@ -6823,16 +6830,25 @@ function openScoreHelperPopup() {
 
   };
 
-  const values = {};
+   players.forEach(player => {
 
-  players.forEach(player => {
+    if (
+      !matchScoreHelperValues[player] ||
+      matchScoreHelperValues[player].length !== items.length
+    ) {
 
-    values[player] =
-      items.map(() => "");
+      matchScoreHelperValues[player] =
+        items.map(() => "");
+
+    }
 
   });
 
+  const values =
+    matchScoreHelperValues;
+
   const tableContainer =
+
     document.getElementById(
       "scoreHelperTable"
     );
@@ -7115,7 +7131,7 @@ function openScoreHelperPopup() {
       cell.style.padding =
         "2px 4px";
 
-            const input =
+                 const input =
         document.createElement("input");
 
       input.type =
@@ -7133,7 +7149,7 @@ function openScoreHelperPopup() {
       input.style.padding =
         "0 6px";
 
-            input.style.fontSize =
+      input.style.fontSize =
         "16px";
 
       input.style.fontWeight =
@@ -7148,8 +7164,11 @@ function openScoreHelperPopup() {
       input.style.border =
         "1px solid rgba(22,35,63,0.14)";
 
+      input.value =
+        values[player][index] || "";
 
       input.oninput = () => {
+
 
         values[player][index] =
           input.value;
@@ -7180,9 +7199,16 @@ function openScoreHelperPopup() {
   });
 
 
-  scrollArea.appendChild(
+    scrollArea.appendChild(
     itemsRow
   );
+
+  items.forEach((itemName, index) => {
+
+    updateItemColumnHighlight(index);
+
+  });
+
 
   /*
    * 右列：合計（固定）
@@ -7385,7 +7411,7 @@ function openScoreHelperPopup() {
 
   }
 
-    function updateTotal(player) {
+      function updateTotal(player) {
 
     const sum =
       computePlayerTotal(player);
@@ -7397,6 +7423,11 @@ function openScoreHelperPopup() {
 
   }
 
+  players.forEach(player => {
+
+    updateTotal(player);
+
+  });
 
   wrapper.appendChild(nameCol);
 
@@ -17283,7 +17314,7 @@ function showScreen(screenName) {
       .getElementById("recordScreen")
       ?.classList.contains("active");
 
-  if (leavingRecordScreen) {
+   if (leavingRecordScreen) {
 
     const gameSelect =
       document.getElementById("matchGame");
@@ -17296,8 +17327,9 @@ function showScreen(screenName) {
 
     }
 
-  }
+    matchScoreHelperValues = {};
 
+  }
 
   /* ホーム画面 */
 

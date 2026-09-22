@@ -2913,17 +2913,24 @@ const playerCounts =
   playTimeInput.value = "";
 }
 
-       gameRegisterSelectedPlayerCounts.clear();
+  gameRegisterSelectedPlayerCounts.clear();
 
     renderPlayerCountPicker(
       document.getElementById("gamePlayerCountPicker"),
       gameRegisterSelectedPlayerCounts
     );
 
+    document
+      .querySelectorAll('input[name="scoreDirection"]')
+      .forEach(radio => {
+        radio.checked = false;
+      });
+
     
         if (imageInput) {
       imageInput.value = "";
     }
+
 
     const preview =
       document.getElementById("gameImagePreview");

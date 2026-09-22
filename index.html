@@ -5274,6 +5274,9 @@ function initGameRankingPlayerCountFilterButtons() {
 
 initGameRankingPlayerCountFilterButtons();
 
+let gameListWeightFilter = new Set();
+let gameListPlayerCountFilter = new Set();
+
 function updateGameListWeightButtonStyle(button) {
 
   const weight = button.dataset.weight;
@@ -5364,11 +5367,9 @@ function initGameListPlayerCountFilterButtons() {
 
 initGameListPlayerCountFilterButtons();
 
-let gameListWeightFilter = new Set();
-let gameListPlayerCountFilter = new Set();
-
 
 let weightSettings = {
+
   lightMax: 30,
   mediumMax: 60
 };

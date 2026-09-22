@@ -4887,7 +4887,10 @@ async function recordMatch() {
 
     });
 
-        document
+            const keepGameName =
+      gameName;
+
+    document
       .querySelectorAll(
         "#scorePlayers .player-row"
       )
@@ -4917,6 +4920,19 @@ async function recordMatch() {
     );
 
     updateAll();
+
+    const gameSelect =
+      document.getElementById("matchGame");
+
+    if (gameSelect) {
+
+      gameSelect.value =
+        keepGameName;
+
+      updateMatchGameTrigger();
+
+    }
+
 
 
   } catch (error) {

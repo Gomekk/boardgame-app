@@ -6837,134 +6837,205 @@ function openScoreHelperPopup() {
       "scoreHelperTable"
     );
 
-  const table =
-    document.createElement("table");
+  const rowHeight =
+    "40px";
 
-  table.style.width =
+  const nameColWidth =
+    "60px";
+
+  const totalColWidth =
+    "56px";
+
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.style.display =
+    "flex";
+
+  wrapper.style.width =
     "100%";
 
-  table.style.borderCollapse =
-    "collapse";
+  /*
+   * 左列：P名（固定）
+   */
 
-  table.style.fontSize =
-    "13px";
+  const nameCol =
+    document.createElement("div");
 
-  const headRow =
-    document.createElement("tr");
+  nameCol.style.flexShrink =
+    "0";
+
+  nameCol.style.width =
+    nameColWidth;
 
   const nameHeadCell =
-    document.createElement("th");
+    document.createElement("div");
 
   nameHeadCell.textContent =
-    "プレイヤー";
+    "P名";
 
-  nameHeadCell.style.textAlign =
-    "left";
+  nameHeadCell.style.fontWeight =
+    "700";
+
+  nameHeadCell.style.fontSize =
+    "13px";
 
   nameHeadCell.style.padding =
-    "6px 4px";
+    "0 4px 6px";
 
   nameHeadCell.style.borderBottom =
     "2px solid rgba(22,35,63,0.1)";
 
-  headRow.appendChild(
+  nameHeadCell.style.height =
+    rowHeight;
+
+  nameHeadCell.style.boxSizing =
+    "border-box";
+
+  nameHeadCell.style.display =
+    "flex";
+
+  nameHeadCell.style.alignItems =
+    "flex-end";
+
+  nameCol.appendChild(
     nameHeadCell
   );
 
-  items.forEach(itemName => {
+  players.forEach(player => {
+
+    const cell =
+      document.createElement("div");
+
+    cell.textContent =
+      player;
+
+    cell.style.fontWeight =
+      "700";
+
+    cell.style.fontSize =
+      "13px";
+
+    cell.style.padding =
+      "0 4px";
+
+    cell.style.height =
+      rowHeight;
+
+    cell.style.boxSizing =
+      "border-box";
+
+    cell.style.display =
+      "flex";
+
+    cell.style.alignItems =
+      "center";
+
+    cell.style.overflow =
+      "hidden";
+
+    cell.style.textOverflow =
+      "ellipsis";
+
+    cell.style.whiteSpace =
+      "nowrap";
+
+    nameCol.appendChild(cell);
+
+  });
+
+  /*
+   * 中央列：項目（横スクロール）
+   */
+
+  const scrollArea =
+    document.createElement("div");
+
+  scrollArea.style.flex =
+    "1";
+
+  scrollArea.style.minWidth =
+    "0";
+
+  scrollArea.style.overflowX =
+    "auto";
+
+  const itemsRow =
+    document.createElement("div");
+
+  itemsRow.style.display =
+    "flex";
+
+  itemsRow.style.minWidth =
+    "max-content";
+
+  items.forEach((itemName, index) => {
+
+    const itemCol =
+      document.createElement("div");
+
+    itemCol.style.width =
+      "74px";
+
+    itemCol.style.flexShrink =
+      "0";
 
     const th =
-      document.createElement("th");
+      document.createElement("div");
 
     th.textContent =
       itemName;
 
+    th.style.fontSize =
+      itemName.length > 4
+        ? "10px"
+        : "12px";
+
+    th.style.lineHeight =
+      "1.2";
+
     th.style.padding =
-      "6px 4px";
+      "0 4px 6px";
 
     th.style.borderBottom =
       "2px solid rgba(22,35,63,0.1)";
 
-    th.style.whiteSpace =
-      "nowrap";
+    th.style.height =
+      rowHeight;
 
-    headRow.appendChild(th);
+    th.style.boxSizing =
+      "border-box";
 
-  });
+    th.style.display =
+      "flex";
 
-  const totalHeadCell =
-    document.createElement("th");
+    th.style.alignItems =
+      "flex-end";
 
-  totalHeadCell.textContent =
-    "合計";
+    th.style.overflow =
+      "hidden";
 
-  totalHeadCell.style.padding =
-    "6px 4px";
+    th.style.wordBreak =
+      "break-all";
 
-  totalHeadCell.style.borderBottom =
-    "2px solid rgba(22,35,63,0.1)";
+    itemCol.appendChild(th);
 
-  headRow.appendChild(
-    totalHeadCell
-  );
-
-  table.appendChild(headRow);
-
-  players.forEach(player => {
-
-    const row =
-      document.createElement("tr");
-
-    const nameCell =
-      document.createElement("td");
-
-    nameCell.textContent =
-      player;
-
-    nameCell.style.padding =
-      "6px 4px";
-
-    nameCell.style.fontWeight =
-      "700";
-
-    nameCell.style.whiteSpace =
-      "nowrap";
-
-    row.appendChild(nameCell);
-
-    const totalCell =
-      document.createElement("td");
-
-    totalCell.style.padding =
-      "6px 4px";
-
-    totalCell.style.fontWeight =
-      "800";
-
-    totalCell.style.textAlign =
-      "right";
-
-    totalCell.textContent =
-      "0";
-
-    function updateTotal() {
-
-      const sum =
-        values[player].reduce(
-          (total, value) =>
-            total + (Number(value) || 0),
-          0
-        );
-
-      totalCell.textContent =
-        String(sum);
-
-    }
-
-    items.forEach((itemName, index) => {
+    players.forEach(player => {
 
       const cell =
-        document.createElement("td");
+        document.createElement("div");
+
+      cell.style.height =
+        rowHeight;
+
+      cell.style.boxSizing =
+        "border-box";
+
+      cell.style.display =
+        "flex";
+
+      cell.style.alignItems =
+        "center";
 
       cell.style.padding =
         "4px";
@@ -6976,10 +7047,10 @@ function openScoreHelperPopup() {
         "number";
 
       input.style.width =
-        "70px";
+        "100%";
 
       input.style.padding =
-        "6px 8px";
+        "6px 6px";
 
       input.style.fontSize =
         "13px";
@@ -6989,25 +7060,139 @@ function openScoreHelperPopup() {
         values[player][index] =
           input.value;
 
-        updateTotal();
+        updateTotal(player);
 
       };
 
       cell.appendChild(input);
 
-      row.appendChild(cell);
+      itemCol.appendChild(cell);
 
     });
 
-    row.appendChild(totalCell);
-
-    table.appendChild(row);
+    itemsRow.appendChild(itemCol);
 
   });
 
-  tableContainer.appendChild(
-    table
+  scrollArea.appendChild(
+    itemsRow
   );
+
+  /*
+   * 右列：合計（固定）
+   */
+
+  const totalCol =
+    document.createElement("div");
+
+  totalCol.style.flexShrink =
+    "0";
+
+  totalCol.style.width =
+    totalColWidth;
+
+  const totalHeadCell =
+    document.createElement("div");
+
+  totalHeadCell.textContent =
+    "合計";
+
+  totalHeadCell.style.fontWeight =
+    "700";
+
+  totalHeadCell.style.fontSize =
+    "13px";
+
+  totalHeadCell.style.padding =
+    "0 4px 6px";
+
+  totalHeadCell.style.borderBottom =
+    "2px solid rgba(22,35,63,0.1)";
+
+  totalHeadCell.style.height =
+    rowHeight;
+
+  totalHeadCell.style.boxSizing =
+    "border-box";
+
+  totalHeadCell.style.display =
+    "flex";
+
+  totalHeadCell.style.alignItems =
+    "flex-end";
+
+  totalHeadCell.style.justifyContent =
+    "flex-end";
+
+  totalCol.appendChild(
+    totalHeadCell
+  );
+
+  const totalCellByPlayer = {};
+
+  players.forEach(player => {
+
+    const cell =
+      document.createElement("div");
+
+    cell.textContent =
+      "0";
+
+    cell.style.fontWeight =
+      "800";
+
+    cell.style.fontSize =
+      "13px";
+
+    cell.style.padding =
+      "0 4px";
+
+    cell.style.height =
+      rowHeight;
+
+    cell.style.boxSizing =
+      "border-box";
+
+    cell.style.display =
+      "flex";
+
+    cell.style.alignItems =
+      "center";
+
+    cell.style.justifyContent =
+      "flex-end";
+
+    totalCellByPlayer[player] =
+      cell;
+
+    totalCol.appendChild(cell);
+
+  });
+
+  function updateTotal(player) {
+
+    const sum =
+      values[player].reduce(
+        (total, value) =>
+          total + (Number(value) || 0),
+        0
+      );
+
+    totalCellByPlayer[player].textContent =
+      String(sum);
+
+  }
+
+  wrapper.appendChild(nameCol);
+
+  wrapper.appendChild(scrollArea);
+
+  wrapper.appendChild(totalCol);
+
+  tableContainer.appendChild(
+    wrapper
+  );
+
 
   document.getElementById(
     "scoreHelperConfirm"

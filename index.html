@@ -7132,14 +7132,21 @@ function openScoreHelperPopup() {
       input.style.padding =
         "0 6px";
 
-      input.style.fontSize =
+            input.style.fontSize =
         "16px";
+
+      input.style.fontWeight =
+        "800";
 
       input.style.textAlign =
         "right";
 
       input.style.borderRadius =
         "6px";
+
+      input.style.border =
+        "1px solid rgba(22,35,63,0.14)";
+
 
       input.oninput = () => {
 
@@ -7189,7 +7196,7 @@ function openScoreHelperPopup() {
   totalCol.style.width =
     totalColWidth;
 
-  const totalHeadCell =
+    const totalHeadCell =
     document.createElement("div");
 
   totalHeadCell.textContent =
@@ -7220,7 +7227,8 @@ function openScoreHelperPopup() {
     "flex-end";
 
   totalHeadCell.style.justifyContent =
-    "flex-end";
+    "center";
+
 
   totalCol.appendChild(
     totalHeadCell

@@ -1882,15 +1882,15 @@ button.small {
 
     <div class="radio-group">
 
-            <label class="radio-option">
+      <label class="radio-option">
         <input
           type="radio"
           name="scoreDirection"
           value="high"
-          checked
         >
         高得点
       </label>
+
 
       <label class="radio-option">
         <input
@@ -2809,10 +2809,24 @@ const playerCounts =
     : null;
 
 
-  const direction =
+    const selectedDirectionInput =
     document.querySelector(
       'input[name="scoreDirection"]:checked'
-    ).value;
+    );
+
+  if (!selectedDirectionInput) {
+
+    alert(
+      "上位設定を選択してください"
+    );
+
+    return;
+
+  }
+
+  const direction =
+    selectedDirectionInput.value;
+
 
   try {
 

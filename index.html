@@ -6971,7 +6971,7 @@ function openScoreHelperPopup() {
 
           const itemCellByPlayer = {};
 
-  function updateItemColumnHighlight(index) {
+    function updateItemColumnHighlight(index) {
 
     const direction =
       selectedGame.direction;
@@ -6986,6 +6986,9 @@ function openScoreHelperPopup() {
       players.forEach(player => {
 
         itemCellByPlayer[player][index].style.background =
+          "";
+
+        itemCellByPlayer[player][index].style.color =
           "";
 
       });
@@ -7004,6 +7007,9 @@ function openScoreHelperPopup() {
       const value =
         Number(values[player][index]);
 
+      const input =
+        itemCellByPlayer[player][index];
+
       if (
         Number.isFinite(value) &&
         value === bestValue
@@ -7014,14 +7020,20 @@ function openScoreHelperPopup() {
             p => p.name === player
           );
 
-        itemCellByPlayer[player][index].style.background =
+        input.style.background =
           playerData && playerData.color
-            ? playerData.color + "33"
-            : "#FFE8CC";
+            ? playerData.color
+            : "#FFCC80";
+
+        input.style.color =
+          "#ffffff";
 
       } else {
 
-        itemCellByPlayer[player][index].style.background =
+        input.style.background =
+          "";
+
+        input.style.color =
           "";
 
       }
@@ -7102,7 +7114,7 @@ function openScoreHelperPopup() {
       cell.style.padding =
         "2px 4px";
 
-      const input =
+            const input =
         document.createElement("input");
 
       input.type =
@@ -7122,6 +7134,12 @@ function openScoreHelperPopup() {
 
       input.style.fontSize =
         "16px";
+
+      input.style.textAlign =
+        "right";
+
+      input.style.borderRadius =
+        "6px";
 
       input.oninput = () => {
 
@@ -7143,7 +7161,8 @@ function openScoreHelperPopup() {
       }
 
       itemCellByPlayer[player][index] =
-        cell;
+        input;
+
 
     });
 

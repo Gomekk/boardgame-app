@@ -5947,6 +5947,15 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   });
 
+    const buttonRow =
+    document.createElement("div");
+
+  buttonRow.style.display =
+    "flex";
+
+  buttonRow.style.gap =
+    "8px";
+
   const addButton =
     document.createElement("button");
 
@@ -5955,6 +5964,9 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   addButton.className =
     "secondary small";
+
+  addButton.style.flex =
+    "1";
 
   addButton.textContent =
     "＋ 項目を追加";
@@ -5970,7 +5982,32 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   };
 
-  container.appendChild(addButton);
+  const previewButton =
+    document.createElement("button");
+
+  previewButton.type =
+    "button";
+
+  previewButton.className =
+    "secondary small";
+
+  previewButton.style.flex =
+    "1";
+
+  previewButton.textContent =
+    "👁 プレビューを見る";
+
+  previewButton.onclick = () => {
+
+    openScoreHelperItemsPreview(items);
+
+  };
+
+  buttonRow.appendChild(addButton);
+
+  buttonRow.appendChild(previewButton);
+
+  container.appendChild(buttonRow);
 
 }
 
@@ -6342,6 +6379,304 @@ function updateScoreHelperButtonState() {
   button.onclick = usable
     ? openScoreHelperPopup
     : null;
+
+}
+
+function openScoreHelperItemsPreview(items) {
+
+  const validItems =
+    items
+      .map(item => item.trim())
+      .filter(item => item !== "");
+
+  if (validItems.length === 0) {
+
+    alert(
+      "先に項目を1つ以上入力してください。"
+    );
+
+    return;
+
+  }
+
+  const existing =
+    document.getElementById(
+      "scoreHelperPreviewOverlay"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "scoreHelperPreviewOverlay";
+
+  overlay.style.position =
+    "fixed";
+
+  overlay.style.inset =
+    "0";
+
+  overlay.style.background =
+    "rgba(0,0,0,.45)";
+
+  overlay.style.zIndex =
+    "10003";
+
+  overlay.style.display =
+    "flex";
+
+  overlay.style.alignItems =
+    "center";
+
+  overlay.style.justifyContent =
+    "center";
+
+  overlay.style.padding =
+    "20px";
+
+  overlay.innerHTML = `
+    <div
+      class="card"
+      style="
+        position:relative;
+        width:100%;
+        max-width:560px;
+        max-height:85vh;
+        overflow-y:auto;
+        margin-bottom:0;
+      "
+    >
+
+      <button
+        type="button"
+        id="scoreHelperPreviewClose"
+        style="
+          position:absolute;
+          top:14px;
+          right:14px;
+          width:32px;
+          height:32px;
+          min-width:32px;
+          padding:0;
+          border:none;
+          background:#f3f4f6;
+          color:#555;
+          border-radius:50%;
+          font-size:20px;
+          line-height:1;
+        "
+      >×</button>
+
+      <h2 style="padding-right:40px;">得点計算補助（プレビュー）</h2>
+
+      <div
+        id="scoreHelperPreviewTable"
+        style="overflow-x:auto;"
+      ></div>
+
+      <button
+        type="button"
+        disabled
+        style="margin-top:16px;opacity:0.5;"
+      >
+        この得点で確定
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById(
+    "scoreHelperPreviewClose"
+  ).onclick = () => {
+
+    overlay.remove();
+
+  };
+
+  const player =
+    "プレイヤー";
+
+  const values =
+    validItems.map(() => "");
+
+  const tableContainer =
+    document.getElementById(
+      "scoreHelperPreviewTable"
+    );
+
+  const table =
+    document.createElement("table");
+
+  table.style.width =
+    "100%";
+
+  table.style.borderCollapse =
+    "collapse";
+
+  table.style.fontSize =
+    "13px";
+
+  const headRow =
+    document.createElement("tr");
+
+  const nameHeadCell =
+    document.createElement("th");
+
+  nameHeadCell.textContent =
+    "プレイヤー";
+
+  nameHeadCell.style.textAlign =
+    "left";
+
+  nameHeadCell.style.padding =
+    "6px 4px";
+
+  nameHeadCell.style.borderBottom =
+    "2px solid rgba(22,35,63,0.1)";
+
+  headRow.appendChild(
+    nameHeadCell
+  );
+
+  validItems.forEach(itemName => {
+
+    const th =
+      document.createElement("th");
+
+    th.textContent =
+      itemName;
+
+    th.style.padding =
+      "6px 4px";
+
+    th.style.borderBottom =
+      "2px solid rgba(22,35,63,0.1)";
+
+    th.style.whiteSpace =
+      "nowrap";
+
+    headRow.appendChild(th);
+
+  });
+
+  const totalHeadCell =
+    document.createElement("th");
+
+  totalHeadCell.textContent =
+    "合計";
+
+  totalHeadCell.style.padding =
+    "6px 4px";
+
+  totalHeadCell.style.borderBottom =
+    "2px solid rgba(22,35,63,0.1)";
+
+  headRow.appendChild(
+    totalHeadCell
+  );
+
+  table.appendChild(headRow);
+
+  const row =
+    document.createElement("tr");
+
+  const nameCell =
+    document.createElement("td");
+
+  nameCell.textContent =
+    player;
+
+  nameCell.style.padding =
+    "6px 4px";
+
+  nameCell.style.fontWeight =
+    "700";
+
+  nameCell.style.whiteSpace =
+    "nowrap";
+
+  row.appendChild(nameCell);
+
+  const totalCell =
+    document.createElement("td");
+
+  totalCell.style.padding =
+    "6px 4px";
+
+  totalCell.style.fontWeight =
+    "800";
+
+  totalCell.style.textAlign =
+    "right";
+
+  totalCell.textContent =
+    "0";
+
+  function updateTotal() {
+
+    const sum =
+      values.reduce(
+        (total, value) =>
+          total + (Number(value) || 0),
+        0
+      );
+
+    totalCell.textContent =
+      String(sum);
+
+  }
+
+  validItems.forEach((itemName, index) => {
+
+    const cell =
+      document.createElement("td");
+
+    cell.style.padding =
+      "4px";
+
+    const input =
+      document.createElement("input");
+
+    input.type =
+      "number";
+
+    input.style.width =
+      "70px";
+
+    input.style.padding =
+      "6px 8px";
+
+    input.style.fontSize =
+      "13px";
+
+    input.oninput = () => {
+
+      values[index] =
+        input.value;
+
+      updateTotal();
+
+    };
+
+    cell.appendChild(input);
+
+    row.appendChild(cell);
+
+  });
+
+  row.appendChild(totalCell);
+
+  table.appendChild(row);
+
+  tableContainer.appendChild(
+    table
+  );
 
 }
 

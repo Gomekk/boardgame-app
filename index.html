@@ -6517,11 +6517,19 @@ function openScoreHelperItemsPreview(items) {
   const rowHeight =
     "40px";
 
+  const unusedRowHeight =
+    "28px";
+
   const nameColWidth =
     "60px";
 
   const totalColWidth =
     "56px";
+
+  const itemHeaderFontSize =
+    validItems.some(itemName => itemName.length > 4)
+      ? "10px"
+      : "12px";
 
   const wrapper =
     document.createElement("div");
@@ -6531,10 +6539,6 @@ function openScoreHelperItemsPreview(items) {
 
   wrapper.style.width =
     "100%";
-
-  /*
-   * 左列：P名（固定）
-   */
 
   const nameCol =
     document.createElement("div");
@@ -6579,6 +6583,16 @@ function openScoreHelperItemsPreview(items) {
     nameHeadCell
   );
 
+  const nameUnusedSpacer =
+    document.createElement("div");
+
+  nameUnusedSpacer.style.height =
+    unusedRowHeight;
+
+  nameCol.appendChild(
+    nameUnusedSpacer
+  );
+
   players.forEach(player => {
 
     const cell =
@@ -6621,10 +6635,6 @@ function openScoreHelperItemsPreview(items) {
 
   });
 
-  /*
-   * 中央列：項目（横スクロール）
-   */
-
   const scrollArea =
     document.createElement("div");
 
@@ -6637,7 +6647,7 @@ function openScoreHelperItemsPreview(items) {
   scrollArea.style.overflowX =
     "auto";
 
-    const itemsRow =
+  const itemsRow =
     document.createElement("div");
 
   itemsRow.style.display =
@@ -6646,13 +6656,7 @@ function openScoreHelperItemsPreview(items) {
   itemsRow.style.minWidth =
     "max-content";
 
-  const itemHeaderFontSize =
-    validItems.some(itemName => itemName.length > 4)
-      ? "10px"
-      : "12px";
-
   validItems.forEach(itemName => {
-
 
     const itemCol =
       document.createElement("div");
@@ -6663,7 +6667,7 @@ function openScoreHelperItemsPreview(items) {
     itemCol.style.flexShrink =
       "0";
 
-        const th =
+    const th =
       document.createElement("div");
 
     th.textContent =
@@ -6700,6 +6704,68 @@ function openScoreHelperItemsPreview(items) {
       "break-all";
 
     itemCol.appendChild(th);
+
+    const unusedCell =
+      document.createElement("div");
+
+    unusedCell.style.height =
+      unusedRowHeight;
+
+    unusedCell.style.boxSizing =
+      "border-box";
+
+    unusedCell.style.display =
+      "flex";
+
+    unusedCell.style.alignItems =
+      "center";
+
+    unusedCell.style.justifyContent =
+      "center";
+
+    unusedCell.style.padding =
+      "2px";
+
+    const unusedButton =
+      document.createElement("button");
+
+    unusedButton.type =
+      "button";
+
+    unusedButton.disabled =
+      true;
+
+    unusedButton.textContent =
+      "不使用";
+
+    unusedButton.style.width =
+      "100%";
+
+    unusedButton.style.padding =
+      "3px 0";
+
+    unusedButton.style.fontSize =
+      "10px";
+
+    unusedButton.style.background =
+      "#4B5563";
+
+    unusedButton.style.color =
+      "#ffffff";
+
+    unusedButton.style.boxShadow =
+      "none";
+
+    unusedButton.style.opacity =
+      "1";
+
+    unusedCell.appendChild(
+      unusedButton
+    );
+
+    itemCol.appendChild(
+      unusedCell
+    );
 
     players.forEach(() => {
 
@@ -6774,10 +6840,6 @@ function openScoreHelperItemsPreview(items) {
     itemsRow
   );
 
-  /*
-   * 右列：合計（固定）
-   */
-
   const totalCol =
     document.createElement("div");
 
@@ -6822,6 +6884,16 @@ function openScoreHelperItemsPreview(items) {
 
   totalCol.appendChild(
     totalHeadCell
+  );
+
+  const totalUnusedSpacer =
+    document.createElement("div");
+
+  totalUnusedSpacer.style.height =
+    unusedRowHeight;
+
+  totalCol.appendChild(
+    totalUnusedSpacer
   );
 
   players.forEach(() => {
@@ -6900,6 +6972,7 @@ function openScoreHelperItemsPreview(items) {
   );
 
 }
+
 
 function openScoreHelperPopup() {
 
@@ -7131,8 +7204,18 @@ function openScoreHelperPopup() {
   nameHeadCell.style.alignItems =
     "flex-end";
 
-  nameCol.appendChild(
+    nameCol.appendChild(
     nameHeadCell
+  );
+
+  const nameUnusedSpacer =
+    document.createElement("div");
+
+  nameUnusedSpacer.style.height =
+    unusedRowHeight;
+
+  nameCol.appendChild(
+    nameUnusedSpacer
   );
 
   players.forEach(player => {
@@ -7145,6 +7228,7 @@ function openScoreHelperPopup() {
 
     cell.style.fontWeight =
       "700";
+
 
     cell.style.fontSize =
       "13px";
@@ -7208,6 +7292,10 @@ function openScoreHelperPopup() {
     items.some(itemName => itemName.length > 4)
       ? "10px"
       : "12px";
+
+  const unusedRowHeight =
+    "28px";
+
 
   function updateItemColumnHighlight(index) {
 
@@ -7323,13 +7411,90 @@ function openScoreHelperPopup() {
     th.style.alignItems =
       "flex-end";
 
-    th.style.overflow =
+        th.style.overflow =
       "hidden";
 
     th.style.wordBreak =
       "break-all";
 
     itemCol.appendChild(th);
+
+    const unusedCell =
+      document.createElement("div");
+
+    unusedCell.style.height =
+      unusedRowHeight;
+
+    unusedCell.style.boxSizing =
+      "border-box";
+
+    unusedCell.style.display =
+      "flex";
+
+    unusedCell.style.alignItems =
+      "center";
+
+    unusedCell.style.justifyContent =
+      "center";
+
+    unusedCell.style.padding =
+      "2px";
+
+    const unusedButton =
+      document.createElement("button");
+
+    unusedButton.type =
+      "button";
+
+    unusedButton.textContent =
+      "不使用";
+
+    unusedButton.style.width =
+      "100%";
+
+    unusedButton.style.padding =
+      "3px 0";
+
+    unusedButton.style.fontSize =
+      "10px";
+
+    unusedButton.style.background =
+      "#4B5563";
+
+    unusedButton.style.color =
+      "#ffffff";
+
+    unusedButton.style.boxShadow =
+      "none";
+
+    unusedButton.onclick = () => {
+
+      players.forEach(player => {
+
+        values[player][index] =
+          "0";
+
+        const targetInput =
+          itemCellByPlayer[player][index];
+
+        targetInput.value =
+          "0";
+
+        updateTotal(player);
+
+      });
+
+      updateItemColumnHighlight(index);
+
+    };
+
+    unusedCell.appendChild(
+      unusedButton
+    );
+
+    itemCol.appendChild(
+      unusedCell
+    );
 
     players.forEach(player => {
 
@@ -7354,6 +7519,7 @@ function openScoreHelperPopup() {
 
                  const input =
         document.createElement("input");
+
 
       input.type =
         "number";
@@ -7478,8 +7644,18 @@ function openScoreHelperPopup() {
     "center";
 
 
-  totalCol.appendChild(
+    totalCol.appendChild(
     totalHeadCell
+  );
+
+  const totalUnusedSpacer =
+    document.createElement("div");
+
+  totalUnusedSpacer.style.height =
+    unusedRowHeight;
+
+  totalCol.appendChild(
+    totalUnusedSpacer
   );
 
   const totalCellByPlayer = {};
@@ -7493,6 +7669,7 @@ function openScoreHelperPopup() {
 
     cell.style.height =
       rowHeight;
+
 
     cell.style.boxSizing =
       "border-box";
@@ -7661,9 +7838,28 @@ function openScoreHelperPopup() {
   );
 
 
-  document.getElementById(
+    document.getElementById(
     "scoreHelperConfirm"
   ).onclick = () => {
+
+    const hasEmptyValue =
+      players.some(player =>
+        values[player].some(value =>
+          value === "" ||
+          value === null ||
+          value === undefined
+        )
+      );
+
+    if (hasEmptyValue) {
+
+      alert(
+        "すべての項目欄に数値を入力してください。"
+      );
+
+      return;
+
+    }
 
     playerRows.forEach(row => {
 

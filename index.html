@@ -4887,17 +4887,37 @@ async function recordMatch() {
 
     });
 
-    document.getElementById(
-      "scorePlayers"
-    ).innerHTML = "";
+        document
+      .querySelectorAll(
+        "#scorePlayers .player-row"
+      )
+      .forEach(row => {
 
-    addScorePlayer();
+        const scoreField =
+          row.querySelector(
+            ".match-score"
+          );
+
+        if (!scoreField) return;
+
+        if (scoreField.tagName === "SELECT") {
+
+          scoreField.selectedIndex = 0;
+
+        } else {
+
+          scoreField.value = "";
+
+        }
+
+      });
 
     alert(
       "対戦結果を記録しました！"
     );
 
     updateAll();
+
 
   } catch (error) {
 

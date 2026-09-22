@@ -5867,11 +5867,14 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   items.forEach((itemName, index) => {
 
-    const row =
+        const row =
       document.createElement("div");
 
     row.style.display =
       "flex";
+
+    row.style.alignItems =
+      "center";
 
     row.style.gap =
       "6px";

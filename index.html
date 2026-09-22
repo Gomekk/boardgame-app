@@ -1295,13 +1295,44 @@ button.small {
 
 
 
-  <!-- 対戦記録 -->
+    <!-- 対戦記録 -->
   <div class="card">
     <h2>🎮 対戦を記録</h2>
 
         <select id="matchGame" style="display:none;">
       <option value="">ゲームを選択</option>
     </select>
+
+    <div id="matchCoOpResultArea" style="display:none;margin-top:12px;">
+
+      <label class="section-note" style="display:block;margin:0 0 6px;">
+        結果
+      </label>
+
+      <div style="display:flex;gap:8px;">
+
+        <button
+          type="button"
+          id="matchCoOpClearButton"
+          class="secondary"
+          style="flex:1;"
+        >
+          🎉 クリア
+        </button>
+
+        <button
+          type="button"
+          id="matchCoOpFailButton"
+          class="secondary"
+          style="flex:1;"
+        >
+          😢 失敗
+        </button>
+
+      </div>
+
+    </div>
+
 
       <button
       type="button"
@@ -1912,7 +1943,10 @@ button.small {
       </label>
 
 
-      <label class="radio-option">
+            <label
+        class="radio-option"
+        style="display:flex;flex-direction:column;justify-content:center;"
+      >
         <input
           type="radio"
           name="scoreDirection"
@@ -1921,7 +1955,20 @@ button.small {
         勝・負
       </label>
 
+      <label
+        class="radio-option"
+        style="display:flex;flex-direction:column;justify-content:center;"
+      >
+        <input
+          type="radio"
+          name="scoreDirection"
+          value="co_op"
+        >
+        協力型
+      </label>
+
     </div>
+
 
 
      <button
@@ -3475,12 +3522,14 @@ renderPlayerCountPicker(
     "radio-group";
 
 
-        [
+      [
     ["high", "高得点"],
     ["low", "低得点"],
     ["rank", "順位"],
-    ["win_lose", "勝・負"]
+    ["win_lose", "勝・負"],
+    ["co_op", "協力型"]
   ].forEach(
+
 
 
     ([value, labelText]) => {
@@ -4543,6 +4592,18 @@ function addScorePlayer(
 
   }
 
+   /*
+   * 協力型ゲーム
+   */
+  else if (
+    selectedGame &&
+    selectedGame.direction === "co_op"
+  ) {
+
+    div.appendChild(select);
+
+  }
+
   /*
    * 通常の得点ゲーム
    */
@@ -4568,6 +4629,7 @@ function addScorePlayer(
     div.appendChild(input);
 
   }
+
 
 
     const remove =
@@ -4650,10 +4712,32 @@ async function recordMatch() {
 
   }
 
-  if (!gameName) {
+    if (!gameName) {
 
     alert(
       "ゲームを選択してください"
+    );
+
+    return;
+
+  }
+
+  const recordedGame =
+    data.games.find(
+      g => g.name === gameName
+    );
+
+  const isCoOpMatch =
+    recordedGame &&
+    recordedGame.direction === "co_op";
+
+  if (
+    isCoOpMatch &&
+    !matchCoOpResult
+  ) {
+
+    alert(
+      "クリア／失敗を選択してください"
     );
 
     return;
@@ -4687,15 +4771,10 @@ async function recordMatch() {
         ".match-player"
       ).value;
 
-    const scoreText =
-      row.querySelector(
-        ".match-score"
-      ).value;
-
-    if (!player || scoreText === "") {
+    if (!player) {
 
       alert(
-        "プレイヤーと得点を入力してください"
+        "プレイヤーを選択してください"
       );
 
       return;
@@ -4714,12 +4793,40 @@ async function recordMatch() {
 
     usedPlayers.add(player);
 
+    if (isCoOpMatch) {
+
+      scores.push({
+        player: player,
+        score:
+          matchCoOpResult === "clear" ? 1 : 0
+      });
+
+      continue;
+
+    }
+
+    const scoreText =
+      row.querySelector(
+        ".match-score"
+      ).value;
+
+    if (scoreText === "") {
+
+      alert(
+        "得点を入力してください"
+      );
+
+      return;
+
+    }
+
     scores.push({
       player: player,
       score: Number(scoreText)
     });
 
   }
+
 
   try {
 
@@ -4887,7 +4994,7 @@ async function recordMatch() {
 
     });
 
-                document
+                    document
       .querySelectorAll(
         "#scorePlayers .player-row"
       )
@@ -4911,6 +5018,10 @@ async function recordMatch() {
         }
 
       });
+
+    matchCoOpResult = null;
+
+    updateCoOpResultArea();
 
     alert(
       "対戦結果を記録しました！"
@@ -5577,6 +5688,8 @@ renderPlayerCountPicker(
 
 
 let matchGamePickerGames = [];
+let matchCoOpResult = null;
+
 
 async function renderGameSelect() {
 
@@ -5627,7 +5740,7 @@ async function renderGameSelect() {
 
     });
 
-    select.onchange = () => {
+        select.onchange = () => {
 
     const preview =
       document.getElementById("matchGamePreview");
@@ -5654,7 +5767,12 @@ async function renderGameSelect() {
 
     updateMatchGameTrigger();
 
+    matchCoOpResult = null;
+
+    updateCoOpResultArea();
+
   };
+
 
   /*
    * ルーレットからゲームが渡されている場合
@@ -5729,8 +5847,80 @@ function updateMatchGameTrigger() {
 
   }
 
-  triggerLabel.textContent =
+    triggerLabel.textContent =
     select.value || "ゲームを選択";
+
+}
+
+function updateCoOpResultArea() {
+
+  const select =
+    document.getElementById("matchGame");
+
+  const area =
+    document.getElementById("matchCoOpResultArea");
+
+  const clearButton =
+    document.getElementById("matchCoOpClearButton");
+
+  const failButton =
+    document.getElementById("matchCoOpFailButton");
+
+  if (!select || !area || !clearButton || !failButton) return;
+
+  const selectedGame =
+    data.games.find(
+      game => game.name === select.value
+    );
+
+  const isCoOp =
+    selectedGame &&
+    selectedGame.direction === "co_op";
+
+  area.style.display =
+    isCoOp ? "block" : "none";
+
+  function updateButtonStyle() {
+
+    clearButton.style.background =
+      matchCoOpResult === "clear"
+        ? "#DFF3D8"
+        : "";
+
+    clearButton.style.color =
+      matchCoOpResult === "clear"
+        ? "#2E7D32"
+        : "";
+
+    failButton.style.background =
+      matchCoOpResult === "fail"
+        ? "#FBEAEA"
+        : "";
+
+    failButton.style.color =
+      matchCoOpResult === "fail"
+        ? "#9B2C2C"
+        : "";
+
+  }
+
+  updateButtonStyle();
+
+  clearButton.onclick = () => {
+
+    matchCoOpResult = "clear";
+
+    updateButtonStyle();
+
+  };
+
+  failButton.onclick = () => {
+
+    matchCoOpResult = "fail";
+
+    updateButtonStyle();
+
+  };
 
 }
 
@@ -10722,7 +10912,7 @@ function renderHeadToHeadRanking() {
         g => g.name === match.game
       );
 
-    if (!game) {
+    if (!game || game.direction === "co_op") {
       return;
     }
 
@@ -11379,7 +11569,10 @@ editButton.onclick = () => {
         Number(item.score);
 
 
-      if (direction === "win_lose") {
+      if (
+        direction === "win_lose" ||
+        direction === "co_op"
+      ) {
 
         // 何もしない（後段で score===1 を勝者とする）
 
@@ -11398,12 +11591,16 @@ editButton.onclick = () => {
     });
 
 
-    const sortedScores =
-      direction === "win_lose"
+        const sortedScores =
+      (
+        direction === "win_lose" ||
+        direction === "co_op"
+      )
         ? [...match.scores].sort(
             (a, b) => b.score - a.score
           )
         : [...match.scores].sort(
+
             (a, b) =>
               direction === "high"
                 ? b.score - a.score
@@ -11420,8 +11617,11 @@ editButton.onclick = () => {
         "history-score";
 
 
-      const isWinnerRow =
-        direction === "win_lose"
+            const isWinnerRow =
+        (
+          direction === "win_lose" ||
+          direction === "co_op"
+        )
           ? Number(item.score) === 1
           : Number(item.score) === bestScore;
 
@@ -11446,13 +11646,14 @@ editButton.onclick = () => {
       const score =
         document.createElement("strong");
 
-     score.textContent =
+    score.textContent =
   direction === "rank"
     ? `${item.score}位`
     : direction === "win_lose"
       ? (Number(item.score) === 1 ? "勝ち" : "負け")
-      : `${item.score}点`;
-
+      : direction === "co_op"
+        ? (Number(item.score) === 1 ? "クリア" : "失敗")
+        : `${item.score}点`;
 
 
       row.appendChild(name);
@@ -12182,16 +12383,32 @@ function getPlayerMatches(
 ) {
 
   return data.matches.filter(
-    match =>
-      Array.isArray(match.scores) &&
-      match.scores.some(
-        s =>
-          s.player ===
-          playerName
-      )
+    match => {
+
+      if (
+        !Array.isArray(match.scores) ||
+        !match.scores.some(
+          s => s.player === playerName
+        )
+      ) {
+        return false;
+      }
+
+      const game =
+        data.games.find(
+          g => g.name === match.game
+        );
+
+      return !(
+        game &&
+        game.direction === "co_op"
+      );
+
+    }
   );
 
 }
+
 
 
 /* =========================
@@ -12226,9 +12443,18 @@ function isWinner(
       s => Number(s.score)
     );
 
-    if (direction === "win_lose") {
+       if (direction === "co_op") {
+
+    return false;
+
+  }
+
+  if (direction === "win_lose") {
 
     return Number(item.score) === 1;
+
+  }
+
 
   }
 
@@ -13161,6 +13387,10 @@ function updateAll() {
 
 function getGameChampionNames(game) {
 
+  if (game.direction === "co_op") {
+    return [];
+  }
+
   const matches =
     data.matches.filter(
       match => match.game === game.name
@@ -13169,6 +13399,7 @@ function getGameChampionNames(game) {
   if (matches.length === 0) {
     return [];
   }
+
 
   const stats = {};
 
@@ -13869,32 +14100,60 @@ function renderGameSpecificRanking(gameName) {
 
   if (!game) return;
   
-    if (scoreRankingSection) {
+       if (scoreRankingSection) {
 
   scoreRankingSection.style.display =
     (
       game.direction === "rank" ||
-      game.direction === "win_lose"
+      game.direction === "win_lose" ||
+      game.direction === "co_op"
     )
       ? "none"
       : "";
 
 }
 
-    const averageRankSection =
+        const averageRankSection =
     averageRankRanking?.closest("div");
+
+  const winCountSection =
+    winCountRanking?.closest("div");
+
+  const streakSection =
+    streakRanking?.closest("div");
 
   if (averageRankSection) {
 
     averageRankSection.style.display =
-      game.direction === "win_lose"
+      (
+        game.direction === "win_lose" ||
+        game.direction === "co_op"
+      )
+        ? "none"
+        : "";
+
+  }
+
+  if (winCountSection) {
+
+    winCountSection.style.display =
+      game.direction === "co_op"
+        ? "none"
+        : "";
+
+  }
+
+  if (streakSection) {
+
+    streakSection.style.display =
+      game.direction === "co_op"
         ? "none"
         : "";
 
   }
 
   
-  const scoreRankingTitle =
+    const scoreRankingTitle =
   scoreRanking
     .parentElement
     ?.querySelector("h3");
@@ -13905,6 +14164,20 @@ if (scoreRankingTitle) {
     game.direction === "rank"
       ? "📊 順位"
       : "🏆 ベストスコア";
+
+}
+
+const winRateTitleEl =
+  winRateRanking
+    .parentElement
+    ?.querySelector("h3");
+
+if (winRateTitleEl) {
+
+  winRateTitleEl.textContent =
+    game.direction === "co_op"
+      ? "🎉 クリア率"
+      : "🥇 勝率";
 
 }
 
@@ -14000,12 +14273,12 @@ if (scoreRankingTitle) {
       player.totalScore +=
         Number(item.score) || 0;
 
-      if (
-        isWinner(
-          match,
-          item.player
-        )
-      ) {
+            const cleared =
+        game.direction === "co_op"
+          ? Number(item.score) === 1
+          : isWinner(match, item.player);
+
+      if (cleared) {
 
         player.wins++;
 
@@ -14647,11 +14920,14 @@ function editMatch(matchId) {
       ? game.direction
       : "high";
 
-    const isRankGame =
+  const isRankGame =
     direction === "rank";
 
   const isWinLoseGame =
     direction === "win_lose";
+
+  const isCoOpGame =
+    direction === "co_op";
 
 
   wrapper.innerHTML = "";
@@ -14806,7 +15082,7 @@ function editMatch(matchId) {
 
       }
 
-    } else if (isWinLoseGame) {
+        } else if (isWinLoseGame) {
 
       scoreInput =
         document.createElement("select");
@@ -14817,6 +15093,38 @@ function editMatch(matchId) {
       [
         ["1", "勝ち"],
         ["0", "負け"]
+      ].forEach(([value, label]) => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          value;
+
+        option.textContent =
+          label;
+
+        if (String(score) === value) {
+          option.selected = true;
+        }
+
+        scoreInput.appendChild(
+          option
+        );
+
+      });
+
+    } else if (isCoOpGame) {
+
+      scoreInput =
+        document.createElement("select");
+
+      scoreInput.className =
+        "match-score";
+
+      [
+        ["1", "クリア"],
+        ["0", "失敗"]
       ].forEach(([value, label]) => {
 
         const option =

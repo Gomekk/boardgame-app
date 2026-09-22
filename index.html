@@ -6637,7 +6637,7 @@ function openScoreHelperItemsPreview(items) {
   scrollArea.style.overflowX =
     "auto";
 
-  const itemsRow =
+    const itemsRow =
     document.createElement("div");
 
   itemsRow.style.display =
@@ -6646,7 +6646,13 @@ function openScoreHelperItemsPreview(items) {
   itemsRow.style.minWidth =
     "max-content";
 
+  const itemHeaderFontSize =
+    validItems.some(itemName => itemName.length > 4)
+      ? "10px"
+      : "12px";
+
   validItems.forEach(itemName => {
+
 
     const itemCol =
       document.createElement("div");
@@ -6657,16 +6663,14 @@ function openScoreHelperItemsPreview(items) {
     itemCol.style.flexShrink =
       "0";
 
-    const th =
+        const th =
       document.createElement("div");
 
     th.textContent =
       itemName;
 
     th.style.fontSize =
-      itemName.length > 4
-        ? "10px"
-        : "12px";
+      itemHeaderFontSize;
 
     th.style.lineHeight =
       "1.2";
@@ -7198,9 +7202,14 @@ function openScoreHelperPopup() {
   itemsRow.style.minWidth =
     "max-content";
 
-          const itemCellByPlayer = {};
+  const itemCellByPlayer = {};
 
-    function updateItemColumnHighlight(index) {
+  const itemHeaderFontSize =
+    items.some(itemName => itemName.length > 4)
+      ? "10px"
+      : "12px";
+
+  function updateItemColumnHighlight(index) {
 
     const direction =
       selectedGame.direction;
@@ -7284,16 +7293,14 @@ function openScoreHelperPopup() {
     itemCol.style.flexShrink =
       "0";
 
-    const th =
+       const th =
       document.createElement("div");
 
     th.textContent =
       itemName;
 
     th.style.fontSize =
-      itemName.length > 4
-        ? "10px"
-        : "12px";
+      itemHeaderFontSize;
 
     th.style.lineHeight =
       "1.2";
@@ -7324,7 +7331,8 @@ function openScoreHelperPopup() {
 
     itemCol.appendChild(th);
 
-        players.forEach(player => {
+    players.forEach(player => {
+
 
       const cell =
         document.createElement("div");

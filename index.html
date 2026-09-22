@@ -14922,6 +14922,27 @@ function showScreen(screenName) {
   const screens =
     document.querySelectorAll(".screenContent");
 
+  const leavingRecordScreen =
+    screenName !== "recordScreen" &&
+    document
+      .getElementById("recordScreen")
+      ?.classList.contains("active");
+
+  if (leavingRecordScreen) {
+
+    const gameSelect =
+      document.getElementById("matchGame");
+
+    if (gameSelect) {
+
+      gameSelect.value = "";
+
+      updateMatchGameTrigger();
+
+    }
+
+  }
+
 
   /* ホーム画面 */
 
@@ -14938,6 +14959,7 @@ function showScreen(screenName) {
     return;
 
   }
+
 
 
   /* ホームを隠す */

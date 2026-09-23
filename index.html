@@ -7165,9 +7165,105 @@ function openScoreHelperPopup() {
   wrapper.style.width =
     "100%";
 
-  const itemCellByPlayer = {};
+    const itemCellByPlayer = {};
 
   items.forEach((itemName, index) => {
+
+  let activeSelection =
+    null;
+
+  const itemColElements = {};
+
+  const nameRowElements = {};
+
+  function clearActiveHighlight() {
+
+    if (!activeSelection) return;
+
+    if (activeSelection.type === "item") {
+
+      const col =
+        itemColElements[activeSelection.index];
+
+      if (col) {
+        col.style.background = "";
+      }
+
+    } else if (activeSelection.type === "player") {
+
+      const row =
+        nameRowElements[activeSelection.player];
+
+      if (row) {
+        row.style.background = "";
+      }
+
+    }
+
+  }
+
+  function focusFirstInput(type, key) {
+
+    if (type === "item") {
+
+      const firstPlayer = players[0];
+
+      if (!firstPlayer) return;
+
+      const input =
+        itemCellByPlayer[firstPlayer]?.[key];
+
+      if (input && !input.disabled) {
+        input.focus();
+      }
+
+    } else if (type === "player") {
+
+      const firstIndex = 0;
+
+      const input =
+        itemCellByPlayer[key]?.[firstIndex];
+
+      if (input && !input.disabled) {
+        input.focus();
+      }
+
+    }
+
+  }
+
+  function toggleActiveSelection(type, key, highlightEl) {
+
+    if (
+      activeSelection &&
+      activeSelection.type === type &&
+      (
+        (type === "item" && activeSelection.index === key) ||
+        (type === "player" && activeSelection.player === key)
+      )
+    ) {
+
+      clearActiveHighlight();
+
+      activeSelection = null;
+
+      return;
+
+    }
+
+    clearActiveHighlight();
+
+    highlightEl.style.background =
+      "#FFF3D8";
+
+    activeSelection =
+      type === "item"
+        ? { type: "item", index: key }
+        : { type: "player", player: key };
+
+    focusFirstInput(type, key);
+
+  }
 
   /*
    * 左列：P名（固定）
@@ -7175,6 +7271,7 @@ function openScoreHelperPopup() {
 
   const nameCol =
     document.createElement("div");
+
 
 
   nameCol.style.flexShrink =
@@ -7408,102 +7505,6 @@ function openScoreHelperPopup() {
 
 
     });
-
-  }
-
-    let activeSelection =
-    null;
-
-  const itemColElements = {};
-
-  const nameRowElements = {};
-
-  function clearActiveHighlight() {
-
-    if (!activeSelection) return;
-
-    if (activeSelection.type === "item") {
-
-      const col =
-        itemColElements[activeSelection.index];
-
-      if (col) {
-        col.style.background = "";
-      }
-
-    } else if (activeSelection.type === "player") {
-
-      const row =
-        nameRowElements[activeSelection.player];
-
-      if (row) {
-        row.style.background = "";
-      }
-
-    }
-
-  }
-
-  function focusFirstInput(type, key) {
-
-    if (type === "item") {
-
-      const firstPlayer = players[0];
-
-      if (!firstPlayer) return;
-
-      const input =
-        itemCellByPlayer[firstPlayer][key];
-
-      if (input && !input.disabled) {
-        input.focus();
-      }
-
-    } else if (type === "player") {
-
-      const firstIndex = 0;
-
-      const input =
-        itemCellByPlayer[key][firstIndex];
-
-      if (input && !input.disabled) {
-        input.focus();
-      }
-
-    }
-
-  }
-
-  function toggleActiveSelection(type, key, highlightEl) {
-
-    if (
-      activeSelection &&
-      activeSelection.type === type &&
-      (
-        (type === "item" && activeSelection.index === key) ||
-        (type === "player" && activeSelection.player === key)
-      )
-    ) {
-
-      clearActiveHighlight();
-
-      activeSelection = null;
-
-      return;
-
-    }
-
-    clearActiveHighlight();
-
-    highlightEl.style.background =
-      "#FFF3D8";
-
-    activeSelection =
-      type === "item"
-        ? { type: "item", index: key }
-        : { type: "player", player: key };
-
-    focusFirstInput(type, key);
 
   }
 

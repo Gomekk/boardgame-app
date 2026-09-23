@@ -1619,6 +1619,8 @@ button.small {
 
        </div>
 
+   <div id="gameRankingTagFilter"></div>
+
      <div id="gameRankingGameList" style="margin-top:12px;"></div>
 
     <!-- 選択したゲームのランキング（ポップアップ） -->
@@ -1899,7 +1901,17 @@ button.small {
     プレイ人数（複数選択可）
   </label>
 
-  <div id="gamePlayerCountPicker" style="display:flex;gap:3px;"></div>
+    <div id="gamePlayerCountPicker" style="display:flex;gap:3px;"></div>
+
+</div>
+
+<div style="margin-top:12px;">
+
+  <label class="section-note" style="display:block;margin:0 0 6px;">
+    ジャンル（複数選択可）
+  </label>
+
+  <div id="gameTagPicker"></div>
 
 </div>
 
@@ -2111,6 +2123,8 @@ button.small {
       </div>
 
     </div>
+
+      <div id="gameListTagFilter"></div>
 
     <div id="gameList" style="margin-top:14px;"></div>
 
@@ -2627,6 +2641,35 @@ let data = {
   matches: []
 };
 
+const GAME_TAGS = [
+  "ダイス",
+  "デッキ構築",
+  "すごろく",
+  "心理戦(バッティング)",
+  "アクション",
+  "タイル配置",
+  "心理戦(ブラフ)",
+  "手札管理",
+  "セットコレクション",
+  "拡大再生産",
+  "ワーカープレイスメント",
+  "トリックテイキング",
+  "チーム戦",
+  "正体隠匿",
+  "競り",
+  "協力",
+  "バースト",
+  "陣取り",
+  "記憶",
+  "推理",
+  "モジュラーボード",
+  "言葉遊び",
+  "パズル",
+  "ドラフト",
+  "表現"
+];
+
+
 const PLAYER_COLOR_PALETTE = [
   "#E57373",
   "#EF5350",
@@ -2940,6 +2983,9 @@ if (gameRegisterSelectedPlayerCounts.size === 0) {
 const playerCounts =
   Array.from(gameRegisterSelectedPlayerCounts).sort((a, b) => a - b);
 
+const tagsToSave =
+  GAME_TAGS.filter(tag => gameRegisterSelectedTags.has(tag));
+
 const scoreHelperCheckbox =
   document.getElementById("gameScoreHelperEnabled");
 
@@ -3024,6 +3070,7 @@ if (
             direction: direction,
             player_counts: playerCounts,
             score_helper_items: scoreHelperItemsToSave,
+              tags: tagsToSave,
             image_url:
               newImageUrl || existingGame.image_url
           })
@@ -3053,6 +3100,7 @@ if (
   direction: direction,
   player_counts: playerCounts,
   score_helper_items: scoreHelperItemsToSave,
+    tags: tagsToSave,
   active: true,
   image_url: newImageUrl
 });
@@ -3072,12 +3120,20 @@ if (
   playTimeInput.value = "";
 }
 
-    gameRegisterSelectedPlayerCounts.clear();
+        gameRegisterSelectedPlayerCounts.clear();
 
     renderPlayerCountPicker(
       document.getElementById("gamePlayerCountPicker"),
       gameRegisterSelectedPlayerCounts
     );
+
+    gameRegisterSelectedTags.clear();
+
+    renderTagPicker(
+      document.getElementById("gameTagPicker"),
+      gameRegisterSelectedTags
+    );
+
 
   gameRegisterScoreHelperItems = [];
 
@@ -3439,6 +3495,40 @@ form.appendChild(
 renderPlayerCountPicker(
   playerCountPicker,
   editSelectedPlayerCounts
+);
+
+const editSelectedTags =
+  new Set(game.tags || []);
+
+const tagLabel =
+  document.createElement("label");
+
+tagLabel.className =
+  "section-note";
+
+tagLabel.style.display =
+  "block";
+
+tagLabel.style.marginTop =
+  "12px";
+
+tagLabel.textContent =
+  "ジャンル（複数選択可）";
+
+form.appendChild(
+  tagLabel
+);
+
+const tagPicker =
+  document.createElement("div");
+
+form.appendChild(
+  tagPicker
+);
+
+renderTagPicker(
+  tagPicker,
+  editSelectedTags
 );
 
 const editSelectedScoreHelperItems =
@@ -4076,8 +4166,11 @@ const newPlayerCounts =
   player_counts:
     newPlayerCounts,
 
-  score_helper_items:
+    score_helper_items:
     newScoreHelperItems,
+
+  tags:
+    GAME_TAGS.filter(tag => editSelectedTags.has(tag)),
 
   direction:
     newDirection,
@@ -5543,10 +5636,15 @@ async function loadDataFromSupabase() {
           ? game.player_counts
           : null,
 
-      scoreHelperItems:
+            scoreHelperItems:
         Array.isArray(game.score_helper_items) && game.score_helper_items.length > 0
           ? game.score_helper_items
           : null,
+
+      tags:
+        Array.isArray(game.tags)
+          ? game.tags
+          : [],
 
       direction:
         game.direction || "high",
@@ -5829,6 +5927,11 @@ let lastRouletteSelectedWeights = new Set();
 let lastRouletteSelectedPlayerCounts = new Set();
 let gameRegisterSelectedPlayerCounts = new Set();
 let gameRegisterScoreHelperItems = [];
+let gameRegisterSelectedTags = new Set();
+let gameRankingTagFilter = new Set();
+let gameListTagFilter = new Set();
+let specificGameTagFilter = new Set();
+let lastRouletteSelectedTags = new Set();
 
 function getGameWeightClass(playTime) {
 
@@ -6356,6 +6459,204 @@ function renderScoreHelperItemsBuilder(container, items) {
 
 }
 
+function styleTagChip(chip, active) {
+
+  chip.style.background =
+    active ? "#1E3A5F" : "#ffffff";
+
+  chip.style.color =
+    active ? "#ffffff" : "#374151";
+
+  chip.style.border =
+    active
+      ? "1px solid #1E3A5F"
+      : "1px solid #d1d5db";
+
+}
+
+function createTagChip(tag, selectedSet, onChange) {
+
+  const chip =
+    document.createElement("button");
+
+  chip.type =
+    "button";
+
+  chip.className =
+    "filter-chip-button";
+
+  chip.textContent =
+    `#${tag}`;
+
+  chip.style.width =
+    "auto";
+
+  chip.style.padding =
+    "4px 9px";
+
+  chip.style.margin =
+    "0";
+
+  chip.style.fontSize =
+    "11px";
+
+  chip.style.fontWeight =
+    "600";
+
+  chip.style.borderRadius =
+    "999px";
+
+  styleTagChip(chip, selectedSet.has(tag));
+
+  chip.onclick = () => {
+
+    if (selectedSet.has(tag)) {
+      selectedSet.delete(tag);
+    } else {
+      selectedSet.add(tag);
+    }
+
+    styleTagChip(chip, selectedSet.has(tag));
+
+    if (onChange) onChange();
+
+  };
+
+  return chip;
+
+}
+
+/*
+ * ゲーム登録・編集用（常に全タグを表示）
+ */
+function renderTagPicker(container, selectedSet) {
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  container.style.display =
+    "flex";
+
+  container.style.flexWrap =
+    "wrap";
+
+  container.style.gap =
+    "5px";
+
+  GAME_TAGS.forEach(tag => {
+
+    container.appendChild(
+      createTagChip(tag, selectedSet)
+    );
+
+  });
+
+}
+
+/*
+ * 絞込み用（「タグ ▶」で開閉）
+ */
+function renderTagFilter(container, selectedSet, onChange) {
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  container.style.textAlign =
+    "left";
+
+  const header =
+    document.createElement("div");
+
+  header.className =
+    "section-note";
+
+  header.style.margin =
+    "0 0 8px";
+
+  header.style.cursor =
+    "pointer";
+
+  header.style.userSelect =
+    "none";
+
+  const chipsArea =
+    document.createElement("div");
+
+  chipsArea.style.display =
+    "none";
+
+  chipsArea.style.flexWrap =
+    "wrap";
+
+  chipsArea.style.gap =
+    "5px";
+
+  chipsArea.style.marginBottom =
+    "12px";
+
+  let open = false;
+
+  function updateHeader() {
+
+    header.textContent =
+      `タグ ${open ? "▼" : "▶"}` +
+      (selectedSet.size > 0
+        ? `（${selectedSet.size}件選択中）`
+        : "");
+
+  }
+
+  header.onclick = () => {
+
+    open = !open;
+
+    chipsArea.style.display =
+      open ? "flex" : "none";
+
+    updateHeader();
+
+  };
+
+  GAME_TAGS.forEach(tag => {
+
+    chipsArea.appendChild(
+      createTagChip(tag, selectedSet, () => {
+
+        updateHeader();
+
+        onChange();
+
+      })
+    );
+
+  });
+
+  updateHeader();
+
+  container.appendChild(header);
+
+  container.appendChild(chipsArea);
+
+}
+
+function matchesTagFilter(game, selectedSet) {
+
+  if (selectedSet.size === 0) return true;
+
+  const tags =
+    game.tags || [];
+
+  for (const tag of selectedSet) {
+    if (tags.includes(tag)) return true;
+  }
+
+  return false;
+
+}
+
+
 function formatPlayerCountsLabel(counts) {
 
   if (!counts || counts.length === 0) return null;
@@ -6385,7 +6686,25 @@ renderPlayerCountPicker(
   gameRegisterSelectedPlayerCounts
 );
 
+renderTagPicker(
+  document.getElementById("gameTagPicker"),
+  gameRegisterSelectedTags
+);
+
+renderTagFilter(
+  document.getElementById("gameRankingTagFilter"),
+  gameRankingTagFilter,
+  () => renderGameRankingGameList()
+);
+
+renderTagFilter(
+  document.getElementById("gameListTagFilter"),
+  gameListTagFilter,
+  () => renderGameList()
+);
+
 const gameScoreHelperCheckboxEl =
+
   document.getElementById("gameScoreHelperEnabled");
 
 const gameScoreHelperItemsAreaEl =
@@ -9295,9 +9614,13 @@ function renderGameList() {
 
       if (!weight) return true;
 
-      return gameListWeightFilter.has(weight);
+            return gameListWeightFilter.has(weight);
 
     })
+    .filter(game =>
+      matchesTagFilter(game, gameListTagFilter)
+    )
+
     .filter(game => {
 
       if (gameListPlayerCountFilter.size === 0) return true;
@@ -9736,12 +10059,32 @@ function renderGameList() {
       `${matchCount}回プレイ済`;
 
 
-    rightCol.appendChild(nameRow);
+        rightCol.appendChild(nameRow);
 
     rightCol.appendChild(metaText);
 
     rightCol.appendChild(playCountText);
 
+    if (game.tags && game.tags.length > 0) {
+
+      const tagsText =
+        document.createElement("div");
+
+      tagsText.className =
+        "game-meta";
+
+      tagsText.style.marginTop =
+        "2px";
+
+      tagsText.style.color =
+        "#1D63C9";
+
+      tagsText.textContent =
+        game.tags.map(tag => `#${tag}`).join(" ");
+
+      rightCol.appendChild(tagsText);
+
+    }
 
         outerRow.appendChild(leftCol);
 
@@ -11823,6 +12166,8 @@ if (allGames.length === 0) {
 
 </div>
 
+<div id="gameRouletteTagFilter" style="margin-top:8px;"></div>
+
 <div
   id="gameRouletteEligibleCount"
   style="
@@ -11926,6 +12271,13 @@ let selectedWeight = lastRouletteSelectedWeight;
 let games = [];
 let selectedWeights = new Set(lastRouletteSelectedWeights);
 let selectedPlayerCounts = new Set(lastRouletteSelectedPlayerCounts);
+let selectedTags = new Set(lastRouletteSelectedTags);
+
+renderTagFilter(
+  document.getElementById("gameRouletteTagFilter"),
+  selectedTags,
+  () => updateEligibleCountDisplay()
+);
 
 
 function startRoulette() {
@@ -11960,6 +12312,15 @@ function startRoulette() {
         return false;
 
       });
+
+  }
+
+  if (selectedWeight !== "specific") {
+
+    games =
+      games.filter(game =>
+        matchesTagFilter(game, selectedTags)
+      );
 
   }
 
@@ -12108,8 +12469,13 @@ function updateEligibleCountDisplay() {
       : eligibleGames;
 
 
+    const filteredByTag =
+    filteredByCount.filter(game =>
+      matchesTagFilter(game, selectedTags)
+    );
+
   label.textContent =
-    `▼ ${filteredByCount.length}件の中からpick up`;
+    `▼ ${filteredByTag.length}件の中からpick up`;
 
 }
 
@@ -12922,6 +13288,8 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
 
         </div>
 
+        <div id="specificGameTagFilter"></div>
+
         <div id="specificGameList"></div>
 
 
@@ -12981,8 +13349,15 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
     () => renderSpecificGameList(searchInput.value)
   );
 
-  specificGameWeightFilter = new Set();
+    specificGameWeightFilter = new Set();
   specificGamePlayerCountFilter = new Set();
+  specificGameTagFilter = new Set();
+
+  renderTagFilter(
+    document.getElementById("specificGameTagFilter"),
+    specificGameTagFilter,
+    () => renderSpecificGameList(searchInput.value)
+  );
 
   function updateSpecificWeightButtonStyle(button) {
 
@@ -13189,6 +13564,9 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
 
     lastRouletteSelectedPlayerCounts =
       new Set(selectedPlayerCounts);
+      
+    lastRouletteSelectedTags =
+      new Set(selectedTags);
 
     overlay.remove();
 
@@ -13211,6 +13589,9 @@ function openSpecificGameSelector(editingSet = null, isCreatingNew = false) {
 
     lastRouletteSelectedPlayerCounts =
       new Set(selectedPlayerCounts);
+
+    lastRouletteSelectedTags =
+      new Set(selectedTags);
 
     overlay.remove();
 
@@ -13256,9 +13637,13 @@ function getVisibleSpecificGames(keyword = "") {
 
       if (!weight) return true;
 
-      return specificGameWeightFilter.has(weight);
+            return specificGameWeightFilter.has(weight);
 
     })
+    .filter(game =>
+      matchesTagFilter(game, specificGameTagFilter)
+    )
+
      .filter(game => {
 
       if (specificGamePlayerCountFilter.size === 0) return true;
@@ -13333,9 +13718,13 @@ function renderSpecificGameList(keyword = "") {
 
         if (!weight) return true;
 
-        return specificGameWeightFilter.has(weight);
+              return specificGameWeightFilter.has(weight);
 
-      })
+    })
+    .filter(game =>
+      matchesTagFilter(game, specificGameTagFilter)
+    )
+
         .filter(game => {
 
       if (specificGamePlayerCountFilter.size === 0) return true;
@@ -16438,9 +16827,13 @@ function renderGameRankingGameList() {
          */
         if (!weight) return true;
 
-        return gameRankingWeightFilter.has(weight);
+                return gameRankingWeightFilter.has(weight);
 
       })
+      .filter(game =>
+        matchesTagFilter(game, gameRankingTagFilter)
+      )
+
                       .filter(game => {
 
         /*

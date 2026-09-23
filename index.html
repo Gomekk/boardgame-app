@@ -6554,18 +6554,6 @@ function styleTagChip(chip, active) {
 
 function createTagChip(tag, selectedSet, onChange) {
 
-  const wrapper =
-    document.createElement("span");
-
-  wrapper.style.display =
-    "inline-flex";
-
-  wrapper.style.alignItems =
-    "center";
-
-  wrapper.style.gap =
-    "2px";
-
   const chip =
     document.createElement("button");
 
@@ -6612,64 +6600,7 @@ function createTagChip(tag, selectedSet, onChange) {
 
   };
 
-  const infoButton =
-    document.createElement("button");
-
-  infoButton.type =
-    "button";
-
-  infoButton.textContent =
-    "ⓘ";
-
-  infoButton.style.width =
-    "18px";
-
-  infoButton.style.height =
-    "18px";
-
-  infoButton.style.minWidth =
-    "18px";
-
-  infoButton.style.padding =
-    "0";
-
-  infoButton.style.margin =
-    "0";
-
-  infoButton.style.borderRadius =
-    "50%";
-
-  infoButton.style.fontSize =
-    "10px";
-
-  infoButton.style.background =
-    "rgba(107,114,128,0.12)";
-
-  infoButton.style.color =
-    "#6b7280";
-
-  infoButton.style.boxShadow =
-    "none";
-
-  infoButton.onclick = event => {
-
-    event.stopPropagation();
-
-    const description =
-      GAME_TAG_DESCRIPTIONS[tag];
-
-    alert(
-      `#${tag}\n\n` +
-      (description || "説明はまだ設定されていません。")
-    );
-
-  };
-
-  wrapper.appendChild(chip);
-
-  wrapper.appendChild(infoButton);
-
-  return wrapper;
+  return chip;
 
 }
 
@@ -6713,6 +6644,21 @@ function renderTagFilter(container, selectedSet, onChange) {
   container.style.textAlign =
     "left";
 
+    const headerRow =
+    document.createElement("div");
+
+  headerRow.style.display =
+    "flex";
+
+  headerRow.style.alignItems =
+    "center";
+
+  headerRow.style.gap =
+    "6px";
+
+  headerRow.style.margin =
+    "0 0 8px";
+
   const header =
     document.createElement("div");
 
@@ -6720,13 +6666,35 @@ function renderTagFilter(container, selectedSet, onChange) {
     "section-note";
 
   header.style.margin =
-    "0 0 8px";
+    "0";
 
   header.style.cursor =
     "pointer";
 
   header.style.userSelect =
     "none";
+
+  const infoButton =
+    document.createElement("span");
+
+  infoButton.textContent =
+    "ⓘ";
+
+  infoButton.style.fontSize =
+    "12px";
+
+  infoButton.style.color =
+    "#9ca3af";
+
+  infoButton.style.cursor =
+    "pointer";
+
+  infoButton.onclick = () => {
+
+    openTagDescriptionsPopup();
+
+  };
+
 
   const chipsArea =
     document.createElement("div");
@@ -6782,9 +6750,209 @@ function renderTagFilter(container, selectedSet, onChange) {
 
   updateHeader();
 
-  container.appendChild(header);
+    headerRow.appendChild(header);
+
+  headerRow.appendChild(infoButton);
+
+  container.appendChild(headerRow);
 
   container.appendChild(chipsArea);
+
+}
+
+function openTagDescriptionsPopup() {
+
+  const existing =
+    document.getElementById(
+      "tagDescriptionsOverlay"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "tagDescriptionsOverlay";
+
+  overlay.style.position =
+    "fixed";
+
+  overlay.style.inset =
+    "0";
+
+  overlay.style.background =
+    "rgba(0,0,0,.45)";
+
+  overlay.style.zIndex =
+    "10003";
+
+  overlay.style.display =
+    "flex";
+
+  overlay.style.alignItems =
+    "center";
+
+  overlay.style.justifyContent =
+    "center";
+
+  overlay.style.padding =
+    "20px";
+
+  overlay.onclick = event => {
+
+    if (event.target === overlay) {
+      overlay.remove();
+    }
+
+  };
+
+  const box =
+    document.createElement("div");
+
+  box.className =
+    "card";
+
+  box.style.position =
+    "relative";
+
+  box.style.width =
+    "100%";
+
+  box.style.maxWidth =
+    "480px";
+
+  box.style.maxHeight =
+    "80vh";
+
+  box.style.overflowY =
+    "auto";
+
+  box.style.marginBottom =
+    "0";
+
+  const closeButton =
+    document.createElement("button");
+
+  closeButton.type =
+    "button";
+
+  closeButton.textContent =
+    "×";
+
+  closeButton.style.position =
+    "absolute";
+
+  closeButton.style.top =
+    "14px";
+
+  closeButton.style.right =
+    "14px";
+
+  closeButton.style.width =
+    "32px";
+
+  closeButton.style.height =
+    "32px";
+
+  closeButton.style.minWidth =
+    "32px";
+
+  closeButton.style.padding =
+    "0";
+
+  closeButton.style.border =
+    "none";
+
+  closeButton.style.background =
+    "#f3f4f6";
+
+  closeButton.style.color =
+    "#555";
+
+  closeButton.style.borderRadius =
+    "50%";
+
+  closeButton.style.fontSize =
+    "20px";
+
+  closeButton.style.lineHeight =
+    "1";
+
+  closeButton.onclick = () => {
+    overlay.remove();
+  };
+
+  const title =
+    document.createElement("h2");
+
+  title.textContent =
+    "🏷️ ジャンルタグの説明";
+
+  title.style.paddingRight =
+    "40px";
+
+  box.appendChild(closeButton);
+
+  box.appendChild(title);
+
+  GAME_TAGS.forEach(tag => {
+
+    const item =
+      document.createElement("div");
+
+    item.style.padding =
+      "10px 0";
+
+    item.style.borderBottom =
+      "1px solid rgba(22,35,63,0.06)";
+
+    const nameEl =
+      document.createElement("div");
+
+    nameEl.textContent =
+      `#${tag}`;
+
+    nameEl.style.fontWeight =
+      "700";
+
+    nameEl.style.fontSize =
+      "13px";
+
+    nameEl.style.color =
+      "#1D63C9";
+
+    const descEl =
+      document.createElement("div");
+
+    descEl.textContent =
+      GAME_TAG_DESCRIPTIONS[tag] || "説明はまだ設定されていません。";
+
+    descEl.style.fontSize =
+      "12px";
+
+    descEl.style.color =
+      GAME_TAG_DESCRIPTIONS[tag] ? "#374151" : "#9ca3af";
+
+    descEl.style.marginTop =
+      "3px";
+
+    descEl.style.whiteSpace =
+      "pre-wrap";
+
+    item.appendChild(nameEl);
+
+    item.appendChild(descEl);
+
+    box.appendChild(item);
+
+  });
+
+  overlay.appendChild(box);
+
+  document.body.appendChild(overlay);
 
 }
 

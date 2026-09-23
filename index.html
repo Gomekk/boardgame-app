@@ -5981,11 +5981,11 @@ function renderScoreHelperItemsBuilder(container, items) {
     row.style.touchAction =
       "none";
 
-    const handle =
+        const handle =
       document.createElement("span");
 
-    handle.textContent =
-      "三";
+    handle.innerHTML =
+      `<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>`;
 
     handle.style.flexShrink =
       "0";
@@ -5993,14 +5993,14 @@ function renderScoreHelperItemsBuilder(container, items) {
     handle.style.width =
       "22px";
 
-    handle.style.textAlign =
+    handle.style.display =
+      "flex";
+
+    handle.style.alignItems =
       "center";
 
-    handle.style.fontSize =
-      "16px";
-
-    handle.style.fontWeight =
-      "700";
+    handle.style.justifyContent =
+      "center";
 
     handle.style.color =
       "#9ca3af";

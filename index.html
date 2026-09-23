@@ -6116,7 +6116,7 @@ function renderScoreHelperItemsBuilder(container, items) {
     calcInput.oninput =
       updateItemValue;
 
-    const removeButton =
+        const removeButton =
       document.createElement("button");
 
     removeButton.type =
@@ -6129,15 +6129,21 @@ function renderScoreHelperItemsBuilder(container, items) {
       "×";
 
     removeButton.style.width =
-      "32px";
+      "22px";
 
     removeButton.style.height =
-      "32px";
+      "22px";
 
     removeButton.style.minWidth =
-      "32px";
+      "22px";
 
     removeButton.style.padding =
+      "0";
+
+    removeButton.style.fontSize =
+      "12px";
+
+    removeButton.style.flexShrink =
       "0";
 
     removeButton.style.borderRadius =

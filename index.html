@@ -7290,7 +7290,10 @@ function openScoreHelperPopup() {
   itemsRow.style.minWidth =
     "max-content";
 
-    const itemCellByPlayer = {};
+      const itemCellByPlayer = {};
+
+  const unusedItemIndexes =
+    new Set();
 
   const itemHeaderFontSize =
     items.some(itemName => itemName.length > 4)
@@ -7300,6 +7303,25 @@ function openScoreHelperPopup() {
 
   function updateItemColumnHighlight(index) {
 
+    if (unusedItemIndexes.has(index)) {
+
+      players.forEach(player => {
+
+        const input =
+          itemCellByPlayer[player][index];
+
+        input.style.background =
+          "#E5E7EB";
+
+        input.style.color =
+          "#9CA3AF";
+
+      });
+
+      return;
+
+    }
+    
     const direction =
       selectedGame.direction;
 
@@ -7441,6 +7463,45 @@ function openScoreHelperPopup() {
     unusedCell.style.padding =
       "2px";
 
+        const toggleRow =
+      document.createElement("div");
+
+    toggleRow.style.display =
+      "flex";
+
+    toggleRow.style.width =
+      "100%";
+
+    toggleRow.style.gap =
+      "4px";
+
+    const useButton =
+      document.createElement("button");
+
+    useButton.type =
+      "button";
+
+    useButton.textContent =
+      "〇";
+
+    useButton.style.flex =
+      "1";
+
+    useButton.style.padding =
+      "3px 0";
+
+    useButton.style.fontSize =
+      "11px";
+
+    useButton.style.fontWeight =
+      "800";
+
+    useButton.style.background =
+      "transparent";
+
+    useButton.style.boxShadow =
+      "none";
+
     const unusedButton =
       document.createElement("button");
 
@@ -7448,27 +7509,64 @@ function openScoreHelperPopup() {
       "button";
 
     unusedButton.textContent =
-      "不使用";
+      "×";
 
-    unusedButton.style.width =
-      "100%";
+    unusedButton.style.flex =
+      "1";
 
     unusedButton.style.padding =
       "3px 0";
 
     unusedButton.style.fontSize =
-      "10px";
+      "11px";
+
+    unusedButton.style.fontWeight =
+      "800";
 
     unusedButton.style.background =
-      "#4B5563";
-
-    unusedButton.style.color =
-      "#ffffff";
+      "transparent";
 
     unusedButton.style.boxShadow =
       "none";
 
+    function updateToggleButtonColors() {
+
+      const isUnused =
+        unusedItemIndexes.has(index);
+
+      useButton.style.color =
+        isUnused ? "#9CA3AF" : "#2E7D32";
+
+      unusedButton.style.color =
+        isUnused ? "#C62828" : "#9CA3AF";
+
+    }
+
+    updateToggleButtonColors();
+
+    useButton.onclick = () => {
+
+      unusedItemIndexes.delete(index);
+
+      players.forEach(player => {
+
+        const targetInput =
+          itemCellByPlayer[player][index];
+
+        targetInput.disabled =
+          false;
+
+      });
+
+      updateToggleButtonColors();
+
+      updateItemColumnHighlight(index);
+
+    };
+
     unusedButton.onclick = () => {
+
+      unusedItemIndexes.add(index);
 
       players.forEach(player => {
 
@@ -7481,16 +7579,25 @@ function openScoreHelperPopup() {
         targetInput.value =
           "0";
 
+        targetInput.disabled =
+          true;
+
         updateTotal(player);
 
       });
+
+      updateToggleButtonColors();
 
       updateItemColumnHighlight(index);
 
     };
 
+    toggleRow.appendChild(useButton);
+
+    toggleRow.appendChild(unusedButton);
+
     unusedCell.appendChild(
-      unusedButton
+      toggleRow
     );
 
     itemCol.appendChild(

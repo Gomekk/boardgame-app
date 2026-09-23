@@ -2942,8 +2942,7 @@ const scoreHelperCheckbox =
 const scoreHelperItemsToSave =
   scoreHelperCheckbox && scoreHelperCheckbox.checked
     ? gameRegisterScoreHelperItems
-        .map(item => item.trim())
-        .filter(item => item !== "")
+        .filter(item => splitItemNameCalc(item).name !== "")
     : null;
 
 if (
@@ -4032,9 +4031,9 @@ const newPlayerCounts =
         const newScoreHelperItems =
       scoreHelperCheckboxEdit.checked
         ? editSelectedScoreHelperItems
-            .map(item => item.trim())
-            .filter(item => item !== "")
+            .filter(item => splitItemNameCalc(item).name !== "")
         : null;
+
 
     if (
       scoreHelperCheckboxEdit.checked &&
@@ -6044,24 +6043,51 @@ function renderScoreHelperItemsBuilder(container, items) {
 
     };
 
-    const input =
+        const { name: itemNamePart, calc: itemCalcPart } =
+      splitItemNameCalc(itemName);
+
+    const nameInput =
       document.createElement("input");
 
-    input.type =
+    nameInput.type =
       "text";
 
-    input.value =
-      itemName;
+    nameInput.value =
+      itemNamePart;
 
-    input.placeholder =
-      `項目${index + 1}（例：素点）`;
+    nameInput.placeholder =
+      `項目${index + 1}の名前（例：屋敷）`;
 
-    input.oninput = () => {
+    nameInput.style.flex =
+      "1";
+
+    const calcInput =
+      document.createElement("input");
+
+    calcInput.type =
+      "text";
+
+    calcInput.value =
+      itemCalcPart;
+
+    calcInput.placeholder =
+      "点数計算（例：1点/枚）";
+
+    calcInput.style.flex =
+      "1";
+
+    function updateItemValue() {
 
       items[index] =
-        input.value;
+        `${nameInput.value}||${calcInput.value}`;
 
-    };
+    }
+
+    nameInput.oninput =
+      updateItemValue;
+
+    calcInput.oninput =
+      updateItemValue;
 
     const removeButton =
       document.createElement("button");
@@ -6103,7 +6129,9 @@ function renderScoreHelperItemsBuilder(container, items) {
 
     row.appendChild(handle);
 
-    row.appendChild(input);
+    row.appendChild(nameInput);
+
+    row.appendChild(calcInput);
 
     row.appendChild(removeButton);
 
@@ -6554,10 +6582,10 @@ function updateScoreHelperButtonState() {
 
 function openScoreHelperItemsPreview(items) {
 
-  const validItems =
+    const validItems =
     items
       .map(item => item.trim())
-      .filter(item => item !== "");
+      .filter(item => splitItemNameCalc(item).name !== "");
 
   if (validItems.length === 0) {
 
@@ -6697,12 +6725,13 @@ function openScoreHelperItemsPreview(items) {
   const totalColWidth =
     "56px";
 
-    const itemHeaderFontSize =
-    validItems.some(itemName => itemName.length > 4)
+  const itemHeaderFontSize =
+    validItems.some(itemName => splitItemNameCalc(itemName).name.length > 4)
       ? "10px"
       : "12px";
 
   const headerRowHeight =
+
     itemHeaderFontSize === "12px"
       ? "50px"
       : "44px";
@@ -7537,8 +7566,8 @@ function openScoreHelperPopup() {
 
   }
 
-    const itemHeaderFontSize =
-    items.some(itemName => itemName.length > 4)
+  const itemHeaderFontSize =
+    items.some(itemName => splitItemNameCalc(itemName).name.length > 4)
       ? "10px"
       : "12px";
 
@@ -7795,14 +7824,15 @@ function openScoreHelperPopup() {
     itemCol.style.flexShrink =
       "0";
 
-                      const th =
+    const th =
       document.createElement("div");
 
     th.innerHTML =
-      formatItemNameHTML(itemName);
+      buildItemHeaderHTML(itemName);
 
     th.style.fontSize =
       itemHeaderFontSize;
+
 
     th.style.lineHeight =
       "1.2";
@@ -17401,32 +17431,32 @@ function escapeHTML(str) {
 
 }
 
-function formatItemNameHTML(name) {
+function splitItemNameCalc(raw) {
 
-  const escaped =
-    escapeHTML(name);
+  const parts =
+    String(raw).split("||");
 
-  const candidates =
-    ["(", "（"]
-      .map(ch => escaped.indexOf(ch))
-      .filter(index => index !== -1);
+  return {
+    name: (parts[0] || "").trim(),
+    calc: (parts[1] || "").trim()
+  };
 
-  if (candidates.length === 0) {
+}
 
-    return `<span style="color:#1D63C9;">${escaped}</span>`;
+function buildItemHeaderHTML(raw) {
 
-  }
+  const { name, calc } =
+    splitItemNameCalc(raw);
 
-  const openIndex =
-    Math.min(...candidates);
+  const nameHTML =
+    `<div style="color:#1D63C9;">${escapeHTML(name)}</div>`;
 
-  const before =
-    escaped.slice(0, openIndex);
+  const calcHTML =
+    calc
+      ? `<div>${escapeHTML(calc)}</div>`
+      : "";
 
-  const after =
-    escaped.slice(openIndex);
-
-  return `<span style="color:#1D63C9;">${before}</span>${after}`;
+  return nameHTML + calcHTML;
 
 }
 

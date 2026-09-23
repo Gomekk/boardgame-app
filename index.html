@@ -4627,6 +4627,65 @@ async function archivePlayer(name) {
    対戦記録入力
 ========================= */
 
+function refreshRankSelectOptions() {
+
+  const rows =
+    document.querySelectorAll(
+      "#scorePlayers .player-row"
+    );
+
+  const totalCount =
+    rows.length;
+
+  rows.forEach(row => {
+
+    const scoreField =
+      row.querySelector(".match-score");
+
+    if (
+      !scoreField ||
+      scoreField.tagName !== "SELECT" ||
+      scoreField.options.length === 0 ||
+      !scoreField.options[0].textContent.includes("位")
+    ) {
+      return;
+    }
+
+    const currentValue =
+      scoreField.value;
+
+    scoreField.innerHTML =
+      "";
+
+    for (
+      let rank = 1;
+      rank <= totalCount;
+      rank++
+    ) {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        rank;
+
+      option.textContent =
+        `${rank}位`;
+
+      if (
+        String(currentValue) === String(rank)
+      ) {
+        option.selected = true;
+      }
+
+      scoreField.appendChild(option);
+
+    }
+
+  });
+
+}
+
 function addScorePlayer(
   playerName = "",
   score = ""
@@ -4714,9 +4773,14 @@ function addScorePlayer(
     rankSelect.className =
       "match-score";
 
+        const currentRowCount =
+      document.querySelectorAll(
+        "#scorePlayers .player-row"
+      ).length + 1;
+
     for (
       let rank = 1;
-      rank <= data.players.filter(p => p.active).length;
+      rank <= currentRowCount;
       rank++
     ) {
 
@@ -4911,13 +4975,20 @@ function addScorePlayer(
     "1";
 
 
-  remove.onclick = () =>
+    remove.onclick = () => {
+
     div.remove();
+
+    refreshRankSelectOptions();
+
+  };
 
 
   div.appendChild(remove);
 
   container.appendChild(div);
+
+  refreshRankSelectOptions();
 
 }
 

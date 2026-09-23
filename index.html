@@ -4802,7 +4802,7 @@ function addScorePlayer(
 
   }
 
-  /*
+    /*
    * 通常の得点ゲーム
    */
   else {
@@ -4822,6 +4822,44 @@ function addScorePlayer(
 
     input.value =
       score;
+
+    input.onkeydown = event => {
+
+      if (event.key !== "Enter") return;
+
+      event.preventDefault();
+
+      const currentRow =
+        div;
+
+      let nextRow =
+        currentRow.nextElementSibling;
+
+      while (
+        nextRow &&
+        !nextRow.classList.contains("player-row")
+      ) {
+
+        nextRow =
+          nextRow.nextElementSibling;
+
+      }
+
+      if (nextRow) {
+
+        const nextInput =
+          nextRow.querySelector(".match-score");
+
+        if (
+          nextInput &&
+          nextInput.tagName === "INPUT"
+        ) {
+          nextInput.focus();
+        }
+
+      }
+
+    };
 
     div.appendChild(select);
     div.appendChild(input);

@@ -6843,11 +6843,11 @@ function openScoreHelperItemsPreview(items) {
     itemCol.style.flexShrink =
       "0";
 
-    const th =
+        const th =
       document.createElement("div");
 
-    th.textContent =
-      itemName;
+    th.innerHTML =
+      formatItemNameHTML(itemName);
 
     th.style.fontSize =
       itemHeaderFontSize;
@@ -7795,11 +7795,11 @@ function openScoreHelperPopup() {
     itemCol.style.flexShrink =
       "0";
 
-           const th =
+                      const th =
       document.createElement("div");
 
-    th.textContent =
-      itemName;
+    th.innerHTML =
+      formatItemNameHTML(itemName);
 
     th.style.fontSize =
       itemHeaderFontSize;
@@ -17400,6 +17400,36 @@ function escapeHTML(str) {
     .replace(/'/g, "&#039;");
 
 }
+
+function formatItemNameHTML(name) {
+
+  const escaped =
+    escapeHTML(name);
+
+  const candidates =
+    ["(", "（"]
+      .map(ch => escaped.indexOf(ch))
+      .filter(index => index !== -1);
+
+  if (candidates.length === 0) {
+
+    return `<span style="color:#1D63C9;">${escaped}</span>`;
+
+  }
+
+  const openIndex =
+    Math.min(...candidates);
+
+  const before =
+    escaped.slice(0, openIndex);
+
+  const after =
+    escaped.slice(openIndex);
+
+  return `<span style="color:#1D63C9;">${before}</span>${after}`;
+
+}
+
 
 
 /* =========================

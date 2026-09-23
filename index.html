@@ -7746,7 +7746,7 @@ function openScoreHelperPopup() {
 
     };
 
-    unusedButton.onclick = () => {
+        unusedButton.onclick = () => {
 
       unusedItemIndexes.add(index);
 
@@ -7767,6 +7767,18 @@ function openScoreHelperPopup() {
         updateTotal(player);
 
       });
+
+      if (
+        activeSelection &&
+        activeSelection.type === "item" &&
+        activeSelection.index === index
+      ) {
+
+        clearActiveHighlight();
+
+        activeSelection = null;
+
+      }
 
       updateToggleButtonColors();
 

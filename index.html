@@ -7098,7 +7098,7 @@ function openScoreHelperPopup() {
         プレイヤー名 or 項目名をタップして一括入力可
       </div>
 
-      <div class="section-note" style="margin-top:-8px;margin-bottom:6px;font-size:10px;">
+     <div class="section-note" style="margin-top:-8px;margin-bottom:0px;font-size:10px;">
         〇･✕で項目の有無を選択
       </div>
 
@@ -7251,7 +7251,14 @@ function openScoreHelperPopup() {
 
   }
 
-  function toggleActiveSelection(type, key, highlightEl) {
+    function toggleActiveSelection(type, key, highlightEl) {
+
+    if (
+      type === "item" &&
+      unusedItemIndexes.has(key)
+    ) {
+      return;
+    }
 
     if (
       activeSelection &&

@@ -6061,7 +6061,7 @@ function renderScoreHelperItemsBuilder(container, items) {
     inputsCol.style.gap =
       "4px";
 
-    const nameInput =
+        const nameInput =
       document.createElement("input");
 
     nameInput.type =
@@ -6071,10 +6071,13 @@ function renderScoreHelperItemsBuilder(container, items) {
       itemNamePart;
 
     nameInput.placeholder =
-      `項目${index + 1}の名前（例：屋敷）`;
+      `項目${index + 1}(例: イベント)`;
 
     nameInput.style.padding =
       "6px 10px";
+
+    nameInput.style.fontSize =
+      "13px";
 
     const calcInput =
       document.createElement("input");
@@ -6086,10 +6089,13 @@ function renderScoreHelperItemsBuilder(container, items) {
       itemCalcPart;
 
     calcInput.placeholder =
-      "点数計算（例：1点/枚）";
+      "点数計算(例: 3点/枚)";
 
     calcInput.style.padding =
       "6px 10px";
+
+    calcInput.style.fontSize =
+      "13px";
 
     inputsCol.appendChild(nameInput);
 

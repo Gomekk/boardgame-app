@@ -7222,7 +7222,7 @@ function openScoreHelperPopup() {
     nameUnusedSpacer
   );
 
-  players.forEach(player => {
+    players.forEach(player => {
 
     const cell =
       document.createElement("div");
@@ -7261,7 +7261,23 @@ function openScoreHelperPopup() {
     cell.style.whiteSpace =
       "nowrap";
 
+    cell.style.cursor =
+      "pointer";
+
+    cell.onclick = () => {
+
+      toggleActiveSelection(
+        "player",
+        player,
+        nameRowElements[player]
+      );
+
+    };
+
     nameCol.appendChild(cell);
+
+    nameRowElements[player] =
+      cell;
 
   });
 
@@ -7392,6 +7408,102 @@ function openScoreHelperPopup() {
 
   }
 
+    let activeSelection =
+    null;
+
+  const itemColElements = {};
+
+  const nameRowElements = {};
+
+  function clearActiveHighlight() {
+
+    if (!activeSelection) return;
+
+    if (activeSelection.type === "item") {
+
+      const col =
+        itemColElements[activeSelection.index];
+
+      if (col) {
+        col.style.background = "";
+      }
+
+    } else if (activeSelection.type === "player") {
+
+      const row =
+        nameRowElements[activeSelection.player];
+
+      if (row) {
+        row.style.background = "";
+      }
+
+    }
+
+  }
+
+  function focusFirstInput(type, key) {
+
+    if (type === "item") {
+
+      const firstPlayer = players[0];
+
+      if (!firstPlayer) return;
+
+      const input =
+        itemCellByPlayer[firstPlayer][key];
+
+      if (input && !input.disabled) {
+        input.focus();
+      }
+
+    } else if (type === "player") {
+
+      const firstIndex = 0;
+
+      const input =
+        itemCellByPlayer[key][firstIndex];
+
+      if (input && !input.disabled) {
+        input.focus();
+      }
+
+    }
+
+  }
+
+  function toggleActiveSelection(type, key, highlightEl) {
+
+    if (
+      activeSelection &&
+      activeSelection.type === type &&
+      (
+        (type === "item" && activeSelection.index === key) ||
+        (type === "player" && activeSelection.player === key)
+      )
+    ) {
+
+      clearActiveHighlight();
+
+      activeSelection = null;
+
+      return;
+
+    }
+
+    clearActiveHighlight();
+
+    highlightEl.style.background =
+      "#FFF3D8";
+
+    activeSelection =
+      type === "item"
+        ? { type: "item", index: key }
+        : { type: "player", player: key };
+
+    focusFirstInput(type, key);
+
+  }
+
   items.forEach((itemName, index) => {
 
 
@@ -7404,7 +7516,7 @@ function openScoreHelperPopup() {
     itemCol.style.flexShrink =
       "0";
 
-       const th =
+           const th =
       document.createElement("div");
 
     th.textContent =
@@ -7434,13 +7546,30 @@ function openScoreHelperPopup() {
     th.style.alignItems =
       "flex-end";
 
-        th.style.overflow =
+    th.style.overflow =
       "hidden";
 
     th.style.wordBreak =
       "break-all";
 
+    th.style.cursor =
+      "pointer";
+
+    th.onclick = () => {
+
+      toggleActiveSelection(
+        "item",
+        index,
+        itemColElements[index]
+      );
+
+    };
+
     itemCol.appendChild(th);
+
+    itemColElements[index] =
+      itemCol;
+
 
     const unusedCell =
       document.createElement("div");
@@ -7544,17 +7673,25 @@ function openScoreHelperPopup() {
 
     updateToggleButtonColors();
 
-    useButton.onclick = () => {
+        useButton.onclick = () => {
 
       unusedItemIndexes.delete(index);
 
       players.forEach(player => {
+
+        values[player][index] =
+          "";
 
         const targetInput =
           itemCellByPlayer[player][index];
 
         targetInput.disabled =
           false;
+
+        targetInput.value =
+          "";
+
+        updateTotal(player);
 
       });
 
@@ -7659,7 +7796,7 @@ function openScoreHelperPopup() {
       input.style.border =
         "1px solid rgba(22,35,63,0.14)";
 
-      input.value =
+            input.value =
         values[player][index] || "";
 
       input.oninput = () => {
@@ -7671,6 +7808,58 @@ function openScoreHelperPopup() {
         updateTotal(player);
 
         updateItemColumnHighlight(index);
+
+      };
+
+            input.onkeydown = event => {
+
+        if (event.key !== "Enter") return;
+
+        event.preventDefault();
+
+        if (activeSelection?.type === "item") {
+
+          const playerIndex =
+            players.indexOf(player);
+
+          for (
+            let nextPlayerIndex = playerIndex + 1;
+            nextPlayerIndex < players.length;
+            nextPlayerIndex++
+          ) {
+
+            const nextPlayer =
+              players[nextPlayerIndex];
+
+            const nextInput =
+              itemCellByPlayer[nextPlayer][index];
+
+            if (nextInput && !nextInput.disabled) {
+              nextInput.focus();
+              break;
+            }
+
+          }
+
+        } else if (activeSelection?.type === "player") {
+
+          for (
+            let nextIndex = index + 1;
+            nextIndex < items.length;
+            nextIndex++
+          ) {
+
+            const nextInput =
+              itemCellByPlayer[player][nextIndex];
+
+            if (nextInput && !nextInput.disabled) {
+              nextInput.focus();
+              break;
+            }
+
+          }
+
+        }
 
       };
 

@@ -2724,6 +2724,7 @@ let GAME_TAGS = [
   "表現"
 ];
 
+let GAME_TAG_DESCRIPTIONS = {};
 
 const PLAYER_COLOR_PALETTE = [
   "#E57373",
@@ -2802,7 +2803,7 @@ async function loadWeightSettings() {
 
         if (!settings) return;
 
-  if (
+    if (
     Array.isArray(settings.game_tags) &&
     settings.game_tags.length > 0
   ) {
@@ -2810,9 +2811,19 @@ async function loadWeightSettings() {
     GAME_TAGS =
       settings.game_tags;
 
-    refreshAllTagUIs();
+  }
+
+  if (
+    settings.game_tag_descriptions &&
+    typeof settings.game_tag_descriptions === "object"
+  ) {
+
+    GAME_TAG_DESCRIPTIONS =
+      settings.game_tag_descriptions;
 
   }
+
+  refreshAllTagUIs();
 
   weightSettings.lightMax =
     settings.weight_light_max;
@@ -6543,6 +6554,18 @@ function styleTagChip(chip, active) {
 
 function createTagChip(tag, selectedSet, onChange) {
 
+  const wrapper =
+    document.createElement("span");
+
+  wrapper.style.display =
+    "inline-flex";
+
+  wrapper.style.alignItems =
+    "center";
+
+  wrapper.style.gap =
+    "2px";
+
   const chip =
     document.createElement("button");
 
@@ -6589,7 +6612,64 @@ function createTagChip(tag, selectedSet, onChange) {
 
   };
 
-  return chip;
+  const infoButton =
+    document.createElement("button");
+
+  infoButton.type =
+    "button";
+
+  infoButton.textContent =
+    "ⓘ";
+
+  infoButton.style.width =
+    "18px";
+
+  infoButton.style.height =
+    "18px";
+
+  infoButton.style.minWidth =
+    "18px";
+
+  infoButton.style.padding =
+    "0";
+
+  infoButton.style.margin =
+    "0";
+
+  infoButton.style.borderRadius =
+    "50%";
+
+  infoButton.style.fontSize =
+    "10px";
+
+  infoButton.style.background =
+    "rgba(107,114,128,0.12)";
+
+  infoButton.style.color =
+    "#6b7280";
+
+  infoButton.style.boxShadow =
+    "none";
+
+  infoButton.onclick = event => {
+
+    event.stopPropagation();
+
+    const description =
+      GAME_TAG_DESCRIPTIONS[tag];
+
+    alert(
+      `#${tag}\n\n` +
+      (description || "説明はまだ設定されていません。")
+    );
+
+  };
+
+  wrapper.appendChild(chip);
+
+  wrapper.appendChild(infoButton);
+
+  return wrapper;
 
 }
 
@@ -6790,7 +6870,8 @@ async function saveGameTagList(newTags) {
         id: 1,
         weight_light_max: weightSettings.lightMax,
         weight_medium_max: weightSettings.mediumMax,
-        game_tags: newTags
+        game_tags: newTags,
+        game_tag_descriptions: GAME_TAG_DESCRIPTIONS
       });
 
   if (error) {
@@ -6819,6 +6900,40 @@ async function saveGameTagList(newTags) {
   return true;
 
 }
+
+async function saveGameTagDescriptions(newDescriptions) {
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("app_settings")
+      .upsert({
+        id: 1,
+        weight_light_max: weightSettings.lightMax,
+        weight_medium_max: weightSettings.mediumMax,
+        game_tags: GAME_TAGS,
+        game_tag_descriptions: newDescriptions
+      });
+
+  if (error) {
+
+    console.error(
+      "タグ説明保存エラー:",
+      error
+    );
+
+    return false;
+
+  }
+
+  GAME_TAG_DESCRIPTIONS =
+    newDescriptions;
+
+  return true;
+
+}
+
 
 /*
  * 各ゲームに付いているタグを書き換える
@@ -6971,7 +7086,21 @@ async function renameGameTag(oldTag) {
 
   }
 
-  replaceTagInSelections(oldTag, newTag);
+    replaceTagInSelections(oldTag, newTag);
+
+  const renamedDescriptions =
+    { ...GAME_TAG_DESCRIPTIONS };
+
+  if (oldTag in renamedDescriptions) {
+
+    renamedDescriptions[newTag] =
+      renamedDescriptions[oldTag];
+
+    delete renamedDescriptions[oldTag];
+
+  }
+
+  await saveGameTagDescriptions(renamedDescriptions);
 
   await saveGameTagList(
     GAME_TAGS.map(tag => tag === oldTag ? newTag : tag)
@@ -7018,7 +7147,14 @@ async function deleteGameTag(tag) {
 
   }
 
-  replaceTagInSelections(tag, null);
+    replaceTagInSelections(tag, null);
+
+  const remainingDescriptions =
+    { ...GAME_TAG_DESCRIPTIONS };
+
+  delete remainingDescriptions[tag];
+
+  await saveGameTagDescriptions(remainingDescriptions);
 
   await saveGameTagList(
     GAME_TAGS.filter(t => t !== tag)
@@ -7182,11 +7318,11 @@ function renderTagManageList() {
     const row =
       document.createElement("div");
 
-    row.style.display =
+        row.style.display =
       "flex";
 
-    row.style.alignItems =
-      "center";
+    row.style.flexDirection =
+      "column";
 
     row.style.gap =
       "6px";
@@ -7199,6 +7335,19 @@ function renderTagManageList() {
 
     row.style.background =
       "#ffffff";
+
+    const topRow =
+      document.createElement("div");
+
+    topRow.style.display =
+      "flex";
+
+    topRow.style.alignItems =
+      "center";
+
+    topRow.style.gap =
+      "6px";
+
 
     /*
      * 三本線の取っ手
@@ -7365,13 +7514,65 @@ function renderTagManageList() {
     deleteButton.onclick = () =>
       deleteGameTag(tag);
 
-    row.appendChild(handle);
+       topRow.appendChild(handle);
 
-    row.appendChild(nameArea);
+    topRow.appendChild(nameArea);
 
-    row.appendChild(editButton);
+    topRow.appendChild(editButton);
 
-    row.appendChild(deleteButton);
+    topRow.appendChild(deleteButton);
+
+    row.appendChild(topRow);
+
+    const descriptionInput =
+      document.createElement("textarea");
+
+    descriptionInput.value =
+      GAME_TAG_DESCRIPTIONS[tag] || "";
+
+    descriptionInput.placeholder =
+      "このタグの説明を入力（絞込み画面などのⓘから見られます）";
+
+    descriptionInput.rows =
+      2;
+
+    descriptionInput.style.width =
+      "100%";
+
+    descriptionInput.style.boxSizing =
+      "border-box";
+
+    descriptionInput.style.fontSize =
+      "12px";
+
+    descriptionInput.style.padding =
+      "6px 8px";
+
+    descriptionInput.style.marginLeft =
+      "34px";
+
+    descriptionInput.style.resize =
+      "vertical";
+
+    descriptionInput.onblur = () => {
+
+      const newDescriptions =
+        { ...GAME_TAG_DESCRIPTIONS };
+
+      const value =
+        descriptionInput.value.trim();
+
+      if (value) {
+        newDescriptions[tag] = value;
+      } else {
+        delete newDescriptions[tag];
+      }
+
+      saveGameTagDescriptions(newDescriptions);
+
+    };
+
+    row.appendChild(descriptionInput);
 
     container.appendChild(row);
 

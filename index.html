@@ -6046,6 +6046,21 @@ function renderScoreHelperItemsBuilder(container, items) {
         const { name: itemNamePart, calc: itemCalcPart } =
       splitItemNameCalc(itemName);
 
+        const inputsCol =
+      document.createElement("div");
+
+    inputsCol.style.flex =
+      "1";
+
+    inputsCol.style.display =
+      "flex";
+
+    inputsCol.style.flexDirection =
+      "column";
+
+    inputsCol.style.gap =
+      "4px";
+
     const nameInput =
       document.createElement("input");
 
@@ -6058,8 +6073,8 @@ function renderScoreHelperItemsBuilder(container, items) {
     nameInput.placeholder =
       `項目${index + 1}の名前（例：屋敷）`;
 
-    nameInput.style.flex =
-      "1";
+    nameInput.style.padding =
+      "6px 10px";
 
     const calcInput =
       document.createElement("input");
@@ -6073,8 +6088,13 @@ function renderScoreHelperItemsBuilder(container, items) {
     calcInput.placeholder =
       "点数計算（例：1点/枚）";
 
-    calcInput.style.flex =
-      "1";
+    calcInput.style.padding =
+      "6px 10px";
+
+    inputsCol.appendChild(nameInput);
+
+    inputsCol.appendChild(calcInput);
+
 
     function updateItemValue() {
 
@@ -6129,9 +6149,7 @@ function renderScoreHelperItemsBuilder(container, items) {
 
     row.appendChild(handle);
 
-    row.appendChild(nameInput);
-
-    row.appendChild(calcInput);
+    row.appendChild(inputsCol);
 
     row.appendChild(removeButton);
 

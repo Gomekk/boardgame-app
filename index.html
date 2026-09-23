@@ -7167,12 +7167,14 @@ function openScoreHelperPopup() {
 
     const itemCellByPlayer = {};
 
-  let activeSelection =
+    let activeSelection =
     null;
 
   const itemColElements = {};
 
   const nameRowElements = {};
+
+  const rowCellsByPlayer = {};
 
   function clearActiveHighlight() {
 
@@ -7187,13 +7189,24 @@ function openScoreHelperPopup() {
         col.style.background = "";
       }
 
-    } else if (activeSelection.type === "player") {
+        } else if (activeSelection.type === "player") {
 
       const row =
         nameRowElements[activeSelection.player];
 
       if (row) {
         row.style.background = "";
+      }
+
+      (rowCellsByPlayer[activeSelection.player] || []).forEach(cell => {
+        cell.style.background = "";
+      });
+
+      const totalCell =
+        totalCellByPlayer[activeSelection.player];
+
+      if (totalCell) {
+        totalCell.style.background = "";
       }
 
     }
@@ -7249,10 +7262,25 @@ function openScoreHelperPopup() {
 
     }
 
-    clearActiveHighlight();
+        clearActiveHighlight();
 
     highlightEl.style.background =
       "#FFF3D8";
+
+    if (type === "player") {
+
+      (rowCellsByPlayer[key] || []).forEach(cell => {
+        cell.style.background = "#FFF3D8";
+      });
+
+      const totalCell =
+        totalCellByPlayer[key];
+
+      if (totalCell) {
+        totalCell.style.background = "#FFF3D8";
+      }
+
+    }
 
     activeSelection =
       type === "item"
@@ -7865,7 +7893,7 @@ function openScoreHelperPopup() {
 
       };
 
-      cell.appendChild(input);
+            cell.appendChild(input);
 
       itemCol.appendChild(cell);
 
@@ -7875,6 +7903,12 @@ function openScoreHelperPopup() {
 
       itemCellByPlayer[player][index] =
         input;
+
+      if (!rowCellsByPlayer[player]) {
+        rowCellsByPlayer[player] = [];
+      }
+
+      rowCellsByPlayer[player].push(cell);
 
 
     });

@@ -258,6 +258,10 @@ button::before {
   background: rgba(155,44,44,0.08);
 }
 
+.score-helper-item-input::placeholder {
+  font-size: 13px;
+}
+
 button:active {
   transform: translateY(1px) scale(0.99);
   box-shadow: 0 1px 4px rgba(22,35,63,0.18);
@@ -6061,14 +6065,18 @@ function renderScoreHelperItemsBuilder(container, items) {
     inputsCol.style.gap =
       "4px";
 
-        const nameInput =
+    const nameInput =
       document.createElement("input");
 
     nameInput.type =
       "text";
 
+    nameInput.className =
+      "score-helper-item-input";
+
     nameInput.value =
       itemNamePart;
+
 
         nameInput.placeholder =
       `項目${index + 1} (例: イベント)`;
@@ -6079,11 +6087,14 @@ function renderScoreHelperItemsBuilder(container, items) {
     nameInput.style.fontSize =
       "16px";
 
-    const calcInput =
+        const calcInput =
       document.createElement("input");
 
     calcInput.type =
       "text";
+
+    calcInput.className =
+      "score-helper-item-input";
 
     calcInput.value =
       itemCalcPart;

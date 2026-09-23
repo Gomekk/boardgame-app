@@ -7155,7 +7155,7 @@ function openScoreHelperPopup() {
   const totalColWidth =
     "56px";
 
-  const wrapper =
+    const wrapper =
     document.createElement("div");
 
 
@@ -7165,12 +7165,17 @@ function openScoreHelperPopup() {
   wrapper.style.width =
     "100%";
 
+  const itemCellByPlayer = {};
+
+  items.forEach((itemName, index) => {
+
   /*
    * 左列：P名（固定）
    */
 
   const nameCol =
     document.createElement("div");
+
 
   nameCol.style.flexShrink =
     "0";
@@ -7305,8 +7310,6 @@ function openScoreHelperPopup() {
 
   itemsRow.style.minWidth =
     "max-content";
-
-      const itemCellByPlayer = {};
 
   const unusedItemIndexes =
     new Set();

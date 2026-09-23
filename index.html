@@ -6697,10 +6697,15 @@ function openScoreHelperItemsPreview(items) {
   const totalColWidth =
     "56px";
 
-  const itemHeaderFontSize =
+    const itemHeaderFontSize =
     validItems.some(itemName => itemName.length > 4)
       ? "10px"
       : "12px";
+
+  const headerRowHeight =
+    itemHeaderFontSize === "12px"
+      ? "50px"
+      : "44px";
 
   const wrapper =
     document.createElement("div");
@@ -6735,11 +6740,11 @@ function openScoreHelperItemsPreview(items) {
   nameHeadCell.style.padding =
     "0 4px 6px";
 
-  nameHeadCell.style.borderBottom =
+    nameHeadCell.style.borderBottom =
     "2px solid rgba(22,35,63,0.1)";
 
   nameHeadCell.style.height =
-    rowHeight;
+    headerRowHeight;
 
   nameHeadCell.style.boxSizing =
     "border-box";
@@ -6853,11 +6858,11 @@ function openScoreHelperItemsPreview(items) {
     th.style.padding =
       "0 4px 6px";
 
-    th.style.borderBottom =
+        th.style.borderBottom =
       "2px solid rgba(22,35,63,0.1)";
 
     th.style.height =
-      rowHeight;
+      headerRowHeight;
 
     th.style.boxSizing =
       "border-box";
@@ -7090,11 +7095,11 @@ function openScoreHelperItemsPreview(items) {
   totalHeadCell.style.padding =
     "0 4px 6px";
 
-  totalHeadCell.style.borderBottom =
+    totalHeadCell.style.borderBottom =
     "2px solid rgba(22,35,63,0.1)";
 
   totalHeadCell.style.height =
-    rowHeight;
+    headerRowHeight;
 
   totalHeadCell.style.boxSizing =
     "border-box";
@@ -7547,7 +7552,7 @@ function openScoreHelperPopup() {
   nameCol.style.width =
     nameColWidth;
 
-  const nameHeadCell =
+    const nameHeadCell =
     document.createElement("div");
 
   nameHeadCell.textContent =
@@ -7566,7 +7571,7 @@ function openScoreHelperPopup() {
     "2px solid rgba(22,35,63,0.1)";
 
   nameHeadCell.style.height =
-    rowHeight;
+    headerRowHeight;
 
   nameHeadCell.style.boxSizing =
     "border-box";
@@ -7678,14 +7683,18 @@ function openScoreHelperPopup() {
   const unusedItemIndexes =
     new Set();
 
-  const itemHeaderFontSize =
+    const itemHeaderFontSize =
     items.some(itemName => itemName.length > 4)
       ? "10px"
       : "12px";
 
+  const headerRowHeight =
+    itemHeaderFontSize === "12px"
+      ? "50px"
+      : "44px";
+
 
   function updateItemColumnHighlight(index) {
-
     if (unusedItemIndexes.has(index)) {
 
       players.forEach(player => {
@@ -7802,11 +7811,11 @@ function openScoreHelperPopup() {
     th.style.padding =
       "0 4px 6px";
 
-    th.style.borderBottom =
+        th.style.borderBottom =
       "2px solid rgba(22,35,63,0.1)";
 
     th.style.height =
-      rowHeight;
+      headerRowHeight;
 
     th.style.boxSizing =
       "border-box";
@@ -8211,11 +8220,11 @@ function openScoreHelperPopup() {
   totalHeadCell.style.padding =
     "0 4px 6px";
 
-  totalHeadCell.style.borderBottom =
+    totalHeadCell.style.borderBottom =
     "2px solid rgba(22,35,63,0.1)";
 
   totalHeadCell.style.height =
-    rowHeight;
+    headerRowHeight;
 
   totalHeadCell.style.boxSizing =
     "border-box";

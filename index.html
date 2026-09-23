@@ -6674,17 +6674,41 @@ function renderTagFilter(container, selectedSet, onChange) {
   header.style.userSelect =
     "none";
 
-  const infoButton =
+    const infoButton =
     document.createElement("span");
 
   infoButton.textContent =
     "ⓘ";
 
+  infoButton.style.display =
+    "inline-flex";
+
+  infoButton.style.alignItems =
+    "center";
+
+  infoButton.style.justifyContent =
+    "center";
+
+  infoButton.style.width =
+    "18px";
+
+  infoButton.style.height =
+    "18px";
+
+  infoButton.style.borderRadius =
+    "50%";
+
+  infoButton.style.background =
+    "rgba(29,99,201,0.12)";
+
   infoButton.style.fontSize =
     "12px";
 
+  infoButton.style.fontWeight =
+    "700";
+
   infoButton.style.color =
-    "#9ca3af";
+    "#1D63C9";
 
   infoButton.style.cursor =
     "pointer";

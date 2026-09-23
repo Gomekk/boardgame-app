@@ -6890,11 +6890,11 @@ function openScoreHelperItemsPreview(items) {
     itemCol.style.flexShrink =
       "0";
 
-        const th =
+  const th =
       document.createElement("div");
 
     th.innerHTML =
-      formatItemNameHTML(itemName);
+      buildItemHeaderHTML(itemName);
 
     th.style.fontSize =
       itemHeaderFontSize;

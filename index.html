@@ -6478,7 +6478,15 @@ function openScoreHelperItemsPreview(items) {
         "
       >×</button>
 
-      <h2 style="padding-right:40px;">得点計算補助（プレビュー）</h2>
+           <h2 style="padding-right:40px;margin-bottom:4px;">得点計算補助（プレビュー）</h2>
+
+      <div class="section-note" style="margin-top:0;font-size:10px;">
+        プレイヤー名 or 項目名をタップして一括入力可
+      </div>
+
+      <div class="section-note" style="margin-top:-8px;margin-bottom:0px;font-size:10px;">
+        〇･✕で項目の有無を選択
+      </div>
 
       <div
         id="scoreHelperPreviewTable"
@@ -6726,6 +6734,54 @@ function openScoreHelperItemsPreview(items) {
     unusedCell.style.padding =
       "2px";
 
+        const toggleRow =
+      document.createElement("div");
+
+    toggleRow.style.display =
+      "flex";
+
+    toggleRow.style.width =
+      "100%";
+
+    toggleRow.style.gap =
+      "1px";
+
+    const useButton =
+      document.createElement("button");
+
+    useButton.type =
+      "button";
+
+    useButton.disabled =
+      true;
+
+    useButton.textContent =
+      "〇";
+
+    useButton.style.flex =
+      "1";
+
+    useButton.style.padding =
+      "0";
+
+    useButton.style.fontSize =
+      "14px";
+
+    useButton.style.fontWeight =
+      "800";
+
+    useButton.style.background =
+      "transparent";
+
+    useButton.style.boxShadow =
+      "none";
+
+    useButton.style.color =
+      "#2E7D32";
+
+    useButton.style.opacity =
+      "1";
+
     const unusedButton =
       document.createElement("button");
 
@@ -6736,31 +6792,38 @@ function openScoreHelperItemsPreview(items) {
       true;
 
     unusedButton.textContent =
-      "不使用";
+      "×";
 
-    unusedButton.style.width =
-      "100%";
+    unusedButton.style.flex =
+      "1";
 
     unusedButton.style.padding =
-      "3px 0";
+      "0";
 
     unusedButton.style.fontSize =
-      "10px";
+      "14px";
+
+    unusedButton.style.fontWeight =
+      "800";
 
     unusedButton.style.background =
-      "#4B5563";
-
-    unusedButton.style.color =
-      "#ffffff";
+      "transparent";
 
     unusedButton.style.boxShadow =
       "none";
 
+    unusedButton.style.color =
+      "#9CA3AF";
+
     unusedButton.style.opacity =
       "1";
 
+    toggleRow.appendChild(useButton);
+
+    toggleRow.appendChild(unusedButton);
+
     unusedCell.appendChild(
-      unusedButton
+      toggleRow
     );
 
     itemCol.appendChild(

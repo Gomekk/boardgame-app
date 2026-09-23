@@ -7323,7 +7323,7 @@ function openScoreHelperPopup() {
         "
       >×</button>
 
-            <h2       <h2 style="padding-right:40px;margin-bottom:4px;">得点計算補助</h2>
+    <h2 style="padding-right:40px;margin-bottom:4px;">得点計算補助</h2>
 
       <div class="section-note" style="margin-top:0;font-size:10px;">
         プレイヤー名 or 項目名をタップして一括入力可
@@ -7537,13 +7537,22 @@ function openScoreHelperPopup() {
 
   }
 
+    const itemHeaderFontSize =
+    items.some(itemName => itemName.length > 4)
+      ? "10px"
+      : "12px";
+
+  const headerRowHeight =
+    itemHeaderFontSize === "12px"
+      ? "50px"
+      : "44px";
+
   /*
    * 左列：P名（固定）
    */
 
   const nameCol =
     document.createElement("div");
-
 
 
   nameCol.style.flexShrink =
@@ -7680,18 +7689,8 @@ function openScoreHelperPopup() {
   itemsRow.style.minWidth =
     "max-content";
 
-  const unusedItemIndexes =
+    const unusedItemIndexes =
     new Set();
-
-    const itemHeaderFontSize =
-    items.some(itemName => itemName.length > 4)
-      ? "10px"
-      : "12px";
-
-  const headerRowHeight =
-    itemHeaderFontSize === "12px"
-      ? "50px"
-      : "44px";
 
 
   function updateItemColumnHighlight(index) {

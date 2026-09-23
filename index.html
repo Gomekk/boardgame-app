@@ -5868,6 +5868,99 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   container.innerHTML = "";
 
+  const rowElements = [];
+
+  let draggingIndex = null;
+
+  let draggingRow = null;
+
+  let currentTargetIndex = null;
+
+  let startY = 0;
+
+  let rowStep = 0;
+
+  function onPointerMove(event) {
+
+    if (draggingIndex === null) return;
+
+    event.preventDefault();
+
+    const deltaY =
+      event.clientY - startY;
+
+    draggingRow.style.transform =
+      `translateY(${deltaY}px)`;
+
+    let targetIndex =
+      draggingIndex +
+      Math.round(deltaY / rowStep);
+
+    targetIndex =
+      Math.max(0, Math.min(items.length - 1, targetIndex));
+
+    if (targetIndex !== currentTargetIndex) {
+
+      currentTargetIndex = targetIndex;
+
+      rowElements.forEach((row, index) => {
+
+        if (index === draggingIndex) return;
+
+        let shift = 0;
+
+        if (
+          draggingIndex < currentTargetIndex &&
+          index > draggingIndex &&
+          index <= currentTargetIndex
+        ) {
+          shift = -rowStep;
+        } else if (
+          draggingIndex > currentTargetIndex &&
+          index < draggingIndex &&
+          index >= currentTargetIndex
+        ) {
+          shift = rowStep;
+        }
+
+        row.style.transition =
+          "transform 0.12s ease";
+
+        row.style.transform =
+          shift ? `translateY(${shift}px)` : "";
+
+      });
+
+    }
+
+  }
+
+  function onPointerUp() {
+
+    if (draggingIndex === null) return;
+
+    if (
+      currentTargetIndex !== null &&
+      currentTargetIndex !== draggingIndex
+    ) {
+
+      const moved =
+        items.splice(draggingIndex, 1)[0];
+
+      items.splice(currentTargetIndex, 0, moved);
+
+    }
+
+    draggingIndex = null;
+
+    currentTargetIndex = null;
+
+    document.removeEventListener("pointermove", onPointerMove);
+
+    renderScoreHelperItemsBuilder(container, items);
+
+  }
+
   items.forEach((itemName, index) => {
 
         const row =
@@ -5884,6 +5977,72 @@ function renderScoreHelperItemsBuilder(container, items) {
 
     row.style.marginBottom =
       "6px";
+
+    row.style.touchAction =
+      "none";
+
+    const handle =
+      document.createElement("span");
+
+    handle.textContent =
+      "三";
+
+    handle.style.flexShrink =
+      "0";
+
+    handle.style.width =
+      "22px";
+
+    handle.style.textAlign =
+      "center";
+
+    handle.style.fontSize =
+      "16px";
+
+    handle.style.fontWeight =
+      "700";
+
+    handle.style.color =
+      "#9ca3af";
+
+    handle.style.cursor =
+      "grab";
+
+    handle.style.userSelect =
+      "none";
+
+    handle.onpointerdown = event => {
+
+      event.preventDefault();
+
+      draggingIndex = index;
+
+      currentTargetIndex = index;
+
+      draggingRow = row;
+
+      startY = event.clientY;
+
+      rowStep =
+        row.getBoundingClientRect().height +
+        parseFloat(
+          getComputedStyle(row).marginBottom || "0"
+        );
+
+      row.style.position =
+        "relative";
+
+      row.style.zIndex =
+        "10";
+
+      row.style.background =
+        "#ffffff";
+
+      document.addEventListener("pointermove", onPointerMove);
+
+      document.addEventListener("pointerup", onPointerUp, { once: true });
+
+    };
 
     const input =
       document.createElement("input");
@@ -5942,11 +6101,15 @@ function renderScoreHelperItemsBuilder(container, items) {
 
     };
 
+    row.appendChild(handle);
+
     row.appendChild(input);
 
     row.appendChild(removeButton);
 
     container.appendChild(row);
+
+    rowElements.push(row);
 
   });
 

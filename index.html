@@ -2244,7 +2244,7 @@ button.small {
     <h2>🏷️ タグ管理</h2>
 
     <p class="section-note">
-      ゲームのジャンル分けに使うタグを管理します。▲▼で表示順を変更できます。
+      ゲームのジャンル分けに使うタグを管理します。三本線をドラッグして並び替えできます。
     </p>
 
     <div style="display:flex;gap:8px;margin-bottom:14px;">
@@ -7048,6 +7048,135 @@ function renderTagManageList() {
 
   }
 
+  const rowElements = [];
+
+  let draggingIndex = null;
+
+  let draggingRow = null;
+
+  let currentTargetIndex = null;
+
+  let startY = 0;
+
+  let rowStep = 0;
+
+  function onPointerMove(event) {
+
+    if (draggingIndex === null) return;
+
+    event.preventDefault();
+
+    const deltaY =
+      event.clientY - startY;
+
+    draggingRow.style.transform =
+      `translateY(${deltaY}px)`;
+
+    let targetIndex =
+      draggingIndex +
+      Math.round(deltaY / rowStep);
+
+    targetIndex =
+      Math.max(0, Math.min(GAME_TAGS.length - 1, targetIndex));
+
+    if (targetIndex !== currentTargetIndex) {
+
+      currentTargetIndex = targetIndex;
+
+      rowElements.forEach((row, index) => {
+
+        if (index === draggingIndex) return;
+
+        let shift = 0;
+
+        if (
+          draggingIndex < currentTargetIndex &&
+          index > draggingIndex &&
+          index <= currentTargetIndex
+        ) {
+          shift = -rowStep;
+        } else if (
+          draggingIndex > currentTargetIndex &&
+          index < draggingIndex &&
+          index >= currentTargetIndex
+        ) {
+          shift = rowStep;
+        }
+
+        row.style.transition =
+          "transform 0.12s ease";
+
+        row.style.transform =
+          shift ? `translateY(${shift}px)` : "";
+
+      });
+
+    }
+
+  }
+
+  async function onPointerUp() {
+
+    if (draggingIndex === null) return;
+
+    document.removeEventListener("pointermove", onPointerMove);
+
+    const fromIndex =
+      draggingIndex;
+
+    const toIndex =
+      currentTargetIndex;
+
+    draggingIndex = null;
+
+    currentTargetIndex = null;
+
+    if (
+      toIndex === null ||
+      toIndex === fromIndex
+    ) {
+
+      renderTagManageList();
+
+      return;
+
+    }
+
+    const previousTags =
+      GAME_TAGS;
+
+    const newTags =
+      [...GAME_TAGS];
+
+    const moved =
+      newTags.splice(fromIndex, 1)[0];
+
+    newTags.splice(toIndex, 0, moved);
+
+    /*
+     * 保存を待たずに先に画面へ反映
+     */
+    GAME_TAGS =
+      newTags;
+
+    renderTagManageList();
+
+    const ok =
+      await saveGameTagList(newTags);
+
+    if (!ok) {
+
+      GAME_TAGS =
+        previousTags;
+
+      refreshAllTagUIs();
+
+      renderTagManageList();
+
+    }
+
+  }
+
   GAME_TAGS.forEach((tag, index) => {
 
     const row =
@@ -7067,6 +7196,85 @@ function renderTagManageList() {
 
     row.style.borderBottom =
       "1px solid rgba(22,35,63,0.06)";
+
+    row.style.background =
+      "#ffffff";
+
+    /*
+     * 三本線の取っ手
+     */
+
+    const handle =
+      document.createElement("span");
+
+    handle.innerHTML =
+      `<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>`;
+
+    handle.style.flexShrink =
+      "0";
+
+    handle.style.width =
+      "28px";
+
+    handle.style.height =
+      "32px";
+
+    handle.style.display =
+      "flex";
+
+    handle.style.alignItems =
+      "center";
+
+    handle.style.justifyContent =
+      "center";
+
+    handle.style.color =
+      "#9ca3af";
+
+    handle.style.cursor =
+      "grab";
+
+    handle.style.userSelect =
+      "none";
+
+    handle.style.touchAction =
+      "none";
+
+    handle.onpointerdown = event => {
+
+      event.preventDefault();
+
+      draggingIndex = index;
+
+      currentTargetIndex = index;
+
+      draggingRow = row;
+
+      startY = event.clientY;
+
+      rowStep =
+        row.getBoundingClientRect().height;
+
+      row.style.position =
+        "relative";
+
+      row.style.zIndex =
+        "10";
+
+      row.style.boxShadow =
+        "0 4px 12px rgba(0,0,0,0.12)";
+
+      document.addEventListener("pointermove", onPointerMove);
+
+      document.addEventListener("pointerup", onPointerUp, { once: true });
+
+      document.addEventListener("pointercancel", onPointerUp, { once: true });
+
+    };
+
+    /*
+     * タグ名・件数
+     */
 
     const nameArea =
       document.createElement("div");
@@ -7117,74 +7325,57 @@ function renderTagManageList() {
 
     nameArea.appendChild(countEl);
 
-    function createActionButton(label, disabled, onClick, extraClass = "") {
+    /*
+     * 編集・削除
+     */
 
-      const button =
-        document.createElement("button");
+    const editButton =
+      document.createElement("button");
 
-      button.type =
-        "button";
+    editButton.type =
+      "button";
 
-      button.className =
-        `list-item-action-button ${extraClass}`;
+    editButton.className =
+      "list-item-action-button";
 
-      button.textContent =
-        label;
+    editButton.textContent =
+      "編集";
 
-      button.disabled =
-        disabled;
+    editButton.style.flexShrink =
+      "0";
 
-      button.style.flexShrink =
-        "0";
+    editButton.onclick = () =>
+      renameGameTag(tag);
 
-      if (disabled) {
-        button.style.opacity =
-          "0.3";
-      }
+    const deleteButton =
+      document.createElement("button");
 
-      button.onclick =
-        onClick;
+    deleteButton.type =
+      "button";
 
-      return button;
+    deleteButton.className =
+      "list-item-action-button danger-text";
 
-    }
+    deleteButton.textContent =
+      "削除";
+
+    deleteButton.style.flexShrink =
+      "0";
+
+    deleteButton.onclick = () =>
+      deleteGameTag(tag);
+
+    row.appendChild(handle);
 
     row.appendChild(nameArea);
 
-    row.appendChild(
-      createActionButton(
-        "▲",
-        index === 0,
-        () => moveGameTag(index, -1)
-      )
-    );
+    row.appendChild(editButton);
 
-    row.appendChild(
-      createActionButton(
-        "▼",
-        index === GAME_TAGS.length - 1,
-        () => moveGameTag(index, 1)
-      )
-    );
-
-    row.appendChild(
-      createActionButton(
-        "編集",
-        false,
-        () => renameGameTag(tag)
-      )
-    );
-
-    row.appendChild(
-      createActionButton(
-        "削除",
-        false,
-        () => deleteGameTag(tag),
-        "danger-text"
-      )
-    );
+    row.appendChild(deleteButton);
 
     container.appendChild(row);
+
+    rowElements.push(row);
 
   });
 

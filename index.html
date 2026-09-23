@@ -1782,12 +1782,20 @@ button.small {
   👥 プレイヤー管理
 </button>
     
-    <button
+        <button
   type="button"
   onclick="showScreen('weightSettingScreen')"
   style="margin-bottom: 8px;"
     >
       ⚖️ 重さ基準設定
+    </button>
+
+    <button
+      type="button"
+      onclick="showScreen('tagManageScreen')"
+      style="margin-bottom: 8px;"
+    >
+      🏷️ タグ管理
     </button>
 
     <button
@@ -2218,6 +2226,53 @@ button.small {
 
 </div>
 
+<div id="tagManageScreen" class="screenContent">
+
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
+  </div>
+
+  <div class="card">
+
+    <h2>🏷️ タグ管理</h2>
+
+    <p class="section-note">
+      ゲームのジャンル分けに使うタグを管理します。▲▼で表示順を変更できます。
+    </p>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+
+      <input
+        id="newTagInput"
+        type="text"
+        placeholder="新しいタグ名"
+        style="flex:1;min-width:0;"
+      >
+
+      <button
+        type="button"
+        onclick="addGameTag()"
+        style="width:auto;flex-shrink:0;"
+      >
+        追加
+      </button>
+
+    </div>
+
+    <div id="tagManageList"></div>
+
+  </div>
+
+</div>
+
+
 <div id="playerManageScreen" class="screenContent">
 
     <div class="screen-back-bar">
@@ -2641,7 +2696,7 @@ let data = {
   matches: []
 };
 
-const GAME_TAGS = [
+let GAME_TAGS = [
   "ダイス",
   "デッキ構築",
   "すごろく",
@@ -2745,7 +2800,19 @@ async function loadWeightSettings() {
 
   }
 
-    if (!settings) return;
+        if (!settings) return;
+
+  if (
+    Array.isArray(settings.game_tags) &&
+    settings.game_tags.length > 0
+  ) {
+
+    GAME_TAGS =
+      settings.game_tags;
+
+    refreshAllTagUIs();
+
+  }
 
   weightSettings.lightMax =
     settings.weight_light_max;
@@ -6656,6 +6723,473 @@ function matchesTagFilter(game, selectedSet) {
 
 }
 
+/* =========================
+   タグ管理
+========================= */
+
+function refreshAllTagUIs() {
+
+  renderTagPicker(
+    document.getElementById("gameTagPicker"),
+    gameRegisterSelectedTags
+  );
+
+  renderTagFilter(
+    document.getElementById("gameRankingTagFilter"),
+    gameRankingTagFilter,
+    () => renderGameRankingGameList()
+  );
+
+  renderTagFilter(
+    document.getElementById("gameListTagFilter"),
+    gameListTagFilter,
+    () => renderGameList()
+  );
+
+}
+
+function normalizeTagName(text) {
+
+  return String(text || "")
+    .trim()
+    .replace(/^#+/, "")
+    .trim();
+
+}
+
+function replaceTagInSelections(oldTag, newTag) {
+
+  [
+    gameRegisterSelectedTags,
+    gameRankingTagFilter,
+    gameListTagFilter,
+    specificGameTagFilter,
+    lastRouletteSelectedTags
+  ].forEach(set => {
+
+    if (set.has(oldTag)) {
+
+      set.delete(oldTag);
+
+      if (newTag) set.add(newTag);
+
+    }
+
+  });
+
+}
+
+async function saveGameTagList(newTags) {
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("app_settings")
+      .upsert({
+        id: 1,
+        weight_light_max: weightSettings.lightMax,
+        weight_medium_max: weightSettings.mediumMax,
+        game_tags: newTags
+      });
+
+  if (error) {
+
+    console.error(
+      "タグ保存エラー:",
+      error
+    );
+
+    alert(
+      "❌ タグの保存に失敗しました。\n\n" +
+      error.message
+    );
+
+    return false;
+
+  }
+
+  GAME_TAGS =
+    newTags;
+
+  refreshAllTagUIs();
+
+  renderTagManageList();
+
+  return true;
+
+}
+
+/*
+ * 各ゲームに付いているタグを書き換える
+ * newTag が null の場合は削除
+ */
+async function updateTagOnGames(oldTag, newTag) {
+
+  const targets =
+    data.games.filter(game =>
+      (game.tags || []).includes(oldTag)
+    );
+
+  for (const game of targets) {
+
+    const newGameTags =
+      newTag
+        ? game.tags.map(tag => tag === oldTag ? newTag : tag)
+        : game.tags.filter(tag => tag !== oldTag);
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("games")
+        .update({
+          tags: newGameTags
+        })
+        .eq(
+          "id",
+          game.id
+        );
+
+    if (error) {
+      throw error;
+    }
+
+    game.tags =
+      newGameTags;
+
+  }
+
+}
+
+async function addGameTag() {
+
+  const input =
+    document.getElementById("newTagInput");
+
+  const tag =
+    normalizeTagName(input.value);
+
+  if (!tag) {
+
+    alert(
+      "タグ名を入力してください"
+    );
+
+    return;
+
+  }
+
+  if (GAME_TAGS.includes(tag)) {
+
+    alert(
+      "同じタグがすでにあります"
+    );
+
+    return;
+
+  }
+
+  const ok =
+    await saveGameTagList([...GAME_TAGS, tag]);
+
+  if (ok) {
+    input.value = "";
+  }
+
+}
+
+async function moveGameTag(index, direction) {
+
+  const target =
+    index + direction;
+
+  if (
+    target < 0 ||
+    target >= GAME_TAGS.length
+  ) {
+    return;
+  }
+
+  const newTags =
+    [...GAME_TAGS];
+
+  [newTags[index], newTags[target]] =
+    [newTags[target], newTags[index]];
+
+  await saveGameTagList(newTags);
+
+}
+
+async function renameGameTag(oldTag) {
+
+  const input =
+    prompt(
+      "新しいタグ名を入力してください",
+      oldTag
+    );
+
+  if (input === null) return;
+
+  const newTag =
+    normalizeTagName(input);
+
+  if (!newTag) {
+
+    alert(
+      "タグ名を入力してください"
+    );
+
+    return;
+
+  }
+
+  if (newTag === oldTag) return;
+
+  if (GAME_TAGS.includes(newTag)) {
+
+    alert(
+      "同じタグがすでにあります"
+    );
+
+    return;
+
+  }
+
+  try {
+
+    await updateTagOnGames(oldTag, newTag);
+
+  } catch (error) {
+
+    alert(
+      "❌ ゲームのタグ更新に失敗しました。\n\n" +
+      error.message
+    );
+
+    return;
+
+  }
+
+  replaceTagInSelections(oldTag, newTag);
+
+  await saveGameTagList(
+    GAME_TAGS.map(tag => tag === oldTag ? newTag : tag)
+  );
+
+  renderGameList();
+
+  renderGameRankingGameList();
+
+}
+
+async function deleteGameTag(tag) {
+
+  const count =
+    data.games.filter(game =>
+      (game.tags || []).includes(tag)
+    ).length;
+
+  if (
+    !confirm(
+      `「#${tag}」を削除しますか？` +
+      (
+        count > 0
+          ? `\n\nこのタグが付いている${count}件のゲームからも外れます。`
+          : ""
+      )
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    await updateTagOnGames(tag, null);
+
+  } catch (error) {
+
+    alert(
+      "❌ ゲームのタグ更新に失敗しました。\n\n" +
+      error.message
+    );
+
+    return;
+
+  }
+
+  replaceTagInSelections(tag, null);
+
+  await saveGameTagList(
+    GAME_TAGS.filter(t => t !== tag)
+  );
+
+  renderGameList();
+
+  renderGameRankingGameList();
+
+}
+
+function renderTagManageList() {
+
+  const container =
+    document.getElementById("tagManageList");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (GAME_TAGS.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">まだタグがありません</div>';
+
+    return;
+
+  }
+
+  GAME_TAGS.forEach((tag, index) => {
+
+    const row =
+      document.createElement("div");
+
+    row.style.display =
+      "flex";
+
+    row.style.alignItems =
+      "center";
+
+    row.style.gap =
+      "6px";
+
+    row.style.padding =
+      "8px 0";
+
+    row.style.borderBottom =
+      "1px solid rgba(22,35,63,0.06)";
+
+    const nameArea =
+      document.createElement("div");
+
+    nameArea.style.flex =
+      "1";
+
+    nameArea.style.minWidth =
+      "0";
+
+    const nameEl =
+      document.createElement("div");
+
+    nameEl.textContent =
+      `#${tag}`;
+
+    nameEl.style.fontWeight =
+      "700";
+
+    nameEl.style.fontSize =
+      "14px";
+
+    nameEl.style.color =
+      "#1D63C9";
+
+    nameEl.style.wordBreak =
+      "break-all";
+
+    const count =
+      data.games.filter(game =>
+        game.active &&
+        (game.tags || []).includes(tag)
+      ).length;
+
+    const countEl =
+      document.createElement("div");
+
+    countEl.className =
+      "section-note";
+
+    countEl.style.margin =
+      "2px 0 0";
+
+    countEl.textContent =
+      `${count}件のゲーム`;
+
+    nameArea.appendChild(nameEl);
+
+    nameArea.appendChild(countEl);
+
+    function createActionButton(label, disabled, onClick, extraClass = "") {
+
+      const button =
+        document.createElement("button");
+
+      button.type =
+        "button";
+
+      button.className =
+        `list-item-action-button ${extraClass}`;
+
+      button.textContent =
+        label;
+
+      button.disabled =
+        disabled;
+
+      button.style.flexShrink =
+        "0";
+
+      if (disabled) {
+        button.style.opacity =
+          "0.3";
+      }
+
+      button.onclick =
+        onClick;
+
+      return button;
+
+    }
+
+    row.appendChild(nameArea);
+
+    row.appendChild(
+      createActionButton(
+        "▲",
+        index === 0,
+        () => moveGameTag(index, -1)
+      )
+    );
+
+    row.appendChild(
+      createActionButton(
+        "▼",
+        index === GAME_TAGS.length - 1,
+        () => moveGameTag(index, 1)
+      )
+    );
+
+    row.appendChild(
+      createActionButton(
+        "編集",
+        false,
+        () => renameGameTag(tag)
+      )
+    );
+
+    row.appendChild(
+      createActionButton(
+        "削除",
+        false,
+        () => deleteGameTag(tag),
+        "danger-text"
+      )
+    );
+
+    container.appendChild(row);
+
+  });
+
+}
+
 
 function formatPlayerCountsLabel(counts) {
 
@@ -10079,8 +10613,11 @@ function renderGameList() {
       tagsText.style.color =
         "#1D63C9";
 
-      tagsText.textContent =
-        game.tags.map(tag => `#${tag}`).join(" ");
+            tagsText.textContent =
+        GAME_TAGS
+          .filter(tag => game.tags.includes(tag))
+          .map(tag => `#${tag}`)
+          .join(" ");
 
       rightCol.appendChild(tagsText);
 
@@ -19042,6 +19579,11 @@ if (target) {
 if (screenName === "playerManageScreen") {
   renderPlayerList();
 }
+
+if (screenName === "tagManageScreen") {
+  renderTagManageList();
+}
+
 
     // ランキング画面
   if (screenName === "rankingScreen") {

@@ -1925,7 +1925,7 @@ button.small {
 
 </div>
 
-<div style="margin-top:16px;display:flex;align-items:center;gap:8px;">
+<div style="margin-top:24px;display:flex;align-items:center;gap:8px;">
   <input type="checkbox" id="gameScoreHelperEnabled" style="width:auto;margin:0;">
   <label for="gameScoreHelperEnabled" class="section-note" style="margin:0;">
     得点計算補助機能を登録する
@@ -3721,7 +3721,7 @@ scoreHelperCheckboxEdit.onchange = () => {
  */
 
 
-  if (game.image) {
+   if (game.image) {
 
     const currentImage =
       document.createElement("img");
@@ -3759,7 +3759,7 @@ scoreHelperCheckboxEdit.onchange = () => {
     "space-between";
 
   imageRow.style.marginTop =
-    "12px";
+    "4px";
 
 
   const imageLabel =
@@ -6668,7 +6668,7 @@ function renderTagPicker(container, selectedSet) {
 
   container.innerHTML = "";
 
-  const headerRow =
+    const headerRow =
     document.createElement("div");
 
   headerRow.style.display =
@@ -6680,10 +6680,13 @@ function renderTagPicker(container, selectedSet) {
   headerRow.style.gap =
     "6px";
 
+  headerRow.style.marginTop =
+    "10px";
+
   headerRow.style.marginBottom =
     "6px";
 
-    const header =
+  const header =
     document.createElement("div");
 
   header.className =
@@ -6692,11 +6695,9 @@ function renderTagPicker(container, selectedSet) {
   header.style.margin =
     "0";
 
-  header.style.paddingTop =
-    "10px";
-
   header.textContent =
     "ジャンルタグ";
+
 
   const infoButton =
     document.createElement("span");

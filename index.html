@@ -6172,17 +6172,82 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   let rowStep = 0;
 
+    let autoScrollFrame =
+    null;
+
+  let lastPointerClientY =
+    0;
+
+  function stepAutoScroll() {
+
+    const edgeSize =
+      60;
+
+    const maxSpeed =
+      14;
+
+    let speed = 0;
+
+    if (lastPointerClientY < edgeSize) {
+
+      speed =
+        -maxSpeed * (1 - lastPointerClientY / edgeSize);
+
+    } else if (
+      lastPointerClientY > window.innerHeight - edgeSize
+    ) {
+
+      speed =
+        maxSpeed *
+        (
+          1 -
+          (window.innerHeight - lastPointerClientY) / edgeSize
+        );
+
+    }
+
+    if (speed !== 0) {
+
+      window.scrollBy(0, speed);
+
+    }
+
+    if (draggingIndex !== null) {
+
+      autoScrollFrame =
+        requestAnimationFrame(stepAutoScroll);
+
+    } else {
+
+      autoScrollFrame =
+        null;
+
+    }
+
+  }
+
   function onPointerMove(event) {
 
     if (draggingIndex === null) return;
 
     event.preventDefault();
 
+    lastPointerClientY =
+      event.clientY;
+
+    if (autoScrollFrame === null) {
+
+      autoScrollFrame =
+        requestAnimationFrame(stepAutoScroll);
+
+    }
+
     const deltaY =
       event.clientY - startY;
 
     draggingRow.style.transform =
       `translateY(${deltaY}px)`;
+
 
     let targetIndex =
       draggingIndex +
@@ -6227,9 +6292,18 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   }
 
-  function onPointerUp() {
+    function onPointerUp() {
 
     if (draggingIndex === null) return;
+
+    if (autoScrollFrame !== null) {
+
+      cancelAnimationFrame(autoScrollFrame);
+
+      autoScrollFrame =
+        null;
+
+    }
 
     if (
       currentTargetIndex !== null &&
@@ -7563,11 +7637,75 @@ function renderTagManageList() {
 
   let rowStep = 0;
 
+    let autoScrollFrame =
+    null;
+
+  let lastPointerClientY =
+    0;
+
+  function stepAutoScroll() {
+
+    const edgeSize =
+      60;
+
+    const maxSpeed =
+      14;
+
+    let speed = 0;
+
+    if (lastPointerClientY < edgeSize) {
+
+      speed =
+        -maxSpeed * (1 - lastPointerClientY / edgeSize);
+
+    } else if (
+      lastPointerClientY > window.innerHeight - edgeSize
+    ) {
+
+      speed =
+        maxSpeed *
+        (
+          1 -
+          (window.innerHeight - lastPointerClientY) / edgeSize
+        );
+
+    }
+
+    if (speed !== 0) {
+
+      window.scrollBy(0, speed);
+
+    }
+
+    if (draggingIndex !== null) {
+
+      autoScrollFrame =
+        requestAnimationFrame(stepAutoScroll);
+
+    } else {
+
+      autoScrollFrame =
+        null;
+
+    }
+
+  }
+
   function onPointerMove(event) {
 
     if (draggingIndex === null) return;
 
     event.preventDefault();
+
+    lastPointerClientY =
+      event.clientY;
+
+    if (autoScrollFrame === null) {
+
+      autoScrollFrame =
+        requestAnimationFrame(stepAutoScroll);
+
+    }
 
     const deltaY =
       event.clientY - startY;
@@ -7634,12 +7772,22 @@ function renderTagManageList() {
 
   }
 
-  async function onPointerUp() {
+      async function onPointerUp() {
 
     if (draggingIndex === null) return;
 
+    if (autoScrollFrame !== null) {
+
+      cancelAnimationFrame(autoScrollFrame);
+
+      autoScrollFrame =
+        null;
+
+    }
+
     const scrollX =
       window.scrollX;
+
 
     const scrollY =
       window.scrollY;

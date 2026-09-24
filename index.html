@@ -7716,7 +7716,7 @@ function renderTagManageList() {
 
     row.appendChild(topRow);
 
-    const descriptionInput =
+        const descriptionInput =
       document.createElement("textarea");
 
     descriptionInput.value =
@@ -7724,9 +7724,6 @@ function renderTagManageList() {
 
     descriptionInput.placeholder =
       "このタグの説明を入力（絞込み画面などのⓘから見られます）";
-
-    descriptionInput.rows =
-      2;
 
     descriptionInput.style.width =
       "calc(100% - 34px)";
@@ -7753,7 +7750,13 @@ function renderTagManageList() {
       "hidden";
 
 
-        function autoResizeDescription() {
+            descriptionInput.style.height =
+      "auto";
+
+    descriptionInput.style.overflowY =
+      "hidden";
+
+    function autoResizeDescription() {
 
       descriptionInput.style.height =
         "auto";
@@ -7765,6 +7768,7 @@ function renderTagManageList() {
 
     descriptionInput.oninput =
       autoResizeDescription;
+
 
     descriptionInput.onblur = () => {
 

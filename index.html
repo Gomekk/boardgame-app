@@ -1453,6 +1453,7 @@ button.small {
       "
     >
 
+     <div style="position:sticky;top:0;height:0;z-index:20;">
       <button
         type="button"
         onclick="document.getElementById('playerDetailOverlay').style.display='none'"
@@ -1472,7 +1473,8 @@ button.small {
           line-height:1;
         "
       >×</button>
-
+      </div>
+      
             <h2 id="detailPlayerName" style="padding-right:40px;"></h2>
 
       <button
@@ -1654,6 +1656,7 @@ button.small {
       "
     >
 
+       <div style="position:sticky;top:0;height:0;z-index:20;">
             <button
         type="button"
         onclick="document.getElementById('selectedGameRankingOverlay').style.display='none'"
@@ -1674,8 +1677,8 @@ button.small {
           line-height:1;
         "
       >×</button>
-
-                    <h2 id="selectedGameRankingTitle" style="padding-right:40px;">
+      </div>
+      <h2 id="selectedGameRankingTitle" style="padding-right:40px;">
         ゲームを選択してください
       </h2>
 
@@ -1854,6 +1857,7 @@ button.small {
     >
 
 
+     <div style="position:sticky;top:0;height:0;z-index:20;">
       <button
         type="button"
         onclick="document.getElementById('gameRegisterOverlay').style.display='none'"
@@ -1873,7 +1877,7 @@ button.small {
           line-height:1;
         "
       >×</button>
-
+      </div>
     <h2 style="padding-right:40px;">🎲 ゲームを登録</h2>
 
     <input id="gameName" placeholder="ゲーム名">
@@ -2316,6 +2320,7 @@ button.small {
       "
     >
 
+    <div style="position:sticky;top:0;height:0;z-index:20;">
       <button
         type="button"
         onclick="document.getElementById('playerRegisterOverlay').style.display='none'"
@@ -2335,7 +2340,8 @@ button.small {
           line-height:1;
         "
       >×</button>
-
+      </div>
+      
     <h2 style="padding-right:40px;">👤 プレイヤーを登録</h2>
 
     <div>
@@ -2633,6 +2639,7 @@ button.small {
       "
     >
 
+     <div style="position:sticky;top:0;height:0;z-index:20;">
       <button
         type="button"
         onclick="document.getElementById('titleGameListOverlay').style.display='none'"
@@ -2652,7 +2659,8 @@ button.small {
           line-height:1;
         "
       >×</button>
-
+      </div>
+      
       <h2 id="titleGameListTitle" style="padding-right:40px;">
         タイトル保有ゲーム一覧
       </h2>
@@ -6988,9 +6996,27 @@ function openTagDescriptionsPopup() {
   title.style.paddingRight =
     "40px";
 
-  box.appendChild(closeButton);
+    const closeButtonWrapper =
+    document.createElement("div");
+
+  closeButtonWrapper.style.position =
+    "sticky";
+
+  closeButtonWrapper.style.top =
+    "0";
+
+  closeButtonWrapper.style.height =
+    "0";
+
+  closeButtonWrapper.style.zIndex =
+    "20";
+
+  closeButtonWrapper.appendChild(closeButton);
+
+  box.appendChild(closeButtonWrapper);
 
   box.appendChild(title);
+
 
   GAME_TAGS.forEach(tag => {
 
@@ -8389,6 +8415,7 @@ function openScoreHelperItemsPreview(items) {
       "
     >
 
+     <div style="position:sticky;top:0;height:0;z-index:20;">
       <button
         type="button"
         id="scoreHelperPreviewClose"
@@ -8408,6 +8435,7 @@ function openScoreHelperItemsPreview(items) {
           line-height:1;
         "
       >×</button>
+      </div>
 
            <h2 style="padding-right:40px;margin-bottom:4px;">得点計算補助（プレビュー）</h2>
 
@@ -9078,9 +9106,11 @@ function openScoreHelperPopup() {
       "
     >
 
+   <div style="position:sticky;top:0;height:0;z-index:20;">
       <button
         type="button"
         id="scoreHelperClose"
+
         style="
           position:absolute;
           top:14px;
@@ -9096,9 +9126,10 @@ function openScoreHelperPopup() {
           font-size:20px;
           line-height:1;
         "
-      >×</button>
+           >×</button>
+      </div>
 
-        <h2 style="padding-right:40px;margin-bottom:4px;">得点計算補助</h2>
+      <h2 style="padding-right:40px;margin-bottom:4px;">得点計算補助</h2>
 
          <div class="section-note" style="margin-top:0;margin-bottom:0;font-size:10px;line-height:1.4;">
         プレイヤー名 or 項目名をタップして一括入力可
@@ -14082,9 +14113,11 @@ async function openFavoriteSetSelector() {
       "
     >
 
+     <div style="position:sticky;top:0;height:0;z-index:20;">
       <button
         type="button"
         id="favoriteSetSelectorClose"
+
         style="
           position:absolute;
           top:14px;
@@ -14101,7 +14134,8 @@ async function openFavoriteSetSelector() {
           line-height:1;
         "
       >×</button>
-
+      </div>
+      
       <h2 style="padding-right:40px;display:flex;align-items:center;gap:8px;">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#131B2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
         お気に入り

@@ -815,6 +815,10 @@ button.small {
   transition: height 0.15s ease;
 }
 
+#gameRouletteName.roulette-idle-tight {
+  margin-bottom: -8px;
+}
+
 #gameRouletteName.spinning-size {
   height: 170px;
 }
@@ -13806,13 +13810,13 @@ if (allGames.length === 0) {
 <button
   type="button"
   id="gameRouletteName"
+  class="roulette-idle-tight"
 
 
   style="
     background:#ffffff;
     color:#1E3A5F;
     border:2px solid #1E3A5F;
-    margin-bottom:-8px;
   "
 >
   <span id="gameRouletteText">START!</span>
@@ -13956,9 +13960,11 @@ function startRoulette() {
     return;
   }
 
-    modeElement.style.display = "none";
+        modeElement.style.display = "none";
 
   document.getElementById("gameRouletteName").classList.add("spinning-size");
+
+  document.getElementById("gameRouletteName").classList.remove("roulette-idle-tight");
 
   overlay.querySelector(".game-roulette-box").classList.add("spinning-size");
 

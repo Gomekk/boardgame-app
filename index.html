@@ -13960,7 +13960,13 @@ function startRoulette() {
     return;
   }
 
-  modeElement.style.display = "none";
+    modeElement.style.display = "none";
+
+  overlay.querySelector("#gameRouletteFavoriteButton").closest("div").style.display = "none";
+
+  overlay.querySelector("#gameRoulettePlayerCountFilter").closest("div").style.display = "none";
+
+  overlay.querySelector("#gameRouletteTagFilter").style.display = "none";
 
   document.getElementById("gameRouletteName").classList.add("spinning-size");
 

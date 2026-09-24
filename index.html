@@ -1919,10 +1919,6 @@ button.small {
 
 <div style="margin-top:12px;">
 
-  <label class="section-note" style="display:block;margin:0 0 6px;">
-    ジャンル（複数選択可）
-  </label>
-
   <div id="gameTagPicker"></div>
 
 </div>
@@ -3597,13 +3593,6 @@ tagLabel.style.display =
 
 tagLabel.style.marginTop =
   "12px";
-
-tagLabel.textContent =
-  "ジャンル（複数選択可）";
-
-form.appendChild(
-  tagLabel
-);
 
 const tagPicker =
   document.createElement("div");
@@ -6677,24 +6666,108 @@ function renderTagPicker(container, selectedSet) {
 
   container.innerHTML = "";
 
-  container.style.display =
+  const headerRow =
+    document.createElement("div");
+
+  headerRow.style.display =
     "flex";
 
-  container.style.flexWrap =
+  headerRow.style.alignItems =
+    "center";
+
+  headerRow.style.gap =
+    "6px";
+
+  headerRow.style.marginBottom =
+    "6px";
+
+  const header =
+    document.createElement("div");
+
+  header.className =
+    "section-note";
+
+  header.style.margin =
+    "0";
+
+  header.textContent =
+    "ジャンルタグ";
+
+  const infoButton =
+    document.createElement("span");
+
+  infoButton.textContent =
+    "ⓘ";
+
+  infoButton.style.display =
+    "inline-flex";
+
+  infoButton.style.alignItems =
+    "center";
+
+  infoButton.style.justifyContent =
+    "center";
+
+  infoButton.style.width =
+    "18px";
+
+  infoButton.style.height =
+    "18px";
+
+  infoButton.style.borderRadius =
+    "50%";
+
+  infoButton.style.background =
+    "rgba(29,99,201,0.12)";
+
+  infoButton.style.fontSize =
+    "12px";
+
+  infoButton.style.fontWeight =
+    "700";
+
+  infoButton.style.color =
+    "#1D63C9";
+
+  infoButton.style.cursor =
+    "pointer";
+
+  infoButton.onclick = () => {
+
+    openTagDescriptionsPopup();
+
+  };
+
+  headerRow.appendChild(header);
+
+  headerRow.appendChild(infoButton);
+
+  container.appendChild(headerRow);
+
+  const chipsArea =
+    document.createElement("div");
+
+  chipsArea.style.display =
+    "flex";
+
+  chipsArea.style.flexWrap =
     "wrap";
 
-  container.style.gap =
+  chipsArea.style.gap =
     "5px";
 
   GAME_TAGS.forEach(tag => {
 
-    container.appendChild(
+    chipsArea.appendChild(
       createTagChip(tag, selectedSet)
     );
 
   });
 
+  container.appendChild(chipsArea);
+
 }
+
 
 /*
  * 絞込み用（「タグ ▶」で開閉）

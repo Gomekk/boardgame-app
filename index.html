@@ -7728,7 +7728,7 @@ function renderTagManageList() {
     descriptionInput.rows =
       2;
 
-        descriptionInput.style.width =
+    descriptionInput.style.width =
       "calc(100% - 34px)";
 
     descriptionInput.style.boxSizing =
@@ -7737,6 +7737,9 @@ function renderTagManageList() {
     descriptionInput.style.fontSize =
       "12px";
 
+    descriptionInput.style.color =
+      "#4B5563";
+
     descriptionInput.style.padding =
       "6px 8px";
 
@@ -7744,7 +7747,24 @@ function renderTagManageList() {
       "34px";
 
     descriptionInput.style.resize =
-      "vertical";
+      "none";
+
+    descriptionInput.style.overflow =
+      "hidden";
+
+
+        function autoResizeDescription() {
+
+      descriptionInput.style.height =
+        "auto";
+
+      descriptionInput.style.height =
+        `${descriptionInput.scrollHeight}px`;
+
+    }
+
+    descriptionInput.oninput =
+      autoResizeDescription;
 
     descriptionInput.onblur = () => {
 
@@ -7765,6 +7785,9 @@ function renderTagManageList() {
     };
 
     row.appendChild(descriptionInput);
+
+    autoResizeDescription();
+
 
     container.appendChild(row);
 

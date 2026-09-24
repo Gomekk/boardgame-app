@@ -7618,9 +7618,31 @@ function renderTagManageList() {
 
   }
 
+      function restoreScrollPosition(x, y) {
+
+    requestAnimationFrame(() => {
+
+      window.scrollTo(x, y);
+
+      requestAnimationFrame(() => {
+
+        window.scrollTo(x, y);
+
+      });
+
+    });
+
+  }
+
   async function onPointerUp() {
 
     if (draggingIndex === null) return;
+
+    const scrollX =
+      window.scrollX;
+
+    const scrollY =
+      window.scrollY;
 
     document.removeEventListener("pointermove", onPointerMove);
 
@@ -7640,6 +7662,8 @@ function renderTagManageList() {
     ) {
 
       renderTagManageList();
+
+      restoreScrollPosition(scrollX, scrollY);
 
       return;
 
@@ -7664,8 +7688,12 @@ function renderTagManageList() {
 
     renderTagManageList();
 
+    restoreScrollPosition(scrollX, scrollY);
+
     const ok =
       await saveGameTagList(newTags);
+
+    restoreScrollPosition(scrollX, scrollY);
 
     if (!ok) {
 
@@ -7676,9 +7704,12 @@ function renderTagManageList() {
 
       renderTagManageList();
 
+      restoreScrollPosition(scrollX, scrollY);
+
     }
 
   }
+
 
   GAME_TAGS.forEach((tag, index) => {
 

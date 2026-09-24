@@ -6174,6 +6174,7 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   let dragOffsetY = 0;
 
+  let startScrollY = 0;
 
     let autoScrollFrame =
     null;
@@ -6229,7 +6230,7 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   }
 
-    function onPointerMove(event) {
+      function onPointerMove(event) {
 
     if (draggingIndex === null) return;
 
@@ -6248,10 +6249,14 @@ function renderScoreHelperItemsBuilder(container, items) {
     draggingRow.style.top =
       `${event.clientY - dragOffsetY}px`;
 
+    const scrolledDeltaY =
+      (event.clientY - startY) +
+      (window.scrollY - startScrollY);
 
     let targetIndex =
       draggingIndex +
-      Math.round(deltaY / rowStep);
+      Math.round(scrolledDeltaY / rowStep);
+
 
     targetIndex =
       Math.max(0, Math.min(items.length - 1, targetIndex));
@@ -6408,8 +6413,12 @@ function renderScoreHelperItemsBuilder(container, items) {
       dragOffsetY =
         event.clientY - rect.top;
 
+      startScrollY =
+        window.scrollY;
+
       row.style.position =
         "fixed";
+
 
       row.style.top =
         `${rect.top}px`;
@@ -7655,6 +7664,9 @@ function renderTagManageList() {
 
   let dragOffsetY = 0;
 
+  let startScrollY = 0;
+
+
     let autoScrollFrame =
     null;
 
@@ -7709,7 +7721,7 @@ function renderTagManageList() {
 
   }
 
-    function onPointerMove(event) {
+      function onPointerMove(event) {
 
     if (draggingIndex === null) return;
 
@@ -7728,10 +7740,14 @@ function renderTagManageList() {
     draggingRow.style.top =
       `${event.clientY - dragOffsetY}px`;
 
+    const scrolledDeltaY =
+      (event.clientY - startY) +
+      (window.scrollY - startScrollY);
 
     let targetIndex =
       draggingIndex +
-      Math.round(deltaY / rowStep);
+      Math.round(scrolledDeltaY / rowStep);
+
 
     targetIndex =
       Math.max(0, Math.min(GAME_TAGS.length - 1, targetIndex));
@@ -7979,8 +7995,12 @@ function renderTagManageList() {
       dragOffsetY =
         event.clientY - rect.top;
 
+      startScrollY =
+        window.scrollY;
+
       row.style.position =
         "fixed";
+
 
       row.style.top =
         `${rect.top}px`;

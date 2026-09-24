@@ -6304,9 +6304,10 @@ function renderScoreHelperItemsBuilder(container, items) {
     handle.style.userSelect =
       "none";
 
-    handle.onpointerdown = event => {
+        let longPressTimer =
+      null;
 
-      event.preventDefault();
+    function startDragging(event) {
 
       draggingIndex = index;
 
@@ -6334,6 +6335,55 @@ function renderScoreHelperItemsBuilder(container, items) {
       document.addEventListener("pointermove", onPointerMove);
 
       document.addEventListener("pointerup", onPointerUp, { once: true });
+
+    }
+
+    function cancelLongPress() {
+
+      if (longPressTimer) {
+
+        clearTimeout(longPressTimer);
+
+        longPressTimer =
+          null;
+
+      }
+
+    }
+
+    handle.onpointerdown = event => {
+
+      event.preventDefault();
+
+      cancelLongPress();
+
+      longPressTimer =
+        setTimeout(() => {
+
+          longPressTimer =
+            null;
+
+          startDragging(event);
+
+        }, 500);
+
+      const cancelOnce = () => {
+
+        cancelLongPress();
+
+        handle.removeEventListener("pointerup", cancelOnce);
+
+        handle.removeEventListener("pointerleave", cancelOnce);
+
+        handle.removeEventListener("pointercancel", cancelOnce);
+
+      };
+
+      handle.addEventListener("pointerup", cancelOnce);
+
+      handle.addEventListener("pointerleave", cancelOnce);
+
+      handle.addEventListener("pointercancel", cancelOnce);
 
     };
 
@@ -7581,9 +7631,10 @@ function renderTagManageList() {
     handle.style.touchAction =
       "none";
 
-    handle.onpointerdown = event => {
+        let longPressTimer =
+      null;
 
-      event.preventDefault();
+    function startDragging(event) {
 
       draggingIndex = index;
 
@@ -7611,7 +7662,57 @@ function renderTagManageList() {
 
       document.addEventListener("pointercancel", onPointerUp, { once: true });
 
+    }
+
+    function cancelLongPress() {
+
+      if (longPressTimer) {
+
+        clearTimeout(longPressTimer);
+
+        longPressTimer =
+          null;
+
+      }
+
+    }
+
+    handle.onpointerdown = event => {
+
+      event.preventDefault();
+
+      cancelLongPress();
+
+      longPressTimer =
+        setTimeout(() => {
+
+          longPressTimer =
+            null;
+
+          startDragging(event);
+
+        }, 500);
+
+      const cancelOnce = () => {
+
+        cancelLongPress();
+
+        handle.removeEventListener("pointerup", cancelOnce);
+
+        handle.removeEventListener("pointerleave", cancelOnce);
+
+        handle.removeEventListener("pointercancel", cancelOnce);
+
+      };
+
+      handle.addEventListener("pointerup", cancelOnce);
+
+      handle.addEventListener("pointerleave", cancelOnce);
+
+      handle.addEventListener("pointercancel", cancelOnce);
+
     };
+
 
     /*
      * タグ名・件数

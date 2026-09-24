@@ -13960,15 +13960,13 @@ function startRoulette() {
     return;
   }
 
-        modeElement.style.display = "none";
+  modeElement.style.display = "none";
 
   document.getElementById("gameRouletteName").classList.add("spinning-size");
 
-  document.getElementById("gameRouletteName").classList.remove("roulette-idle-tight");
+  overlay.querySelector("#gameRouletteName").classList.remove("roulette-idle-tight");
 
   overlay.querySelector(".game-roulette-box").classList.add("spinning-size");
-
-
 
   const weightNameMap = {
     light: "軽量級",

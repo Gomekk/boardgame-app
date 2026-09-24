@@ -1857,14 +1857,15 @@ button.small {
     >
 
 
-     <div style="position:sticky;top:0;height:0;z-index:20;">
-      <button
+         <button
         type="button"
         onclick="document.getElementById('gameRegisterOverlay').style.display='none'"
         style="
-          position:absolute;
+          position:sticky;
+          float:right;
           top:14px;
-          right:14px;
+          margin-right:14px;
+          margin-bottom:-32px;
           width:32px;
           height:32px;
           min-width:32px;
@@ -1875,9 +1876,10 @@ button.small {
           border-radius:50%;
           font-size:20px;
           line-height:1;
+          z-index:20;
         "
       >×</button>
-      </div>
+
     <h2 style="padding-right:40px;">🎲 ゲームを登録</h2>
 
     <input id="gameName" placeholder="ゲーム名">
@@ -1933,7 +1935,7 @@ button.small {
 <div id="gameScoreHelperItemsArea" style="display:none;margin-top:8px;"></div>
 
 
-        <div style="margin-top:12px;">
+        <div style="margin-top:20px;">
       <label class="section-note">📷 ゲーム写真（任意）</label>
 
             <input
@@ -6681,7 +6683,7 @@ function renderTagPicker(container, selectedSet) {
   headerRow.style.marginBottom =
     "6px";
 
-  const header =
+    const header =
     document.createElement("div");
 
   header.className =
@@ -6689,6 +6691,9 @@ function renderTagPicker(container, selectedSet) {
 
   header.style.margin =
     "0";
+
+  header.style.paddingTop =
+    "10px";
 
   header.textContent =
     "ジャンルタグ";

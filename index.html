@@ -13766,7 +13766,7 @@ if (allGames.length === 0) {
 
 </div>
 
-<div style="display:flex;align-items:center;gap:6px;margin:2px 0 4px;">
+<div id="gameRoulettePlayerCountRow" style="display:flex;align-items:center;gap:6px;margin:2px 0 4px;">
 
   <span style="font-size:12px;color:#6b7280;white-space:nowrap;">人数</span>
 
@@ -13960,13 +13960,13 @@ function startRoulette() {
     return;
   }
 
-    modeElement.style.display = "none";
+      modeElement.style.display = "none";
 
-  overlay.querySelector("#gameRouletteFavoriteButton").closest("div").style.display = "none";
+  overlay.querySelector("#gameRouletteFavoriteButton").closest("div").style.visibility = "hidden";
 
-  overlay.querySelector("#gameRoulettePlayerCountFilter").closest("div").style.display = "none";
+  document.getElementById("gameRoulettePlayerCountRow").style.visibility = "hidden";
 
-  overlay.querySelector("#gameRouletteTagFilter").style.display = "none";
+  overlay.querySelector("#gameRouletteTagFilter").style.visibility = "hidden";
 
   document.getElementById("gameRouletteName").classList.add("spinning-size");
 

@@ -6769,11 +6769,20 @@ function renderTagFilter(container, selectedSet, onChange) {
   infoButton.style.cursor =
     "pointer";
 
-  infoButton.onclick = () => {
+    infoButton.onclick = () => {
 
     openTagDescriptionsPopup();
 
   };
+
+  const countLabel =
+    document.createElement("span");
+
+  countLabel.className =
+    "section-note";
+
+  countLabel.style.margin =
+    "0";
 
 
   const chipsArea =
@@ -6791,15 +6800,17 @@ function renderTagFilter(container, selectedSet, onChange) {
   chipsArea.style.marginBottom =
     "12px";
 
-  let open = false;
+   let open = false;
 
   function updateHeader() {
 
     header.textContent =
-      `ジャンルタグ ${open ? "▼" : "▶"}` +
-      (selectedSet.size > 0
+      `ジャンルタグ ${open ? "▼" : "▶"}`;
+
+    countLabel.textContent =
+      selectedSet.size > 0
         ? `（${selectedSet.size}件選択中）`
-        : "");
+        : "";
 
   }
 
@@ -6830,11 +6841,14 @@ function renderTagFilter(container, selectedSet, onChange) {
 
   updateHeader();
 
-    headerRow.appendChild(header);
+  headerRow.appendChild(header);
 
   headerRow.appendChild(infoButton);
 
+  headerRow.appendChild(countLabel);
+
   container.appendChild(headerRow);
+
 
   container.appendChild(chipsArea);
 

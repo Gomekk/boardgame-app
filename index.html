@@ -6162,7 +6162,7 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   const rowElements = [];
 
-  let draggingIndex = null;
+    let draggingIndex = null;
 
   let draggingRow = null;
 
@@ -6171,6 +6171,9 @@ function renderScoreHelperItemsBuilder(container, items) {
   let startY = 0;
 
   let rowStep = 0;
+
+  let dragOffsetY = 0;
+
 
     let autoScrollFrame =
     null;
@@ -6226,7 +6229,7 @@ function renderScoreHelperItemsBuilder(container, items) {
 
   }
 
-  function onPointerMove(event) {
+    function onPointerMove(event) {
 
     if (draggingIndex === null) return;
 
@@ -6242,11 +6245,8 @@ function renderScoreHelperItemsBuilder(container, items) {
 
     }
 
-    const deltaY =
-      event.clientY - startY;
-
-    draggingRow.style.transform =
-      `translateY(${deltaY}px)`;
+    draggingRow.style.top =
+      `${event.clientY - dragOffsetY}px`;
 
 
     let targetIndex =
@@ -6386,7 +6386,7 @@ function renderScoreHelperItemsBuilder(container, items) {
         let longPressTimer =
       null;
 
-    function startDragging(event) {
+        function startDragging(event) {
 
       draggingIndex = index;
 
@@ -6396,20 +6396,36 @@ function renderScoreHelperItemsBuilder(container, items) {
 
       startY = event.clientY;
 
+      const rect =
+        row.getBoundingClientRect();
+
       rowStep =
-        row.getBoundingClientRect().height +
+        rect.height +
         parseFloat(
           getComputedStyle(row).marginBottom || "0"
         );
 
+      dragOffsetY =
+        event.clientY - rect.top;
+
       row.style.position =
-        "relative";
+        "fixed";
+
+      row.style.top =
+        `${rect.top}px`;
+
+      row.style.left =
+        `${rect.left}px`;
+
+      row.style.width =
+        `${rect.width}px`;
 
       row.style.zIndex =
-        "10";
+        "1000";
 
       row.style.background =
         "#ffffff";
+
 
       document.addEventListener("pointermove", onPointerMove);
 
@@ -7627,7 +7643,7 @@ function renderTagManageList() {
 
   const rowElements = [];
 
-  let draggingIndex = null;
+    let draggingIndex = null;
 
   let draggingRow = null;
 
@@ -7636,6 +7652,8 @@ function renderTagManageList() {
   let startY = 0;
 
   let rowStep = 0;
+
+  let dragOffsetY = 0;
 
     let autoScrollFrame =
     null;
@@ -7691,7 +7709,7 @@ function renderTagManageList() {
 
   }
 
-  function onPointerMove(event) {
+    function onPointerMove(event) {
 
     if (draggingIndex === null) return;
 
@@ -7707,11 +7725,9 @@ function renderTagManageList() {
 
     }
 
-    const deltaY =
-      event.clientY - startY;
+    draggingRow.style.top =
+      `${event.clientY - dragOffsetY}px`;
 
-    draggingRow.style.transform =
-      `translateY(${deltaY}px)`;
 
     let targetIndex =
       draggingIndex +
@@ -7944,7 +7960,7 @@ function renderTagManageList() {
         let longPressTimer =
       null;
 
-    function startDragging(event) {
+        function startDragging(event) {
 
       draggingIndex = index;
 
@@ -7954,14 +7970,29 @@ function renderTagManageList() {
 
       startY = event.clientY;
 
+      const rect =
+        row.getBoundingClientRect();
+
       rowStep =
-        row.getBoundingClientRect().height;
+        rect.height;
+
+      dragOffsetY =
+        event.clientY - rect.top;
 
       row.style.position =
-        "relative";
+        "fixed";
+
+      row.style.top =
+        `${rect.top}px`;
+
+      row.style.left =
+        `${rect.left}px`;
+
+      row.style.width =
+        `${rect.width}px`;
 
       row.style.zIndex =
-        "10";
+        "1000";
 
       row.style.boxShadow =
         "0 4px 12px rgba(0,0,0,0.12)";
@@ -7973,6 +8004,7 @@ function renderTagManageList() {
       document.addEventListener("pointercancel", onPointerUp, { once: true });
 
     }
+
 
     function cancelLongPress() {
 

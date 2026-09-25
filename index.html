@@ -14493,29 +14493,22 @@ function spinRoulette() {
 
     buildRouletteResultInfo(matchedGameData);
 
-    subElement.textContent =
+        subElement.textContent =
       "🎉 このゲームに決定！";
-
 
 
     buttonsElement.style.display =
       "flex";
 
-    [
-      "#gameRouletteEligibleCountSpacerTop",
-      "#gameRouletteEligibleCountSpacerBottom",
-      "#gameRouletteSpacerTop",
-      "#gameRouletteSpacerBottom",
-      "#gameRouletteSubSpacerTop",
-      "#gameRouletteSubSpacerBottom"
-    ].forEach(selector => {
+    const eligibleCountEl =
+      overlay.querySelector("#gameRouletteEligibleCount");
 
-      const spacer =
-        overlay.querySelector(selector);
+    if (eligibleCountEl) {
 
-      if (spacer) spacer.style.flex = "0";
+      eligibleCountEl.style.display =
+        "none";
 
-    });
+    }
 
     return;
 

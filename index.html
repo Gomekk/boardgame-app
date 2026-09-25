@@ -758,7 +758,6 @@ button.small {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   width: min(420px, 100%);
   max-height: 92vh;
   overflow-y: scroll;
@@ -13800,6 +13799,7 @@ if (allGames.length === 0) {
 >
 </div>
 
+<div id="gameRouletteSpacerTop" style="flex:1;"></div>
 
 <button
   type="button"
@@ -13816,13 +13816,14 @@ if (allGames.length === 0) {
   <span id="gameRouletteText">START!</span>
 </button>
 
-
+<div id="gameRouletteSpacerBottom" style="flex:1;"></div>
 
       <div
         id="gameRouletteSub"
         class="game-roulette-sub"
       >
       </div>
+
 
       <div
         id="gameRouletteButtons"

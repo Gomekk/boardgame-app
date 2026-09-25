@@ -768,12 +768,7 @@ button.small {
   padding: 18px 24px 16px;
   text-align: center;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
-  transition: min-height 0.15s ease;
   scrollbar-gutter: stable;
-}
-
-.game-roulette-box.spinning-size {
-  min-height: 480px;
 }
 
 .game-roulette-box::before {
@@ -13958,13 +13953,28 @@ function startRoulette() {
     return;
   }
 
-      modeElement.style.display = "none";
+  modeElement.style.display = "none";
 
-  overlay.querySelector("#gameRouletteFavoriteButton").closest("div").style.visibility = "hidden";
+  const favoriteRow =
+    overlay.querySelector("#gameRouletteFavoriteButton").closest("div");
 
-  document.getElementById("gameRoulettePlayerCountRow").style.visibility = "hidden";
+  favoriteRow.style.height = "0";
+  favoriteRow.style.overflow = "hidden";
+  favoriteRow.style.marginBottom = "0";
 
-  overlay.querySelector("#gameRouletteTagFilter").style.visibility = "hidden";
+  const playerCountRow =
+    document.getElementById("gameRoulettePlayerCountRow");
+
+  playerCountRow.style.height = "0";
+  playerCountRow.style.overflow = "hidden";
+  playerCountRow.style.margin = "0";
+
+  const tagFilterRow =
+    overlay.querySelector("#gameRouletteTagFilter");
+
+  tagFilterRow.style.height = "0";
+  tagFilterRow.style.overflow = "hidden";
+  tagFilterRow.style.marginTop = "0";
 
   document.getElementById("gameRouletteName").classList.add("spinning-size");
 

@@ -14140,6 +14140,38 @@ renderTagFilter(
   () => updateEligibleCountDisplay()
 );
 
+const tagFilterToggleHeader =
+  document.querySelector(
+    "#gameRouletteTagFilter > div:first-child"
+  );
+
+if (tagFilterToggleHeader) {
+
+  tagFilterToggleHeader.addEventListener("click", () => {
+
+    const chipsArea =
+      document.querySelector(
+        "#gameRouletteTagFilter > div:nth-child(2)"
+      );
+
+    const box =
+      overlay.querySelector(".game-roulette-box");
+
+    if (chipsArea && box) {
+
+      const isOpen =
+        chipsArea.style.display === "flex";
+
+      box.style.height =
+        isOpen ? "auto" : "480px";
+
+    }
+
+  });
+
+}
+
+
 
 function startRoulette() {
 

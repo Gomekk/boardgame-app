@@ -13539,6 +13539,120 @@ matches.forEach(match => {
 
 }
 
+function buildRouletteResultInfo(game) {
+
+  const container =
+    document.getElementById(
+      "gameRouletteResultInfo"
+    );
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  container.style.display =
+    "flex";
+
+  container.style.flexDirection =
+    "column";
+
+  container.style.alignItems =
+    "center";
+
+  container.style.gap =
+    "6px";
+
+  if (game.image) {
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      game.image;
+
+    image.className =
+      "game-thumb-large";
+
+    container.appendChild(image);
+
+  }
+
+  const name =
+    document.createElement("div");
+
+  name.textContent =
+    game.name;
+
+  name.style.fontWeight =
+    "800";
+
+  name.style.fontSize =
+    "20px";
+
+  name.style.color =
+    "#1E3A5F";
+
+  name.style.wordBreak =
+    "break-word";
+
+  container.appendChild(name);
+
+  const matchCount =
+    data.matches.filter(
+      m => m.game === game.name
+    ).length;
+
+  const championNames =
+    getGameChampionNames(game);
+
+  const metaParts =
+    [`${matchCount}回プレイ済`];
+
+  if (championNames.length > 0) {
+
+    metaParts.push(
+      `👑 ${championNames.join(" / ")}`
+    );
+
+  }
+
+  const meta =
+    document.createElement("div");
+
+  meta.textContent =
+    metaParts.join("　");
+
+  meta.style.fontSize =
+    "12px";
+
+  meta.style.color =
+    "#6b7280";
+
+  container.appendChild(meta);
+
+  if (game.tags && game.tags.length > 0) {
+
+    const tagsText =
+      document.createElement("div");
+
+    tagsText.textContent =
+      GAME_TAGS
+        .filter(tag => game.tags.includes(tag))
+        .map(tag => `#${tag}`)
+        .join(" ");
+
+    tagsText.style.fontSize =
+      "11px";
+
+    tagsText.style.color =
+      "#1D63C9";
+
+    container.appendChild(tagsText);
+
+  }
+
+}
+
 function buildRouletteContent(g) {
 
   const nameHtml =
@@ -13820,6 +13934,12 @@ if (allGames.length === 0) {
 >
   <span id="gameRouletteText">START!</span>
 </button>
+
+<div
+  id="gameRouletteResultInfo"
+  style="display:none;"
+>
+</div>
 
 <div id="gameRouletteSpacerBottom" style="flex:1;"></div>
 
@@ -14359,17 +14479,23 @@ function spinRoulette() {
         )
       ];
 
-        nameElement.classList.remove(
+                nameElement.classList.remove(
       "game-roulette-spinning"
     );
 
-    nameElement.innerHTML =
-      buildRouletteContent(selectedGame);
+    document.getElementById("gameRouletteName").style.display =
+      "none";
 
-    fitRouletteText();
+    const matchedGameData =
+      data.games.find(
+        g => g.id === selectedGame.id
+      ) || selectedGame;
 
-            subElement.textContent =
+    buildRouletteResultInfo(matchedGameData);
+
+    subElement.textContent =
       "🎉 このゲームに決定！";
+
 
 
     buttonsElement.style.display =

@@ -14367,16 +14367,27 @@ function spinRoulette() {
 
     fitRouletteText();
 
-    subElement.textContent =
+        subElement.textContent =
       "🎉 このゲームに決定！";
 
 
     buttonsElement.style.display =
       "flex";
 
+    const spacerTop =
+      overlay.querySelector("#gameRouletteSpacerTop");
+
+    const spacerBottom =
+      overlay.querySelector("#gameRouletteSpacerBottom");
+
+    if (spacerTop) spacerTop.style.flex = "0";
+
+    if (spacerBottom) spacerBottom.style.flex = "0";
+
     return;
 
   }
+
 
   const delay =
   45 +

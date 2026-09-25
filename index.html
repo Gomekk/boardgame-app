@@ -865,6 +865,30 @@ button.small {
   100% { transform: scale(1); opacity: 1; }
 }
 
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  pointer-events: none;
+  animation-name: confettiFall;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(var(--confetti-fall-distance, 420px)) rotate(var(--confetti-rotate, 540deg));
+    opacity: 0;
+  }
+}
+
+
 /* =========================
    ホーム画面 新デザイン
 ========================= */
@@ -13541,6 +13565,88 @@ matches.forEach(match => {
 
 }
 
+function triggerConfetti(box) {
+
+  const colors =
+    ["#CBA135", "#E57373", "#64B5F6", "#81C784", "#BA68C8", "#FFD54F", "#4DB6AC"];
+
+  const pieceCount =
+    36;
+
+  for (let i = 0; i < pieceCount; i++) {
+
+    const piece =
+      document.createElement("div");
+
+    piece.className =
+      "confetti-piece";
+
+    const left =
+      Math.random() * 100;
+
+    const delay =
+      Math.random() * 0.25;
+
+    const duration =
+      1.1 + Math.random() * 0.7;
+
+    const rotate =
+      (Math.random() > 0.5 ? 1 : -1) *
+      (360 + Math.random() * 360);
+
+    const fallDistance =
+      box.clientHeight + 60;
+
+    const color =
+      colors[
+        Math.floor(Math.random() * colors.length)
+      ];
+
+    piece.style.left =
+      `${left}%`;
+
+    piece.style.background =
+      color;
+
+    piece.style.animationDelay =
+      `${delay}s`;
+
+    piece.style.animationDuration =
+      `${duration}s`;
+
+    piece.style.setProperty(
+      "--confetti-rotate",
+      `${rotate}deg`
+    );
+
+    piece.style.setProperty(
+      "--confetti-fall-distance",
+      `${fallDistance}px`
+    );
+
+    if (Math.random() > 0.5) {
+
+      piece.style.borderRadius =
+        "50%";
+
+      piece.style.width =
+        "9px";
+
+      piece.style.height =
+        "9px";
+
+    }
+
+    box.appendChild(piece);
+
+    setTimeout(() => {
+      piece.remove();
+    }, (delay + duration) * 1000 + 100);
+
+  }
+
+}
+
 function buildRouletteResultInfo(game) {
 
   const container =
@@ -14486,7 +14592,7 @@ function spinRoulette() {
       "game-roulette-spinning"
     );
 
-    document.getElementById("gameRouletteName").style.display =
+        document.getElementById("gameRouletteName").style.display =
       "none";
 
     const matchedGameData =
@@ -14496,8 +14602,13 @@ function spinRoulette() {
 
     buildRouletteResultInfo(matchedGameData);
 
-        subElement.textContent =
+    triggerConfetti(
+      overlay.querySelector(".game-roulette-box")
+    );
+
+    subElement.textContent =
       "🎉 このゲームに決定！";
+
 
 
     buttonsElement.style.display =

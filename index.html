@@ -14368,22 +14368,28 @@ function spinRoulette() {
 
     fitRouletteText();
 
-        subElement.textContent =
+            subElement.textContent =
       "🎉 このゲームに決定！";
 
 
     buttonsElement.style.display =
       "flex";
 
-    const spacerTop =
-      overlay.querySelector("#gameRouletteSpacerTop");
+    [
+      "#gameRouletteEligibleCountSpacerTop",
+      "#gameRouletteEligibleCountSpacerBottom",
+      "#gameRouletteSpacerTop",
+      "#gameRouletteSpacerBottom",
+      "#gameRouletteSubSpacerTop",
+      "#gameRouletteSubSpacerBottom"
+    ].forEach(selector => {
 
-    const spacerBottom =
-      overlay.querySelector("#gameRouletteSpacerBottom");
+      const spacer =
+        overlay.querySelector(selector);
 
-    if (spacerTop) spacerTop.style.flex = "0";
+      if (spacer) spacer.style.flex = "0";
 
-    if (spacerBottom) spacerBottom.style.flex = "0";
+    });
 
     return;
 

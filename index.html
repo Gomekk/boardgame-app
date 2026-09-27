@@ -2364,29 +2364,40 @@ button.small {
     </button>
   </div>
 
-  <div class="card">
+    <div class="card">
 
-    <h2 id="todayResultsTitle">📋 本日の対戦結果</h2>
-
-    <div style="display:flex;align-items:center;gap:8px;margin-top:-6px;margin-bottom:8px;">
+    <h2
+      style="
+        position:relative;
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        cursor:pointer;
+      "
+      onclick="document.getElementById('todayResultsDateInput').showPicker ? document.getElementById('todayResultsDateInput').showPicker() : document.getElementById('todayResultsDateInput').focus()"
+    >
+      📋
+      <span id="todayResultsTitleDate" style="text-decoration:underline;text-decoration-style:dotted;"></span>
+      の対戦結果
 
       <input
         type="date"
         id="todayResultsDateInput"
-        style="flex:1;"
+        style="
+          position:absolute;
+          inset:0;
+          width:100%;
+          height:100%;
+          opacity:0;
+          padding:0;
+          border:none;
+          cursor:pointer;
+        "
       >
 
-      <button
-        type="button"
-        onclick="jumpToTodayResults()"
-        style="width:auto;flex-shrink:0;padding:10px 14px;font-size:12px;"
-      >
-        今日
-      </button>
+    </h2>
 
-    </div>
-
-    <div id="todayMatchList"></div>
+    <div id="todayMatchList" style="margin-top:8px;"></div>
   </div>
 
 
@@ -20201,15 +20212,13 @@ function getTodayMatches() {
 
 function refreshTodayResultsScreen() {
 
-  const title =
-    document.getElementById("todayResultsTitle");
+  const titleDate =
+    document.getElementById("todayResultsTitleDate");
 
-  if (title) {
+  if (titleDate) {
 
-    title.textContent =
-      todayResultsSelectedDate === getTodayDateString()
-        ? "📋 本日の対戦結果"
-        : `📋 ${todayResultsSelectedDate} の対戦結果`;
+    titleDate.textContent =
+      `[${todayResultsSelectedDate}]`;
 
   }
 
@@ -20223,21 +20232,6 @@ function refreshTodayResultsScreen() {
 
 }
 
-function jumpToTodayResults() {
-
-  todayResultsSelectedDate =
-    getTodayDateString();
-
-  const dateInput =
-    document.getElementById("todayResultsDateInput");
-
-  if (dateInput) {
-    dateInput.value = todayResultsSelectedDate;
-  }
-
-  refreshTodayResultsScreen();
-
-}
 
 function computeMatchDisplayRows(match, game) {
 

@@ -1303,17 +1303,18 @@ button.small {
 
   </div>
 
-  <button
-    type="button"
-    class="today-results-button"
-    onclick="showScreen('todayResultsScreen')"
-  >
-    📋 本日の対戦結果
-  </button>
+    <!-- 設定・共有 -->
 
-
-  <!-- 設定・共有 -->
   <div class="home-utility-row">
+
+    <button
+      type="button"
+      class="today-results-button"
+      onclick="showScreen('todayResultsScreen')"
+      style="flex:1;margin-top:0;padding:0 14px;font-size:13px;"
+    >
+      📋 本日の対戦結果
+    </button>
 
     <button
       type="button"
@@ -1321,6 +1322,7 @@ button.small {
       onclick="shareAppLink()"
       aria-label="リンクを共有"
     >
+
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 3v12"/>
         <path d="M8 7l4-4 4 4"/>

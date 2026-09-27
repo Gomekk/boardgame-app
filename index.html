@@ -1143,6 +1143,37 @@ button.small {
   box-shadow: 0 6px 16px rgba(22,35,63,0.22), 0 0 0 1px rgba(203,161,53,0.25);
 }
 
+.today-results-button {
+  margin-top: 10px;
+  background: transparent;
+  border: 2px dashed var(--gold);
+  color: var(--navy);
+  box-shadow: none;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.today-results-button::before {
+  content: none;
+}
+
+.today-results-button:active {
+  box-shadow: none;
+  transform: translateY(1px) scale(0.99);
+}
+
+.rate-position-box {
+  width: 52px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.rate-position-box input {
+  padding: 6px 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
 </style>
 
 
@@ -1262,7 +1293,7 @@ button.small {
       🎰 ランダム pick
     </button>
     
-    <button
+      <button
       type="button"
       class="btn-brown"
       onclick="showScreen('rankingScreen')"
@@ -1271,6 +1302,14 @@ button.small {
     </button>
 
   </div>
+
+  <button
+    type="button"
+    class="today-results-button"
+    onclick="showScreen('todayResultsScreen')"
+  >
+    📋 本日の対戦結果
+  </button>
 
 
   <!-- 設定・共有 -->
@@ -1819,7 +1858,7 @@ button.small {
       ⚖️ 重さ基準設定
     </button>
 
-    <button
+        <button
       type="button"
       onclick="showScreen('tagManageScreen')"
       style="margin-bottom: 8px;"
@@ -1829,10 +1868,19 @@ button.small {
 
     <button
       type="button"
+      onclick="showScreen('rateSettingScreen')"
+      style="margin-bottom: 8px;"
+    >
+      🎯 レート設定
+    </button>
+
+    <button
+      type="button"
       onclick="showScreen('backupScreen')"
     >
       💾 データ管理
     </button>
+
 
   </div>
 
@@ -2300,6 +2348,128 @@ button.small {
 
 </div>
 
+<div id="todayResultsScreen" class="screenContent">
+
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('homeScreen')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>📋 本日の対戦結果</h2>
+    <div id="todayResultsDate" class="section-note" style="margin-top:-10px;"></div>
+    <div id="todayMatchList" style="margin-top:8px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>🏅 順位集計</h2>
+    <div id="todayRankSummary"></div>
+  </div>
+
+  <div class="card">
+    <h2>👑 勝利数まとめ</h2>
+    <div id="todayWinSummary"></div>
+  </div>
+
+  <div class="card">
+    <h2>🎯 レート合計</h2>
+    <div id="todayRateSummary"></div>
+  </div>
+
+</div>
+
+<div id="rateSettingScreen" class="screenContent">
+
+  <div class="screen-back-bar">
+    <button type="button" class="screen-back-home" onclick="showScreen('homeScreen')" aria-label="ホームに戻る">
+      <svg viewBox="0 0 24 24" fill="#1E3A5F"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+    </button>
+    <span class="screen-back-divider"></span>
+    <button type="button" class="screen-back-prev" onclick="showScreen('settingsScreen')" aria-label="前の画面に戻る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      戻る
+    </button>
+  </div>
+
+  <div class="card">
+
+    <h2>🎯 レート設定</h2>
+
+    <p class="section-note">
+      軽量級・中量級・重量級それぞれについて、順位ごとの獲得ポイントを設定します（未入力は0点）。「本日の対戦結果」画面のレート合計に使われます。協力型ゲームは集計対象外です。
+    </p>
+
+    <h3 style="margin-top:16px;">🟢 軽量級</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">1位</label><input type="number" id="rateInput_light_1"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">2位</label><input type="number" id="rateInput_light_2"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">3位</label><input type="number" id="rateInput_light_3"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">4位</label><input type="number" id="rateInput_light_4"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">5位</label><input type="number" id="rateInput_light_5"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">6位</label><input type="number" id="rateInput_light_6"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">7位</label><input type="number" id="rateInput_light_7"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">8位</label><input type="number" id="rateInput_light_8"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">9位</label><input type="number" id="rateInput_light_9"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">10位</label><input type="number" id="rateInput_light_10"></div>
+    </div>
+
+    <h3 style="margin-top:24px;">🟡 中量級</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">1位</label><input type="number" id="rateInput_medium_1"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">2位</label><input type="number" id="rateInput_medium_2"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">3位</label><input type="number" id="rateInput_medium_3"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">4位</label><input type="number" id="rateInput_medium_4"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">5位</label><input type="number" id="rateInput_medium_5"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">6位</label><input type="number" id="rateInput_medium_6"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">7位</label><input type="number" id="rateInput_medium_7"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">8位</label><input type="number" id="rateInput_medium_8"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">9位</label><input type="number" id="rateInput_medium_9"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">10位</label><input type="number" id="rateInput_medium_10"></div>
+    </div>
+
+    <h3 style="margin-top:24px;">🔴 重量級</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">1位</label><input type="number" id="rateInput_heavy_1"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">2位</label><input type="number" id="rateInput_heavy_2"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">3位</label><input type="number" id="rateInput_heavy_3"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">4位</label><input type="number" id="rateInput_heavy_4"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">5位</label><input type="number" id="rateInput_heavy_5"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">6位</label><input type="number" id="rateInput_heavy_6"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">7位</label><input type="number" id="rateInput_heavy_7"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">8位</label><input type="number" id="rateInput_heavy_8"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">9位</label><input type="number" id="rateInput_heavy_9"></div>
+      <div class="rate-position-box"><label class="section-note" style="display:block;margin:0 0 4px;">10位</label><input type="number" id="rateInput_heavy_10"></div>
+    </div>
+
+    <h3 style="margin-top:24px;">⚔️ 勝ち・負けのみゲーム</h3>
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;">
+        <label class="section-note" style="display:block;margin:0 0 4px;">勝ち</label>
+        <input type="number" id="rateInput_winLose_win" style="padding:8px;font-size:14px;text-align:center;">
+      </div>
+      <div style="flex:1;">
+        <label class="section-note" style="display:block;margin:0 0 4px;">負け</label>
+        <input type="number" id="rateInput_winLose_lose" style="padding:8px;font-size:14px;text-align:center;">
+      </div>
+    </div>
+
+    <button
+      type="button"
+      style="margin-top:24px;"
+      onclick="saveRateSettings()"
+    >
+      💾 レート設定を保存
+    </button>
+
+  </div>
+
+</div>
 
 <div id="playerManageScreen" class="screenContent">
 
@@ -2855,7 +3025,18 @@ async function loadWeightSettings() {
 
   }
 
+  if (
+    settings.rate_settings &&
+    typeof settings.rate_settings === "object"
+  ) {
+
+    rateSettings =
+      mergeRateSettings(settings.rate_settings);
+
+  }
+
   refreshAllTagUIs();
+
 
   weightSettings.lightMax =
     settings.weight_light_max;
@@ -6021,6 +6202,159 @@ let weightSettings = {
   lightMax: 30,
   mediumMax: 60
 };
+
+function createDefaultRateSettings() {
+
+  const perRank = {};
+
+  for (let rank = 1; rank <= 10; rank++) {
+    perRank[rank] = 0;
+  }
+
+  return {
+    light: { ...perRank },
+    medium: { ...perRank },
+    heavy: { ...perRank },
+    winLose: { win: 0, lose: 0 }
+  };
+
+}
+
+function mergeRateSettings(saved) {
+
+  const base =
+    createDefaultRateSettings();
+
+  ["light", "medium", "heavy"].forEach(weight => {
+
+    if (saved[weight]) {
+
+      for (let rank = 1; rank <= 10; rank++) {
+
+        if (saved[weight][rank] !== undefined) {
+          base[weight][rank] =
+            Number(saved[weight][rank]) || 0;
+        }
+
+      }
+
+    }
+
+  });
+
+  if (saved.winLose) {
+
+    base.winLose.win =
+      Number(saved.winLose.win) || 0;
+
+    base.winLose.lose =
+      Number(saved.winLose.lose) || 0;
+
+  }
+
+  return base;
+
+}
+
+let rateSettings = createDefaultRateSettings();
+
+function renderRateSettingInputs() {
+
+  ["light", "medium", "heavy"].forEach(weight => {
+
+    for (let rank = 1; rank <= 10; rank++) {
+
+      const input =
+        document.getElementById(`rateInput_${weight}_${rank}`);
+
+      if (input) {
+        input.value = rateSettings[weight][rank] || 0;
+      }
+
+    }
+
+  });
+
+  const winInput =
+    document.getElementById("rateInput_winLose_win");
+
+  const loseInput =
+    document.getElementById("rateInput_winLose_lose");
+
+  if (winInput) winInput.value = rateSettings.winLose.win || 0;
+
+  if (loseInput) loseInput.value = rateSettings.winLose.lose || 0;
+
+}
+
+async function saveRateSettings() {
+
+  const newSettings =
+    createDefaultRateSettings();
+
+  ["light", "medium", "heavy"].forEach(weight => {
+
+    for (let rank = 1; rank <= 10; rank++) {
+
+      const input =
+        document.getElementById(`rateInput_${weight}_${rank}`);
+
+      if (input) {
+        newSettings[weight][rank] =
+          Number(input.value) || 0;
+      }
+
+    }
+
+  });
+
+  const winInput =
+    document.getElementById("rateInput_winLose_win");
+
+  const loseInput =
+    document.getElementById("rateInput_winLose_lose");
+
+  newSettings.winLose.win =
+    winInput ? (Number(winInput.value) || 0) : 0;
+
+  newSettings.winLose.lose =
+    loseInput ? (Number(loseInput.value) || 0) : 0;
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("app_settings")
+      .upsert({
+        id: 1,
+        rate_settings: newSettings
+      });
+
+  if (error) {
+
+    console.error(
+      "レート設定保存エラー:",
+      error
+    );
+
+    alert(
+      "❌ レート設定の保存に失敗しました。\n\n" +
+      error.message
+    );
+
+    return;
+
+  }
+
+  rateSettings =
+    newSettings;
+
+  alert(
+    "レート設定を保存しました。"
+  );
+
+}
+
 
 let specificRouletteSelectedGames = new Set();
 let specificGameWeightFilter = new Set();
@@ -19821,6 +20155,555 @@ renderMatchHistory(gameName);
 
 }
 
+/* =========================
+   本日の対戦結果
+========================= */
+
+function getTodayDateString() {
+
+  return new Date().toLocaleDateString("en-CA");
+
+}
+
+function getTodayMatches() {
+
+  const today =
+    getTodayDateString();
+
+  return data.matches.filter(match =>
+    String(match.date).slice(0, 10) === today
+  );
+
+}
+
+function computeMatchDisplayRows(match, game) {
+
+  const direction =
+    game ? game.direction : "high";
+
+  const scores =
+    (match.scores || []).map(item => ({
+      player: item.player,
+      score: Number(item.score)
+    }));
+
+  if (direction === "co_op") {
+
+    return scores.map(item => ({
+      player: item.player,
+      rank: null,
+      displayScore:
+        item.score === 1 ? "クリア" : "失敗",
+      isWinnerFlag:
+        item.score === 1
+    }));
+
+  }
+
+  let bestScore =
+    direction === "high" ? -Infinity : Infinity;
+
+  if (
+    direction === "high" ||
+    direction === "low"
+  ) {
+
+    scores.forEach(item => {
+
+      if (direction === "high") {
+
+        if (item.score > bestScore) {
+          bestScore = item.score;
+        }
+
+      } else {
+
+        if (item.score < bestScore) {
+          bestScore = item.score;
+        }
+
+      }
+
+    });
+
+  }
+
+  const sorted =
+    direction === "win_lose"
+      ? [...scores].sort((a, b) => b.score - a.score)
+      : [...scores].sort((a, b) =>
+          direction === "high"
+            ? b.score - a.score
+            : a.score - b.score
+        );
+
+  return sorted.map(item => {
+
+    let rank;
+
+    if (direction === "win_lose") {
+      rank = item.score === 1 ? 1 : 2;
+    } else if (direction === "rank") {
+      rank = item.score;
+    } else if (direction === "low") {
+      rank =
+        scores.filter(s => s.score < item.score).length + 1;
+    } else {
+      rank =
+        scores.filter(s => s.score > item.score).length + 1;
+    }
+
+    const isWinnerFlag =
+      direction === "win_lose"
+        ? item.score === 1
+        : item.score === bestScore;
+
+    let displayScore;
+
+    if (direction === "rank") {
+      displayScore = `${item.score}位`;
+    } else if (direction === "win_lose") {
+      displayScore = item.score === 1 ? "勝ち" : "負け";
+    } else {
+      displayScore = `${item.score}点`;
+    }
+
+    return {
+      player: item.player,
+      rank: rank,
+      displayScore: displayScore,
+      isWinnerFlag: isWinnerFlag
+    };
+
+  });
+
+}
+
+function renderTodayMatchList() {
+
+  const container =
+    document.getElementById("todayMatchList");
+
+  const dateLabel =
+    document.getElementById("todayResultsDate");
+
+  if (!container) return;
+
+  const todayMatches =
+    getTodayMatches();
+
+  if (dateLabel) {
+
+    dateLabel.textContent =
+      `${getTodayDateString()} の記録`;
+
+  }
+
+  container.innerHTML = "";
+
+  if (todayMatches.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">本日はまだ対戦記録がありません</div>';
+
+    return;
+
+  }
+
+  todayMatches.forEach(match => {
+
+    const game =
+      data.games.find(g => g.name === match.game);
+
+    const rows =
+      computeMatchDisplayRows(match, game);
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.className =
+      "history-item";
+
+    const titleRow =
+      document.createElement("div");
+
+    titleRow.style.display =
+      "flex";
+
+    titleRow.style.alignItems =
+      "center";
+
+    titleRow.style.gap =
+      "8px";
+
+    titleRow.style.marginBottom =
+      "4px";
+
+    if (game && game.image) {
+
+      const thumb =
+        document.createElement("img");
+
+      thumb.src =
+        game.image;
+
+      thumb.className =
+        "game-thumb";
+
+      titleRow.appendChild(thumb);
+
+    }
+
+    const nameEl =
+      document.createElement("div");
+
+    nameEl.style.fontWeight =
+      "700";
+
+    nameEl.textContent =
+      match.game;
+
+    titleRow.appendChild(nameEl);
+
+    wrapper.appendChild(titleRow);
+
+    rows.forEach(row => {
+
+      const scoreRow =
+        document.createElement("div");
+
+      scoreRow.className =
+        "history-score";
+
+      if (row.isWinnerFlag) {
+        scoreRow.classList.add("history-winner");
+      }
+
+      const nameSpan =
+        document.createElement("span");
+
+      nameSpan.textContent =
+        row.isWinnerFlag
+          ? `🥇 ${row.player}`
+          : row.player;
+
+      const scoreSpan =
+        document.createElement("strong");
+
+      scoreSpan.textContent =
+        row.displayScore;
+
+      scoreRow.appendChild(nameSpan);
+
+      scoreRow.appendChild(scoreSpan);
+
+      wrapper.appendChild(scoreRow);
+
+    });
+
+    container.appendChild(wrapper);
+
+  });
+
+}
+
+function renderTodayRankSummary() {
+
+  const container =
+    document.getElementById("todayRankSummary");
+
+  if (!container) return;
+
+  const todayMatches =
+    getTodayMatches();
+
+  const rankCounts = {};
+
+  let maxRank = 0;
+
+  todayMatches.forEach(match => {
+
+    const game =
+      data.games.find(g => g.name === match.game);
+
+    if (!game || game.direction === "co_op") return;
+
+    const rows =
+      computeMatchDisplayRows(match, game);
+
+    rows.forEach(row => {
+
+      if (!rankCounts[row.player]) {
+        rankCounts[row.player] = {};
+      }
+
+      rankCounts[row.player][row.rank] =
+        (rankCounts[row.player][row.rank] || 0) + 1;
+
+      if (row.rank > maxRank) {
+        maxRank = row.rank;
+      }
+
+    });
+
+  });
+
+  container.innerHTML = "";
+
+  const players =
+    Object.keys(rankCounts);
+
+  if (players.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">対象の対戦記録がありません</div>';
+
+    return;
+
+  }
+
+  players
+    .sort((a, b) =>
+      (rankCounts[b][1] || 0) - (rankCounts[a][1] || 0)
+    )
+    .forEach(player => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "player-detail-item";
+
+      const nameEl =
+        document.createElement("span");
+
+      nameEl.textContent =
+        player;
+
+      const detailEl =
+        document.createElement("span");
+
+      const parts = [];
+
+      for (let rank = 1; rank <= maxRank; rank++) {
+
+        const count =
+          rankCounts[player][rank] || 0;
+
+        if (count > 0) {
+          parts.push(`${rank}位×${count}`);
+        }
+
+      }
+
+      detailEl.textContent =
+        parts.join("　");
+
+      row.appendChild(nameEl);
+
+      row.appendChild(detailEl);
+
+      container.appendChild(row);
+
+    });
+
+}
+
+function renderTodayWinSummary() {
+
+  const container =
+    document.getElementById("todayWinSummary");
+
+  if (!container) return;
+
+  const todayMatches =
+    getTodayMatches();
+
+  const winCounts = {};
+
+  todayMatches.forEach(match => {
+
+    (match.scores || []).forEach(item => {
+
+      if (isWinner(match, item.player)) {
+
+        winCounts[item.player] =
+          (winCounts[item.player] || 0) + 1;
+
+      }
+
+    });
+
+  });
+
+  container.innerHTML = "";
+
+  const players =
+    Object.keys(winCounts);
+
+  if (players.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">本日の勝利記録はありません</div>';
+
+    return;
+
+  }
+
+  players
+    .sort((a, b) => winCounts[b] - winCounts[a])
+    .forEach(player => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "player-detail-item";
+
+      const nameEl =
+        document.createElement("span");
+
+      nameEl.textContent =
+        player;
+
+      const scoreEl =
+        document.createElement("strong");
+
+      scoreEl.textContent =
+        `${winCounts[player]}勝`;
+
+      row.appendChild(nameEl);
+
+      row.appendChild(scoreEl);
+
+      container.appendChild(row);
+
+    });
+
+}
+
+function renderTodayRateSummary() {
+
+  const container =
+    document.getElementById("todayRateSummary");
+
+  if (!container) return;
+
+  const todayMatches =
+    getTodayMatches();
+
+  const points = {};
+
+  todayMatches.forEach(match => {
+
+    const game =
+      data.games.find(g => g.name === match.game);
+
+    if (!game || game.direction === "co_op") return;
+
+    const rows =
+      computeMatchDisplayRows(match, game);
+
+    rows.forEach(row => {
+
+      let earned = 0;
+
+      if (game.direction === "win_lose") {
+
+        earned =
+          row.isWinnerFlag
+            ? rateSettings.winLose.win
+            : rateSettings.winLose.lose;
+
+      } else {
+
+        const weight =
+          getGameWeightClass(game.playTime);
+
+        if (
+          weight &&
+          rateSettings[weight] &&
+          rateSettings[weight][row.rank] !== undefined
+        ) {
+
+          earned =
+            rateSettings[weight][row.rank];
+
+        }
+
+      }
+
+      points[row.player] =
+        (points[row.player] || 0) + earned;
+
+    });
+
+  });
+
+  container.innerHTML = "";
+
+  const players =
+    Object.keys(points);
+
+  if (players.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">対象の対戦記録がありません</div>';
+
+    return;
+
+  }
+
+  const hasAnyRate =
+    players.some(player => points[player] !== 0);
+
+  if (!hasAnyRate) {
+
+    const note =
+      document.createElement("div");
+
+    note.className =
+      "section-note";
+
+    note.textContent =
+      "レートが設定されていません。設定 → レート設定 から点数を設定できます。";
+
+    container.appendChild(note);
+
+  }
+
+  players
+    .sort((a, b) => points[b] - points[a])
+    .forEach(player => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "player-detail-item";
+
+      const nameEl =
+        document.createElement("span");
+
+      nameEl.textContent =
+        player;
+
+      const scoreEl =
+        document.createElement("strong");
+
+      scoreEl.textContent =
+        `${points[player]}点`;
+
+      row.appendChild(nameEl);
+
+      row.appendChild(scoreEl);
+
+      container.appendChild(row);
+
+    });
+
+}
+
 function normalizeGameSearch(text) {
 
   return String(text)
@@ -20983,6 +21866,25 @@ if (screenName === "playerManageScreen") {
 if (screenName === "tagManageScreen") {
   renderTagManageList();
 }
+
+if (screenName === "todayResultsScreen") {
+
+  renderTodayMatchList();
+
+  renderTodayRankSummary();
+
+  renderTodayWinSummary();
+
+  renderTodayRateSummary();
+
+}
+
+if (screenName === "rateSettingScreen") {
+
+  renderRateSettingInputs();
+
+}
+
 
 
     // ランキング画面

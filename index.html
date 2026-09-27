@@ -2365,10 +2365,30 @@ button.small {
   </div>
 
   <div class="card">
-    <h2>📋 本日の対戦結果</h2>
-    <div id="todayResultsDate" class="section-note" style="margin-top:-10px;"></div>
-    <div id="todayMatchList" style="margin-top:8px;"></div>
+
+    <h2 id="todayResultsTitle">📋 本日の対戦結果</h2>
+
+    <div style="display:flex;align-items:center;gap:8px;margin-top:-6px;margin-bottom:8px;">
+
+      <input
+        type="date"
+        id="todayResultsDateInput"
+        style="flex:1;"
+      >
+
+      <button
+        type="button"
+        onclick="jumpToTodayResults()"
+        style="width:auto;flex-shrink:0;padding:10px 14px;font-size:12px;"
+      >
+        今日
+      </button>
+
+    </div>
+
+    <div id="todayMatchList"></div>
   </div>
+
 
   <div class="card">
     <h2>🏅 順位集計</h2>
@@ -20168,14 +20188,54 @@ function getTodayDateString() {
 
 }
 
+let todayResultsSelectedDate =
+  getTodayDateString();
+
 function getTodayMatches() {
 
-  const today =
+  return data.matches.filter(match =>
+    String(match.date).slice(0, 10) === todayResultsSelectedDate
+  );
+
+}
+
+function refreshTodayResultsScreen() {
+
+  const title =
+    document.getElementById("todayResultsTitle");
+
+  if (title) {
+
+    title.textContent =
+      todayResultsSelectedDate === getTodayDateString()
+        ? "📋 本日の対戦結果"
+        : `📋 ${todayResultsSelectedDate} の対戦結果`;
+
+  }
+
+  renderTodayMatchList();
+
+  renderTodayRankSummary();
+
+  renderTodayWinSummary();
+
+  renderTodayRateSummary();
+
+}
+
+function jumpToTodayResults() {
+
+  todayResultsSelectedDate =
     getTodayDateString();
 
-  return data.matches.filter(match =>
-    String(match.date).slice(0, 10) === today
-  );
+  const dateInput =
+    document.getElementById("todayResultsDateInput");
+
+  if (dateInput) {
+    dateInput.value = todayResultsSelectedDate;
+  }
+
+  refreshTodayResultsScreen();
 
 }
 
@@ -20287,31 +20347,22 @@ function renderTodayMatchList() {
   const container =
     document.getElementById("todayMatchList");
 
-  const dateLabel =
-    document.getElementById("todayResultsDate");
-
   if (!container) return;
 
   const todayMatches =
     getTodayMatches();
-
-  if (dateLabel) {
-
-    dateLabel.textContent =
-      `${getTodayDateString()} の記録`;
-
-  }
 
   container.innerHTML = "";
 
   if (todayMatches.length === 0) {
 
     container.innerHTML =
-      '<div class="empty">本日はまだ対戦記録がありません</div>';
+      '<div class="empty">対戦記録がありません</div>';
 
     return;
 
   }
+
 
   todayMatches.forEach(match => {
 
@@ -21872,15 +21923,20 @@ if (screenName === "tagManageScreen") {
 
 if (screenName === "todayResultsScreen") {
 
-  renderTodayMatchList();
+  todayResultsSelectedDate =
+    getTodayDateString();
 
-  renderTodayRankSummary();
+  const dateInput =
+    document.getElementById("todayResultsDateInput");
 
-  renderTodayWinSummary();
+  if (dateInput) {
+    dateInput.value = todayResultsSelectedDate;
+  }
 
-  renderTodayRateSummary();
+  refreshTodayResultsScreen();
 
 }
+
 
 if (screenName === "rateSettingScreen") {
 
@@ -21888,7 +21944,29 @@ if (screenName === "rateSettingScreen") {
 
 }
 
+const todayResultsDateInputEl =
+  document.getElementById("todayResultsDateInput");
 
+if (
+  todayResultsDateInputEl &&
+  !todayResultsDateInputEl.dataset.bound
+) {
+
+  todayResultsDateInputEl.dataset.bound =
+    "true";
+
+  todayResultsDateInputEl.addEventListener("change", () => {
+
+    if (!todayResultsDateInputEl.value) return;
+
+    todayResultsSelectedDate =
+      todayResultsDateInputEl.value;
+
+    refreshTodayResultsScreen();
+
+  });
+
+}
 
     // ランキング画面
   if (screenName === "rankingScreen") {

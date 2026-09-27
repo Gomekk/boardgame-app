@@ -6354,13 +6354,15 @@ async function saveRateSettings() {
   newSettings.winLose.lose =
     loseInput ? (Number(loseInput.value) || 0) : 0;
 
-  const {
+    const {
     error
   } =
     await supabaseClient
       .from("app_settings")
       .upsert({
         id: 1,
+        weight_light_max: weightSettings.lightMax,
+        weight_medium_max: weightSettings.mediumMax,
         rate_settings: newSettings
       });
 

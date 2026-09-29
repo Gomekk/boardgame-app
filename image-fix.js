@@ -8,6 +8,19 @@
 
 (function () {
 
+  let started = false;
+
+  function start() {
+
+  if (started) return;
+
+  if (typeof supabaseClient === "undefined") {
+    console.error("image-fix.js: supabaseClient が見つかりません。読み込み順を確認してください。");
+    return;
+  }
+
+  started = true;
+
   const BUCKET = "game-images";
   const MAX_SIZE = 256;
   const CACHE_SECONDS = "31536000"; // 1年
@@ -15,11 +28,6 @@
   const ALREADY_SMALL_BYTES = 60 * 1024;
   const PUBLIC_MARKER =
     "/storage/v1/object/public/" + BUCKET + "/";
-
-  if (typeof supabaseClient === "undefined") {
-    console.error("image-fix.js: supabaseClient が見つかりません。読み込み順を確認してください。");
-    return;
-  }
 
   /* ---------- 画像の縮小 ---------- */
 
@@ -86,12 +94,18 @@
 
   /* ---------- アップロード時に自動で縮小＋長期キャッシュ ---------- */
 
-  const storage = supabaseClient.storage;
-  const originalFrom = storage.from.bind(storage);
+  /*
+   * supabaseClient.storage は参照するたびに新しく作られるため、
+   * 個々のインスタンスではなく共通の設計図（prototype）を書き換える
+   */
+  const storageProto =
+    Object.getPrototypeOf(supabaseClient.storage);
 
-  storage.from = function (bucketId) {
+  const originalFrom = storageProto.from;
 
-    const bucketApi = originalFrom(bucketId);
+  storageProto.from = function (bucketId) {
+
+    const bucketApi = originalFrom.call(this, bucketId);
 
     if (bucketId !== BUCKET) return bucketApi;
 
@@ -289,5 +303,19 @@
   }
 
   addOptimizeButton();
+
+  console.log("image-fix.js: 読み込み完了");
+
+  }
+
+  /*
+   * 読み込み位置がどこでも動くよう、
+   * ページの読み込み完了後にも実行を試みる
+   */
+  start();
+
+  if (!started) {
+    window.addEventListener("load", start);
+  }
 
 })();

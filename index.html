@@ -1656,6 +1656,25 @@ button.small {
   opacity: 0;
 }
 
+.shake-dice-rolling.tumbling {
+  animation: dice-blur-spin 0.12s linear infinite;
+}
+
+@keyframes dice-blur-spin {
+  0% {
+    rotate: 0deg;
+    filter: blur(0.6px) drop-shadow(0 6px 8px rgba(0,0,0,0.3));
+  }
+  50% {
+    rotate: 180deg;
+    filter: blur(1.8px) drop-shadow(0 6px 8px rgba(0,0,0,0.3));
+  }
+  100% {
+    rotate: 360deg;
+    filter: blur(0.6px) drop-shadow(0 6px 8px rgba(0,0,0,0.3));
+  }
+}
+
 /* =========================
    下部タブバー
 ========================= */
@@ -21697,23 +21716,11 @@ function showShakeDiceOverlay() {
     "shake-dice-rolling";
 
   dice.textContent =
-    SHAKE_DICE_FACES[0];
+    "🎲";
 
   document.body.appendChild(dice);
 
-  let cycling = true;
-
-  const faceTimer =
-    setInterval(() => {
-
-      if (!cycling) return;
-
-      dice.textContent =
-        SHAKE_DICE_FACES[
-          Math.floor(Math.random() * 6)
-        ];
-
-    }, 60);
+  dice.classList.add("tumbling");
 
   const midX1 =
     startX + (landX - startX) * 0.35;
@@ -21770,14 +21777,7 @@ function showShakeDiceOverlay() {
 
   animation.onfinish = () => {
 
-    cycling = false;
-
-    clearInterval(faceTimer);
-
-    dice.textContent =
-      SHAKE_DICE_FACES[
-        Math.floor(Math.random() * 6)
-      ];
+    dice.classList.remove("tumbling");
 
     shakeDiceFadeTimer =
       setTimeout(() => {

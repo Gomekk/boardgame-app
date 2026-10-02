@@ -3368,6 +3368,43 @@ body.has-bottom-nav .container {
 <script>
 
 /* =========================
+   下部タブバー（画面切り替えより前に定義）
+========================= */
+
+const BOTTOM_NAV_PARENT_MAP = {
+  homeScreen: "homeScreen",
+  recordScreen: "recordScreen",
+  gameRankingScreen: "gameRankingScreen",
+  rankingScreen: "rankingScreen",
+  settingsScreen: "settingsScreen",
+  gameManageScreen: "settingsScreen",
+  weightSettingScreen: "settingsScreen",
+  tagManageScreen: "settingsScreen",
+  playerManageScreen: "settingsScreen",
+  backupScreen: "settingsScreen",
+  rateSettingScreen: "settingsScreen",
+  todayResultsScreen: "homeScreen"
+};
+
+function updateBottomNavActive(screenName) {
+
+  const activeTab =
+    BOTTOM_NAV_PARENT_MAP[screenName] || "homeScreen";
+
+  document
+    .querySelectorAll("#appBottomNav .app-bottom-nav-item")
+    .forEach(item => {
+
+      item.classList.toggle(
+        "active",
+        item.dataset.tab === activeTab
+      );
+
+    });
+
+}
+
+/* =========================
    データ読み込み
 ========================= */
 
@@ -22254,39 +22291,6 @@ function openRecordScreen() {
 /* =========================
    画面切り替え
 ========================= */
-
-const BOTTOM_NAV_PARENT_MAP = {
-  homeScreen: "homeScreen",
-  recordScreen: "recordScreen",
-  gameRankingScreen: "gameRankingScreen",
-  rankingScreen: "rankingScreen",
-  settingsScreen: "settingsScreen",
-  gameManageScreen: "settingsScreen",
-  weightSettingScreen: "settingsScreen",
-  tagManageScreen: "settingsScreen",
-  playerManageScreen: "settingsScreen",
-  backupScreen: "settingsScreen",
-  rateSettingScreen: "settingsScreen",
-  todayResultsScreen: "homeScreen"
-};
-
-function updateBottomNavActive(screenName) {
-
-  const activeTab =
-    BOTTOM_NAV_PARENT_MAP[screenName] || "homeScreen";
-
-  document
-    .querySelectorAll("#appBottomNav .app-bottom-nav-item")
-    .forEach(item => {
-
-      item.classList.toggle(
-        "active",
-        item.dataset.tab === activeTab
-      );
-
-    });
-
-}
 
 function showScreen(screenName) {
 

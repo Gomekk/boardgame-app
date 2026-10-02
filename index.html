@@ -1652,32 +1652,6 @@ button.small {
   transition: opacity 0.4s ease;
 }
 
-.shake-dice-result-badge {
-  position: absolute;
-  top: -6px;
-  right: -8px;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 900;
-  color: #fff;
-  background: linear-gradient(155deg, #F4D879 0%, var(--gold) 55%, #8F6E12 100%);
-  border: 2px solid var(--navy);
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  opacity: 0;
-  transform: scale(0.4);
-  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.17, 0.67, 0.5, 1.4);
-}
-
-.shake-dice-result-badge.visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
 .shake-dice-rolling.fade-out {
   opacity: 0;
 }
@@ -21723,17 +21697,23 @@ function showShakeDiceOverlay() {
     "shake-dice-rolling";
 
   dice.textContent =
-    "🎲";
+    SHAKE_DICE_FACES[0];
 
   document.body.appendChild(dice);
 
-  const resultBadge =
-    document.createElement("span");
+  let cycling = true;
 
-  resultBadge.className =
-    "shake-dice-result-badge";
+  const faceTimer =
+    setInterval(() => {
 
-  dice.appendChild(resultBadge);
+      if (!cycling) return;
+
+      dice.textContent =
+        SHAKE_DICE_FACES[
+          Math.floor(Math.random() * 6)
+        ];
+
+    }, 60);
 
   const midX1 =
     startX + (landX - startX) * 0.35;
@@ -21790,15 +21770,14 @@ function showShakeDiceOverlay() {
 
   animation.onfinish = () => {
 
-    const resultValue =
-      1 + Math.floor(Math.random() * 6);
+    cycling = false;
 
-    resultBadge.textContent =
-      String(resultValue);
+    clearInterval(faceTimer);
 
-    requestAnimationFrame(() => {
-      resultBadge.classList.add("visible");
-    });
+    dice.textContent =
+      SHAKE_DICE_FACES[
+        Math.floor(Math.random() * 6)
+      ];
 
     shakeDiceFadeTimer =
       setTimeout(() => {

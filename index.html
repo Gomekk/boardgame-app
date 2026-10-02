@@ -1262,6 +1262,49 @@ button.small {
   50% { transform: translateY(-6px); }
 }
 
+.deco-dice {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  font-size: 22px;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+  animation: dice-roll-in 4.5s ease-in-out infinite;
+}
+
+@keyframes dice-roll-in {
+  0% { transform: translateX(-70px) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  45% { transform: translateX(0) rotate(620deg); opacity: 1; }
+  70%, 100% { transform: translateX(0) rotate(620deg); opacity: 1; }
+}
+
+.deco-dice-right {
+  animation-name: dice-roll-in-right;
+}
+
+@keyframes dice-roll-in-right {
+  0% { transform: translateX(70px) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  45% { transform: translateX(0) rotate(-620deg); opacity: 1; }
+  70%, 100% { transform: translateX(0) rotate(-620deg); opacity: 1; }
+}
+
+/* ランキングカードの登場アニメーション */
+.home-ranking-card {
+  animation: card-slide-in 0.6s cubic-bezier(0.2, 0.8, 0.3, 1.1) backwards;
+}
+
+.home-ranking-card:nth-child(1) { animation-delay: 0s; }
+.home-ranking-card:nth-child(2) { animation-delay: 0.08s; }
+.home-ranking-card:nth-child(3) { animation-delay: 0.16s; }
+.home-ranking-card:nth-child(4) { animation-delay: 0.24s; }
+.home-ranking-card:nth-child(5) { animation-delay: 0.32s; }
+
+@keyframes card-slide-in {
+  0% { transform: translateY(26px) rotate(-2deg); opacity: 0; }
+  100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+}
+
 .app-header-card {
   position: relative;
   overflow: hidden;
@@ -1335,6 +1378,41 @@ button.small {
   border-radius: 999px;
   background: linear-gradient(90deg, #E8637A, var(--gold), #3FB6A8);
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* 流れる文字幕（マーキー） */
+.marquee-banner {
+  position: relative;
+  overflow: hidden;
+  background: var(--navy-deep);
+  border-radius: var(--radius-sm);
+  padding: 9px 0;
+  margin: 10px -16px 14px;
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.3);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 28px;
+  animation: marquee-scroll 16s linear infinite;
+}
+
+.marquee-track span {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: #F4D879;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.marquee-track span.pink { color: #F28FA3; }
+.marquee-track span.teal { color: #6FE3D4; }
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .section-heading {
@@ -1670,6 +1748,8 @@ body.has-bottom-nav .container {
     <span class="deco-sparkle" style="top:40%;right:12px;font-size:14px;animation-duration:2.3s;">★</span>
     <span class="deco-dot" style="top:12px;left:62%;width:8px;height:8px;background:#E8637A;animation-duration:2.8s;"></span>
     <span class="deco-dot" style="bottom:14px;left:16px;width:6px;height:6px;background:#3FB6A8;animation-duration:3.6s;animation-delay:-1s;"></span>
+    <span class="deco-dice" style="top:50px;left:10px;">🎲</span>
+    <span class="deco-dice deco-dice-right" style="bottom:10px;right:90px;animation-delay:-2.2s;">🎲</span>
 
     <div class="app-header-top">
       <div>
@@ -1693,6 +1773,23 @@ body.has-bottom-nav .container {
 
     <div class="app-header-divider"></div>
 
+  </div>
+
+  <div class="marquee-banner">
+    <div class="marquee-track">
+      <span>🎲 サイコロをふれ</span>
+      <span class="pink">✊ じゃんけん</span>
+      <span class="teal">🏆 王者決定</span>
+      <span>📝 得点を記録せよ</span>
+      <span class="pink">🔥 連勝記録更新中</span>
+      <span class="teal">🎉 今日は誰が勝つ？</span>
+      <span>🎲 サイコロをふれ</span>
+      <span class="pink">✊ じゃんけん</span>
+      <span class="teal">🏆 王者決定</span>
+      <span>📝 得点を記録せよ</span>
+      <span class="pink">🔥 連勝記録更新中</span>
+      <span class="teal">🎉 今日は誰が勝つ？</span>
+    </div>
   </div>
 
   <!-- メインCTA -->

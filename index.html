@@ -51,6 +51,12 @@ body {
   font-family: "Zen Kaku Gothic New", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
     "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   background:
+    repeating-linear-gradient(
+      -35deg,
+      rgba(203,161,53,0.05) 0px, rgba(203,161,53,0.05) 8px,
+      transparent 8px, transparent 22px
+    ),
+    radial-gradient(circle, rgba(36,64,107,0.06) 2.5px, transparent 2.5px) 0 0 / 26px 26px,
     radial-gradient(1200px 500px at 50% -120px, rgba(203,161,53,0.10), transparent 60%),
     var(--bg);
   background-attachment: fixed;
@@ -89,19 +95,19 @@ header p {
   border-radius: var(--radius-lg);
   padding: 20px;
   margin-bottom: 16px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border);
+  box-shadow: 0 3px 0 rgba(19,27,46,0.1), var(--shadow-card);
+  border: 2px solid var(--navy);
 }
 
 .card::before {
   content: "";
   position: absolute;
-  top: 0;
+  top: -2px;
   left: 20px;
   right: 20px;
-  height: 1.5px;
-  background: linear-gradient(90deg, transparent, rgba(203,161,53,0.8), transparent);
-  box-shadow: 0 0 8px rgba(203,161,53,0.35);
+  height: 3px;
+  background: var(--accent-gradient);
+  border-radius: 0 0 3px 3px;
 }
 
 
@@ -111,6 +117,26 @@ h2 {
   font-weight: 700;
   margin: 0 0 14px;
   letter-spacing: 0.01em;
+}
+
+.card > h2:first-child,
+.card h2.deco-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+}
+
+.card > h2:first-child::before,
+.card h2.deco-heading::before {
+  content: "";
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--gold);
+  border-radius: 2px;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 4px rgba(203,161,53,0.5);
 }
 
 h3 {
@@ -148,13 +174,13 @@ select:focus {
 button {
   position: relative;
   overflow: hidden;
-  border: none;
+  border: 2px solid var(--navy-deep);
   background: linear-gradient(155deg, var(--navy-light) 0%, var(--navy) 55%, var(--navy-deep) 100%);
   color: white;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   letter-spacing: 0.02em;
-  box-shadow: var(--shadow-btn);
+  box-shadow: 0 4px 0 var(--navy-deep), var(--shadow-btn);
   transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s ease;
 }
 
@@ -164,6 +190,11 @@ button::before {
   inset: 0;
   background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 55%);
   pointer-events: none;
+}
+
+button:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--navy-deep), 0 1px 4px rgba(22,35,63,0.18);
 }
 
 /*
@@ -262,16 +293,16 @@ button::before {
   font-size: 13px;
 }
 
-button:active {
-  transform: translateY(1px) scale(0.99);
-  box-shadow: 0 1px 4px rgba(22,35,63,0.18);
-}
-
 button.secondary {
   background: #EDEBE4;
   color: var(--navy);
   box-shadow: none;
-  border: 1px solid rgba(22,35,63,0.10);
+  border: 2px solid var(--navy);
+}
+
+button.secondary:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 button.danger {

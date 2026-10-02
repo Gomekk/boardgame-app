@@ -1232,11 +1232,16 @@ button.small {
   opacity: 0.8;
   font-size: 18px;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
-  animation: twinkle 1.8s ease-in-out infinite;
+  animation: twinkle 1.8s ease-in-out infinite, wander-a 7s ease-in-out infinite;
 }
 
 .deco-sparkle:nth-of-type(odd) {
-  animation-delay: -0.7s;
+  animation-delay: -0.7s, -3.3s;
+  animation-name: twinkle, wander-b;
+}
+
+.deco-sparkle:nth-of-type(3n) {
+  animation-duration: 1.8s, 9s;
 }
 
 .deco-dot {
@@ -1244,7 +1249,7 @@ button.small {
   pointer-events: none;
   z-index: 0;
   border-radius: 50%;
-  animation: float-bob 3.2s ease-in-out infinite;
+  animation: wander-c 5.5s ease-in-out infinite;
 }
 
 @keyframes wiggle {
@@ -1253,40 +1258,34 @@ button.small {
 }
 
 @keyframes twinkle {
-  0%, 100% { transform: scale(0.85) rotate(0deg); opacity: 0.5; }
-  50% { transform: scale(1.25) rotate(18deg); opacity: 1; }
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
-@keyframes float-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+/* 縦横無尽に動き回るための複数パターン */
+@keyframes wander-a {
+  0%   { translate: 0 0; scale: 1; }
+  20%  { translate: 44px -26px; scale: 1.2; }
+  42%  { translate: 92px 8px; scale: 0.85; }
+  64%  { translate: 48px 42px; scale: 1.15; }
+  85%  { translate: -14px 18px; scale: 0.9; }
+  100% { translate: 0 0; scale: 1; }
 }
 
-.deco-dice {
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
-  font-size: 22px;
-  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
-  animation: dice-roll-in 4.5s ease-in-out infinite;
+@keyframes wander-b {
+  0%   { translate: 0 0; scale: 1; }
+  25%  { translate: -52px 22px; scale: 0.9; }
+  50%  { translate: -18px -32px; scale: 1.2; }
+  75%  { translate: 32px -10px; scale: 0.85; }
+  100% { translate: 0 0; scale: 1; }
 }
 
-@keyframes dice-roll-in {
-  0% { transform: translateX(-70px) rotate(0deg); opacity: 0; }
-  12% { opacity: 1; }
-  45% { transform: translateX(0) rotate(620deg); opacity: 1; }
-  70%, 100% { transform: translateX(0) rotate(620deg); opacity: 1; }
-}
-
-.deco-dice-right {
-  animation-name: dice-roll-in-right;
-}
-
-@keyframes dice-roll-in-right {
-  0% { transform: translateX(70px) rotate(0deg); opacity: 0; }
-  12% { opacity: 1; }
-  45% { transform: translateX(0) rotate(-620deg); opacity: 1; }
-  70%, 100% { transform: translateX(0) rotate(-620deg); opacity: 1; }
+@keyframes wander-c {
+  0%   { translate: 0 0; scale: 1; }
+  30%  { translate: 60px 28px; scale: 1.3; }
+  55%  { translate: 18px -24px; scale: 0.8; }
+  80%  { translate: -42px 14px; scale: 1.1; }
+  100% { translate: 0 0; scale: 1; }
 }
 
 /* ランキングカードの登場アニメーション */
@@ -1463,6 +1462,20 @@ button.small {
   background-repeat: repeat-x;
 }
 
+.cta-row-big {
+  display: flex;
+  gap: 10px;
+}
+
+.cta-row-big .cta-button-big {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 6px;
+  font-size: 13px;
+  gap: 6px;
+  white-space: nowrap;
+}
+
 .cta-button-big {
   position: relative;
   overflow: hidden;
@@ -1524,7 +1537,12 @@ button.small {
   pointer-events: none;
   color: #fff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.25);
-  animation: twinkle 1.6s ease-in-out infinite;
+  animation: cta-twinkle 1.6s ease-in-out infinite;
+}
+
+@keyframes cta-twinkle {
+  0%, 100% { transform: scale(0.85) rotate(0deg); opacity: 0.5; }
+  50% { transform: scale(1.25) rotate(18deg); opacity: 1; }
 }
 
 .cta-button-big .cta-bolt {
@@ -1544,30 +1562,21 @@ button.small {
   box-shadow: 0 2px 0 var(--navy), 0 4px 10px rgba(19,27,46,0.24);
 }
 
-.cta-row-secondary {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 6px;
+.cta-button-big-green {
+  color: #163B24;
+  background:
+    repeating-linear-gradient(
+      -35deg,
+      rgba(255,255,255,0.22) 0px, rgba(255,255,255,0.22) 6px,
+      transparent 6px, transparent 16px
+    ),
+    linear-gradient(155deg, #9BE39C 0%, #4CAF50 55%, #1F6B2C 100%);
+  border-color: #1B4D26;
+  box-shadow: 0 6px 0 #1B4D26, 0 10px 18px rgba(19,27,46,0.28);
 }
 
-.cta-button-secondary {
-  flex: 1;
-  padding: 13px 8px;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--navy);
-  background: var(--surface);
-  border: 2px solid var(--navy);
-  border-radius: var(--radius-md);
-  box-shadow: 0 3px 0 rgba(19,27,46,0.5);
-  margin-bottom: 0;
-}
-
-.cta-button-secondary::before { content: none; }
-
-.cta-button-secondary:active {
-  transform: translateY(2px);
-  box-shadow: none;
+.cta-button-big-green:active {
+  box-shadow: 0 2px 0 #1B4D26, 0 4px 10px rgba(19,27,46,0.24);
 }
 
 /* 爆発バッジ（順位・番号） */
@@ -1619,6 +1628,61 @@ button.small {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* =========================
+   隠しコマンド：シェイクでサイコロ
+========================= */
+
+.shake-dice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(11,17,32,0.15);
+  transition: opacity 0.25s ease;
+}
+
+.shake-dice-overlay.visible {
+  opacity: 1;
+}
+
+.shake-dice-face {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 96px;
+  line-height: 1;
+  color: var(--navy-deep);
+  background: var(--surface);
+  border: 4px solid var(--navy);
+  border-radius: 28px;
+  box-shadow: 0 16px 30px rgba(0,0,0,0.35);
+}
+
+.shake-dice-face.rolling {
+  animation: shake-dice-roll 0.08s linear infinite;
+}
+
+@keyframes shake-dice-roll {
+  0% { transform: rotate(-10deg) scale(0.94); }
+  50% { transform: rotate(10deg) scale(1.06); }
+  100% { transform: rotate(-10deg) scale(0.94); }
+}
+
+.shake-dice-face.settle {
+  animation: shake-dice-settle 0.45s cubic-bezier(0.17, 0.67, 0.5, 1.4);
+}
+
+@keyframes shake-dice-settle {
+  0% { transform: scale(1.35) rotate(14deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
 /* =========================
@@ -1748,8 +1812,7 @@ body.has-bottom-nav .container {
     <span class="deco-sparkle" style="top:40%;right:12px;font-size:14px;animation-duration:2.3s;">★</span>
     <span class="deco-dot" style="top:12px;left:62%;width:8px;height:8px;background:#E8637A;animation-duration:2.8s;"></span>
     <span class="deco-dot" style="bottom:14px;left:16px;width:6px;height:6px;background:#3FB6A8;animation-duration:3.6s;animation-delay:-1s;"></span>
-    <span class="deco-dice" style="top:50px;left:10px;">🎲</span>
-    <span class="deco-dice deco-dice-right" style="bottom:10px;right:90px;animation-delay:-2.2s;">🎲</span>
+
 
     <div class="app-header-top">
       <div>
@@ -1792,34 +1855,30 @@ body.has-bottom-nav .container {
     </div>
   </div>
 
-  <!-- メインCTA -->
-  <button
-    type="button"
-    class="cta-button-big"
-    onclick="openRecordScreen()"
-  >
-    <span class="cta-sparkle" style="top:6px;left:14px;font-size:13px;">✦</span>
-    <span class="cta-sparkle" style="bottom:6px;right:46px;font-size:11px;animation-delay:-0.8s;">✦</span>
-    <span class="cta-sparkle" style="top:8px;right:16px;font-size:15px;animation-delay:-0.4s;">★</span>
-    <span class="cta-bolt" style="bottom:4px;left:40px;font-size:14px;">⚡</span>
-    📝 ゲームを記録する
-  </button>
-
-  <div class="cta-row-secondary">
+  <!-- メインアクション -->
+  <div class="cta-row-big">
 
     <button
       type="button"
-      class="cta-button-secondary"
+      class="cta-button-big"
       onclick="randomSelectGame()"
     >
+      <span class="cta-sparkle" style="top:6px;left:14px;font-size:13px;">✦</span>
+      <span class="cta-sparkle" style="bottom:6px;right:46px;font-size:11px;animation-delay:-0.8s;">✦</span>
+      <span class="cta-sparkle" style="top:8px;right:16px;font-size:15px;animation-delay:-0.4s;">★</span>
+      <span class="cta-bolt" style="bottom:4px;left:40px;font-size:14px;">⚡</span>
       🎰 ランダム pick
     </button>
 
     <button
       type="button"
-      class="cta-button-secondary"
+      class="cta-button-big cta-button-big-green"
       onclick="showScreen('todayResultsScreen')"
     >
+      <span class="cta-sparkle" style="top:6px;left:14px;font-size:13px;">✦</span>
+      <span class="cta-sparkle" style="bottom:6px;right:46px;font-size:11px;animation-delay:-0.8s;">✦</span>
+      <span class="cta-sparkle" style="top:8px;right:16px;font-size:15px;animation-delay:-0.4s;">★</span>
+      <span class="cta-bolt" style="bottom:4px;left:40px;font-size:14px;">⚡</span>
       📋 本日の対戦結果
     </button>
 
@@ -21574,6 +21633,209 @@ if (matchGameEl) {
 updateAll();
 
 addScorePlayer();
+
+/* =========================
+   隠しコマンド：シェイクでサイコロ
+========================= */
+
+let shakeDiceLastMagnitude = 0;
+let shakeDiceCooldownUntil = 0;
+let shakeDiceMotionEnabled = false;
+let shakeDiceHideTimer = null;
+let shakeDiceRollTimer = null;
+
+const SHAKE_DICE_FACES =
+  ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+
+function ensureShakeDiceOverlay() {
+
+  let overlay =
+    document.getElementById("shakeDiceOverlay");
+
+  if (overlay) return overlay;
+
+  overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "shakeDiceOverlay";
+
+  overlay.className =
+    "shake-dice-overlay";
+
+  overlay.innerHTML =
+    `<div class="shake-dice-face" id="shakeDiceFace">⚀</div>`;
+
+  document.body.appendChild(overlay);
+
+  return overlay;
+
+}
+
+function showShakeDiceOverlay() {
+
+  const homeScreenEl =
+    document.getElementById("homeScreen");
+
+  const isHomeVisible =
+    homeScreenEl &&
+    !homeScreenEl.classList.contains("hidden");
+
+  if (!isHomeVisible) return;
+
+  const overlay =
+    ensureShakeDiceOverlay();
+
+  const faceEl =
+    document.getElementById("shakeDiceFace");
+
+  overlay.classList.add("visible");
+
+  faceEl.classList.remove("settle");
+
+  void faceEl.offsetWidth;
+
+  faceEl.classList.add("rolling");
+
+  if (shakeDiceRollTimer) {
+    clearInterval(shakeDiceRollTimer);
+  }
+
+  let rollCount = 0;
+
+  shakeDiceRollTimer =
+    setInterval(() => {
+
+      faceEl.textContent =
+        SHAKE_DICE_FACES[
+          Math.floor(Math.random() * 6)
+        ];
+
+      rollCount++;
+
+      if (rollCount > 12) {
+
+        clearInterval(shakeDiceRollTimer);
+
+        shakeDiceRollTimer = null;
+
+        faceEl.textContent =
+          SHAKE_DICE_FACES[
+            Math.floor(Math.random() * 6)
+          ];
+
+        faceEl.classList.remove("rolling");
+
+        faceEl.classList.add("settle");
+
+      }
+
+    }, 70);
+
+  if (shakeDiceHideTimer) {
+    clearTimeout(shakeDiceHideTimer);
+  }
+
+  shakeDiceHideTimer =
+    setTimeout(() => {
+
+      overlay.classList.remove("visible");
+
+    }, 4000);
+
+}
+
+function handleShakeDiceMotion(event) {
+
+  const acc =
+    event.accelerationIncludingGravity ||
+    event.acceleration;
+
+  if (!acc) return;
+
+  const magnitude =
+    Math.sqrt(
+      Math.pow(acc.x || 0, 2) +
+      Math.pow(acc.y || 0, 2) +
+      Math.pow(acc.z || 0, 2)
+    );
+
+  const now =
+    Date.now();
+
+  const delta =
+    Math.abs(magnitude - shakeDiceLastMagnitude);
+
+  shakeDiceLastMagnitude =
+    magnitude;
+
+  if (
+    delta > 28 &&
+    now > shakeDiceCooldownUntil
+  ) {
+
+    shakeDiceCooldownUntil =
+      now + 1200;
+
+    showShakeDiceOverlay();
+
+  }
+
+}
+
+function enableShakeDice() {
+
+  if (shakeDiceMotionEnabled) return;
+
+  if (
+    typeof DeviceMotionEvent !== "undefined" &&
+    typeof DeviceMotionEvent.requestPermission === "function"
+  ) {
+
+    DeviceMotionEvent.requestPermission()
+      .then(response => {
+
+        if (response === "granted") {
+
+          shakeDiceMotionEnabled = true;
+
+          window.addEventListener(
+            "devicemotion",
+            handleShakeDiceMotion
+          );
+
+        }
+
+      })
+      .catch(() => {});
+
+  } else if (typeof DeviceMotionEvent !== "undefined") {
+
+    shakeDiceMotionEnabled = true;
+
+    window.addEventListener(
+      "devicemotion",
+      handleShakeDiceMotion
+    );
+
+  }
+
+}
+
+document.addEventListener(
+  "click",
+  function requestShakeDiceOnce() {
+
+    enableShakeDice();
+
+    document.removeEventListener(
+      "click",
+      requestShakeDiceOnce
+    );
+
+  },
+  { once: true }
+);
 
 updateBottomNavActive("homeScreen");
 

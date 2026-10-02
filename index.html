@@ -1518,18 +1518,15 @@ button.small {
 
 .app-bottom-nav {
   position: fixed;
-  left: 10px;
-  right: 10px;
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 9000;
   display: flex;
-  overflow: hidden;
-  background: rgba(255,255,255,0.97);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid var(--navy);
-  border-radius: 999px;
-  box-shadow: 0 6px 18px rgba(19,27,46,0.22);
+  background: rgba(255,255,255,0.98);
+  border-top: 1px solid rgba(19,27,46,0.1);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -2px 10px rgba(19,27,46,0.06);
 }
 
 .app-bottom-nav-item {
@@ -1539,7 +1536,7 @@ button.small {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  padding: 8px 2px;
+  padding: 8px 2px 6px;
   background: none;
   border: none;
   box-shadow: none;
@@ -1547,7 +1544,7 @@ button.small {
   font-size: 10px;
   font-weight: 700;
   margin-bottom: 0;
-  border-radius: 999px;
+  border-radius: 0;
 }
 
 .app-bottom-nav-item::before { content: none; }
@@ -1568,7 +1565,7 @@ button.small {
 
 body.has-bottom-nav .screen,
 body.has-bottom-nav .container {
-  padding-bottom: 110px;
+  padding-bottom: 76px;
 }
 
 </style>
